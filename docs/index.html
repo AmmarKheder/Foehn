@@ -30,8 +30,8 @@
 <main id="top">
 
 <section class="hero">
-  <div class="wrap hero-grid">
-    <div>
+  <div class="wrap">
+    <div class="hero-text">
       <p class="kicker">INAR Helsinki · LUT University · AMC-Lahti</p>
       <img src="assets/logo.svg" alt="Foehn" style="width:min(100%,360px);display:block;margin:0 0 10px -4px" />
       <p class="tag">Global kilometre-scale probabilistic forecasts of fine particulate matter</p>
@@ -50,10 +50,10 @@
         <div class="stat"><b>78 %</b><span>of the stations with lower error than CAMS</span></div>
       </div>
     </div>
-    <div class="hero-art">
-      <img src="assets/foehn_globe.gif" alt="Foehn forecast of daily PM2.5 at 1 km on 21 January 2022, on a rotating globe" />
-      <p class="cap">Foehn's forecast for 21 January 2022, issued the evening before (ensemble mean, 1 km).</p>
-    </div>
+  </div>
+  <div class="wrap hero-media">
+    <img src="assets/foehn_globes.gif" alt="Left: Foehn forecast of daily PM2.5 at 1 km for 21 January 2022. Right: FLEXGREEN, where the air arriving in thirty cities that day was, one to seven days before" />
+    <p class="cap">Left: Foehn's forecast of daily PM<sub>2.5</sub> at 1&nbsp;km for 21 January 2022, issued the evening before (ensemble mean). Right: FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</p>
   </div>
 </section>
 
@@ -77,18 +77,13 @@
   <div class="wrap">
     <h2>How Foehn works</h2>
     <p class="sub">The PM<sub>2.5</sub> that reaches a place is set by what the arriving air contained and by what happened to it on the way. Foehn separates the two.</p>
-    <div class="how-grid">
-      <div>
-        <p><strong>FLEXGREEN, computed transport.</strong> A GPU re-implementation of the backward mode of the FLEXPART particle model
-          releases particles in every 0.5° land cell on the target day and follows them backwards in the three-dimensional
-          forecast wind, with turbulence and removal. The result is the Green's function of the transport: where the arriving
-          air was on the start day, at which height, and how much of its aerosol survived. It has no learned parameter.</p>
-        <p><strong>A generative network for what the air carries.</strong> The network reads the start-day fields where the physics
-          says the air was, and generates the 1&nbsp;km field of the target day by flow matching; each noise field gives one
-          ensemble member, and whole continents are produced in one pass with no visible seam. The design is described in the paper.</p>
-      </div>
-      <figure class="how-art"><img src="assets/flexgreen_globe.gif" alt="FLEXGREEN origins of the air arriving in thirty cities, one to seven days before" /><figcaption>Where the air arriving in thirty cities on 21 January 2022 was, one to seven days before (blue, near the ground on the start day; pink, aloft).</figcaption></figure>
-    </div>
+    <p><strong>FLEXGREEN, computed transport.</strong> A GPU re-implementation of the backward mode of the FLEXPART particle model
+      releases particles in every 0.5° land cell on the target day and follows them backwards in the three-dimensional
+      forecast wind, with turbulence and removal. The result is the Green's function of the transport: where the arriving
+      air was on the start day, at which height, and how much of its aerosol survived. It has no learned parameter.</p>
+    <p><strong>A generative network for what the air carries.</strong> The network reads the start-day fields where the physics
+      says the air was, and generates the 1&nbsp;km field of the target day by flow matching; each noise field gives one
+      ensemble member, and whole continents are produced in one pass with no visible seam. The design is described in the paper.</p>
   </div>
 </section>
 

@@ -2,7 +2,8 @@
   <img src="docs/assets/logo.svg" width="360" alt="Foehn">
 </p>
 <p align="center">
-  <img src="docs/assets/foehn_globe.gif" width="400" alt="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, on a rotating globe">
+  <img src="docs/assets/foehn_globes.gif" width="820" alt="Left: Foehn forecast of daily PM2.5 at 1 km for 21 January 2022. Right: FLEXGREEN, where the air arriving in thirty cities that day was, one to seven days before">
+  <br><sub>Left: Foehn's forecast of daily PM<sub>2.5</sub> at 1 km for 21 January 2022, issued the evening before (ensemble mean). Right: FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</sub>
 </p>
 
 # Foehn: global kilometre-scale probabilistic forecasts of fine particulate matter
@@ -55,11 +56,6 @@ The result is the Green's function of the transport: where the arriving air was 
 much of its aerosol survived the journey. It has no learned parameter. The network reads the start-day fields where the
 physics says the air was, and generates the 1 km field of the target day by flow matching; each noise field gives one
 ensemble member. The design is described in the paper.
-
-<p align="center">
-  <img src="docs/assets/flexgreen_globe.gif" width="300" alt="FLEXGREEN: where the air arriving in thirty cities on 21 January 2022 was, one to seven days before">
-  <br><sub>FLEXGREEN: where the air arriving in thirty cities on 21 January 2022 was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</sub>
-</p>
 
 ## Results
 
