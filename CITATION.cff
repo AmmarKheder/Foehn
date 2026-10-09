@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "If you use Foehn or FLEXGREEN, please cite the paper below."
+title: "Foehn: global kilometre-scale probabilistic forecasts of fine particulate matter"
+type: software
+license: MIT
+repository-code: "https://github.com/AmmarKheder/Foehn"
+url: "https://ammarkheder.github.io/Foehn/"
+authors:
+  - family-names: Kheder
+    given-names: Ammar
+    email: ammar.kheder@lut.fi
+    affiliation: "INAR, University of Helsinki; LUT University; AMC-Lahti"
+  - family-names: Boy
+    given-names: Michael
+    affiliation: "INAR, University of Helsinki; LUT University; AMC-Lahti"
+  - family-names: Liu
+    given-names: Zhi-Song
+    affiliation: "INAR, University of Helsinki; LUT University; AMC-Lahti"
+keywords:
+  - air quality
+  - PM2.5
+  - forecasting
+  - flow matching
+  - Lagrangian transport
+  - FLEXPART
+preferred-citation:
+  type: article
+  title: "Global kilometre-scale probabilistic forecasts of fine particulate matter"
+  authors:
+    - family-names: Kheder
+      given-names: Ammar
+    - family-names: Boy
+      given-names: Michael
+    - family-names: Liu
+      given-names: Zhi-Song
+  year: 2026
+  notes: "Manuscript submitted"

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Foehn — global kilometre-scale probabilistic forecasts of PM2.5</title>
+<meta name="description" content="Foehn forecasts daily PM2.5 at 1 km over all inhabited land up to a week ahead, as a calibrated ensemble, with the transport of the air computed by FLEXGREEN. Interactive viewer of the forecasts of the paper." />
+<meta property="og:title" content="Foehn — global kilometre-scale probabilistic forecasts of PM2.5" />
+<meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
+<meta property="og:type" content="website" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-row">
+    <a class="brand" href="#top"><span class="brand-mark"></span><span>Foehn</span></a>
+    <nav class="nav">
+      <a href="#abstract">Paper</a>
+      <a href="#how">How it works</a>
+      <a href="#viewer">Viewer</a>
+      <a href="#figures">Figures</a>
+      <a href="#code">Code &amp; data</a>
+      <a href="#cite">Cite</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">INAR Helsinki · LUT University · AMC-Lahti</p>
+      <h1>Foehn</h1>
+      <p class="tag">Global kilometre-scale probabilistic forecasts of fine particulate matter</p>
+      <p class="lede">Daily PM<sub>2.5</sub> for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as a
+        calibrated ensemble. Foehn learns from the first global 1&nbsp;km record of PM<sub>2.5</sub>, generates whole continents
+        in one pass by flow matching, and <strong>computes rather than learns the transport of the air</strong> with FLEXGREEN,
+        a GPU re-implementation of the backward mode of the FLEXPART particle model.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#viewer">Explore the forecasts</a>
+        <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn">Code on GitHub</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>1 km</b><span>resolution, whole globe, no visible seam</span></div>
+        <div class="stat"><b>7 days</b><span>calibrated ensemble, to a week ahead</span></div>
+        <div class="stat"><b>−20 %</b><span>RMSE vs the operational CAMS forecast at 6,612 stations, 1 day ahead</span></div>
+        <div class="stat"><b>78 %</b><span>of the stations with lower error than CAMS</span></div>
+      </div>
+    </div>
+    <div class="hero-art">
+      <img src="assets/foehn_globe.gif" alt="Foehn forecast of daily PM2.5 at 1 km on 21 January 2022, on a rotating globe" />
+      <p class="cap">Foehn's forecast for 21 January 2022, issued the evening before (ensemble mean, 1 km).</p>
+    </div>
+  </div>
+</section>
+
+<section class="band band-soft" id="abstract">
+  <div class="wrap">
+    <h2>Paper</h2>
+    <p class="sub">Kheder A., Boy M. &amp; Liu Z.-S. <em>Global kilometre-scale probabilistic forecasts of fine particulate matter.</em> Manuscript submitted, 2026.</p>
+    <p>About a million deaths a year follow days of high fine particulate matter: the short-term toll that daily forecasts and
+      warnings exist to prevent. PM<sub>2.5</sub> changes from one street to the next, yet it is measured at sparse stations and
+      forecast on grids about 40&nbsp;km wide. Two bottlenecks kept machine learning from forecasting it where it harms:
+      resolution, and the peaks that squared-error training smooths away. Foehn removes both. It learns from the first global
+      record of daily PM<sub>2.5</sub> at 1&nbsp;km with the operational weather forecast as input, generates whole continents at
+      once by flow matching, and computes the transport of the air and of the emissions it meets with a particle model driven by
+      the forecast wind. At 6,612 monitoring stations unused in training, it is more accurate than the operational Copernicus
+      forecast issued at the same time at all its lead times, one to four days, and detects locally extreme pollution markedly
+      better. It also reveals the exposure that coarse grids hide from millions of people every day.</p>
+  </div>
+</section>
+
+<section class="band" id="how">
+  <div class="wrap">
+    <h2>How Foehn works</h2>
+    <p class="sub">The PM<sub>2.5</sub> that reaches a place is set by what the arriving air contained and by what happened to it on the way. Foehn separates the two.</p>
+    <figure><img src="figures/fig_gc1_schematic.png" alt="Schematic of Foehn: FLEXGREEN transport, learned tracers, flow-matching generator" /></figure>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><h3>FLEXGREEN: computed transport</h3><p>Particles are released in every 0.5° land cell on the target day and followed backwards in the three-dimensional forecast wind, with turbulence and removal. The result is the Green's function of the transport: where the air was on the start day, at which height, and how much of its aerosol survived. No learned parameter.</p></div>
+      <div class="step"><span class="n">2</span><h3>Learned tracers</h3><p>A small encoder turns the start-day maps into 32 latent tracers that every receptor reads at the origins of its particles: the network chooses what to transport, the physics decides where the air comes from.</p></div>
+      <div class="step"><span class="n">3</span><h3>Flow-matching generator</h3><p>Conditioned on the 1&nbsp;km fields of the start day, the forecast weather and the transport maps, a network carries a noise field to a 1&nbsp;km forecast in four steps. Each noise field is one ensemble member; twenty-one continent-sized windows blend with no visible seam.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-soft" id="viewer">
+  <div class="wrap">
+    <h2>Interactive viewer</h2>
+    <p class="sub">The forecasts of the three case studies of the paper, as issued: choose a case, a target day and how many days
+      before the forecast was issued, and compare Foehn's ensemble with the 1&nbsp;km reference estimates (GHAP, made after the
+      fact) and the CAMS operational forecast issued at the same time. Every panel is a genuine output of the final model
+      (16 members, 1&nbsp;km); nothing is recomputed in the browser.</p>
+    <div class="viewer">
+      <div class="controls">
+        <div><label for="case">Case</label><select id="case"></select></div>
+        <div><label for="target">Target day</label><select id="target"></select></div>
+        <div><label>Issued … days before</label><div class="lead"><input type="range" id="lead" min="1" max="7" step="1" value="1" /><output id="leadout">1 day</output></div></div>
+      </div>
+      <div class="layers" id="layers">
+        <button data-layer="mean" class="on">Ensemble mean</button>
+        <button data-layer="member">One member</button>
+        <button data-layer="prob">Probability of exceedance</button>
+      </div>
+      <div class="panels" style="margin-top:14px">
+        <div class="panel"><div class="ttl">Foehn, 1 km <span id="foehn-sub"></span></div><img id="img-foehn" alt="Foehn forecast" /></div>
+        <div class="side">
+          <div class="panel"><div class="ttl">GHAP, 1 km <span>reference, not a forecast</span></div><img id="img-ghap" alt="GHAP reference" /></div>
+          <div class="panel"><div class="ttl">CAMS, 0.4° <span>issued at the same time</span></div><img id="img-cams" alt="CAMS forecast" /><div class="missing" id="cams-missing" style="display:none">The CAMS forecast covers four days ahead.</div></div>
+        </div>
+      </div>
+      <div class="cbars"><img src="viewer/cbar_pm.png" alt="PM2.5 colour scale" /><img src="viewer/cbar_prob.png" alt="probability colour scale" id="cbar-prob" /></div>
+      <p class="note" id="viewer-note"></p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="figures">
+  <div class="wrap">
+    <h2>Figures</h2>
+    <div class="gallery">
+      <figure class="wide"><img src="figures/fig_overview.png" alt="One forecast of the whole planet at 1 km" /><figcaption>One forecast of the whole planet at 1&nbsp;km (21 January 2022), and four polluted basins against the CAMS forecast and the GHAP estimates, with the stations of four official networks.</figcaption></figure>
+      <figure><img src="figures/fig_hidden.png" alt="Why the kilometre matters" /><figcaption>The people a 40&nbsp;km forecast cannot warn: 186 million per day on average, and the detection of local extremes.</figcaption></figure>
+      <figure><img src="figures/fig_gc2_realism.png" alt="Sharp realistic samples over the North China Plain" /><figcaption>Sharp, realistic members: the January 2022 haze over the North China Plain, one and five days ahead, and the Beijing stations.</figcaption></figure>
+      <figure><img src="figures/fig_transport.png" alt="The pollution follows the air" /><figcaption>The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time.</figcaption></figure>
+      <figure><img src="figures/fig_smoke.png" alt="Forecasting wildfire smoke five days ahead" /><figcaption>The smoke of the Gironde fires of July 2022 at the Teich bird reserve, forecast five days ahead.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="band band-soft" id="code">
+  <div class="wrap">
+    <h2>Code &amp; data</h2>
+    <table class="links">
+      <tr><td>Code (MIT licence)</td><td><a href="https://github.com/AmmarKheder/Foehn">github.com/AmmarKheder/Foehn</a> — FLEXGREEN, data preparation, training, calibration, inference, evaluation, and every figure of the paper.</td></tr>
+      <tr><td>Trained weights</td><td>Available to the editors and referees; released with a Zenodo DOI upon publication.</td></tr>
+      <tr><td>Target and inputs</td><td>GHAP daily 1&nbsp;km PM<sub>2.5</sub> (Wei et al., Zenodo); ECMWF IFS HRES forecasts (WeatherBench&nbsp;2); ERA5; CAMS global forecasts and analyses, GFAS and CAMS-GLOB-ANT (Copernicus Atmosphere Data Store); GHS-POP population.</td></tr>
+      <tr><td>Evaluation stations</td><td>EEA, CNEMC, US EPA AQS, AirKorea, NIES Japan, CPCB India (partly through OpenAQ). Stations are used for evaluation only.</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="band" id="cite">
+  <div class="wrap">
+    <h2>Cite</h2>
+<pre><code>@article{kheder2026foehn,
+  title  = {Global kilometre-scale probabilistic forecasts of fine particulate matter},
+  author = {Kheder, Ammar and Boy, Michael and Liu, Zhi-Song},
+  year   = {2026},
+  note   = {Manuscript submitted}
+}</code></pre>
+    <p class="note">Questions and problems: <a href="https://github.com/AmmarKheder/Foehn/issues">GitHub issues</a> · ammar.kheder@lut.fi</p>
+  </div>
+</section>
+
+</main>
+<footer><div class="wrap">Foehn · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · Atmospheric Modelling Centre Lahti. Computations on the LUMI supercomputer (CSC, EuroHPC).</div></footer>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const sel = { case: $("case"), target: $("target"), lead: $("lead"), leadout: $("leadout") };
+  let DB = null, layer = "mean";
+  fetch("viewer/index.json").then((r) => r.json()).then((db) => {
+    DB = db;
+    for (const [k, c] of Object.entries(db.cases)) { const o = document.createElement("option"); o.value = k; o.textContent = c.name; sel.case.appendChild(o); }
+    sel.case.value = "beijing"; fillTargets(); render();
+  }).catch(() => { $("viewer-note").textContent = "The viewer data could not be loaded."; });
+  function fillTargets() {
+    const c = DB.cases[sel.case.value]; sel.target.innerHTML = "";
+    for (const t of c.targets) { const o = document.createElement("option"); o.value = t.doy; o.textContent = t.label; sel.target.appendChild(o); }
+    sel.target.value = c.targets[Math.min(c.targets.length - 1, c.targets.length > 1 ? 5 : 0)].doy;
+    sel.lead.max = Math.max(...c.leads); sel.lead.min = Math.min(...c.leads);
+    if (+sel.lead.value > +sel.lead.max) sel.lead.value = sel.lead.max;
+    document.querySelector('[data-layer="prob"]').textContent = "Probability of PM₂.₅ > " + c.thr + " µg m⁻³";
+  }
+  function available(c, t, h) { return c.available.find((e) => e[0] === +t && e[1] === +h); }
+  function render() {
+    const key = sel.case.value, c = DB.cases[key], t = sel.target.value, h = +sel.lead.value;
+    sel.leadout.textContent = h + (h > 1 ? " days" : " day");
+    const e = available(c, t, h);
+    const base = "viewer/" + key + "/" + t + "_h" + h + "_";
+    $("img-foehn").src = e ? base + layer + ".png" : "";
+    $("img-foehn").style.display = e ? "block" : "none";
+    $("img-ghap").src = "viewer/" + key + "/" + t + "_ghap.png";
+    const hasCams = e && e[2];
+    $("img-cams").style.display = hasCams ? "block" : "none"; $("cams-missing").style.display = hasCams ? "none" : "block";
+    if (hasCams) $("img-cams").src = base + "cams.png";
+    $("cbar-prob").style.display = layer === "prob" ? "inline" : "none";
+    const label = sel.target.options[sel.target.selectedIndex].textContent;
+    $("foehn-sub").textContent = e ? (layer === "prob" ? "probability from 16 members" : layer === "member" ? "member 1 of 16" : "ensemble mean of 16 members") + ", issued " + h + (h > 1 ? " days" : " day") + " before " + label : "no forecast at this lead time";
+    $("viewer-note").textContent = c.note + ". Box: " + c.box[1] + "–" + c.box[0] + "°N, " + c.box[2] + "–" + c.box[3] + "°E" + (c.ds > 1 ? "; displayed at " + c.ds + " km." : "; displayed at 1 km.");
+    // preload the neighbouring lead times
+    for (const hh of [h - 1, h + 1]) { const ee = available(c, t, hh); if (ee) { const im = new Image(); im.src = "viewer/" + key + "/" + t + "_h" + hh + "_" + layer + ".png"; } }
+  }
+  sel.case.addEventListener("change", () => { fillTargets(); render(); });
+  sel.target.addEventListener("change", render);
+  sel.lead.addEventListener("input", render);
+  document.querySelectorAll("#layers button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("#layers button").forEach((x) => x.classList.remove("on")); b.classList.add("on"); layer = b.dataset.layer; render();
+  }));
+})();
+</script>
+</body>
+</html>
