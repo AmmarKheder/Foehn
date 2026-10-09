@@ -64,11 +64,13 @@ forecast and Aurora issued at the same time (details and intervals in the paper)
 
 | | Foehn | CAMS | Aurora |
 |---|---|---|---|
-| RMSE at the stations, 1 day ahead (µg m⁻³) | **12.4** | 15.6 | 16.0 |
-| RMSE, 4 days ahead | **14.5** | 16.6 | 17.5 |
-| CRPS, 1 day ahead (fair CRPS of 4 members; absolute error for single forecasts) | **4.2** | 8.1 | 8.5 |
-| SEDI, days above the local 99th percentile, 1 day ahead | **0.63** | 0.45 | 0.43 |
-| Stations where the error is lower than CAMS (5,959 stations with ≥ 30 common days) | **78 %** | – | – |
+| RMSE, 1 day (µg m⁻³) | **12.4** | 15.6 | 16.0 |
+| RMSE, 4 days | **14.5** | 16.6 | 17.5 |
+| CRPS, 1 day | **4.2** | 8.1 | 8.5 |
+| SEDI, local P99, 1 day | **0.63** | 0.45 | 0.43 |
+| Stations better than CAMS | **78 %** | – | – |
+
+RMSE and CRPS at the 6,612 stations (the CRPS is the fair CRPS of four members; for a single forecast it is the absolute error); SEDI for the days above the local 99th percentile; the share of the 5,959 stations with at least 30 common days where Foehn's error is lower than CAMS's.
 
 <p align="center">
   <img src="docs/figures/fig_transport.png" width="880" alt="The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time">

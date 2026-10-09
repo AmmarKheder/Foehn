@@ -58,7 +58,7 @@ figcaption { font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
 .viewer { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
 .controls { display: grid; grid-template-columns: 1.4fr 1.2fr 1fr; gap: 14px; align-items: end; margin-bottom: 14px; }
 .controls label { display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
-.controls select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: #fff; }
+.controls select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 16px; background: #fff; }
 .lead { display: flex; align-items: center; gap: 10px; }
 .lead input[type=range] { flex: 1; accent-color: var(--blue); }
 .lead output { min-width: 86px; font-weight: 600; font-size: 14px; }
@@ -92,6 +92,7 @@ footer { padding: 30px 0 50px; color: var(--muted); font-size: 13px; border-top:
 }
 @media (max-width: 480px) {
   .wrap { padding: 0 14px; }
+  select, input, button, output { font-size: 16px; }
   .stats { grid-template-columns: 1fr; }
   .stat b { font-size: 22px; }
   .tag { font-size: 17px; }
