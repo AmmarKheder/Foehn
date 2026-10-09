@@ -8,7 +8,7 @@
 # Foehn: global kilometre-scale probabilistic forecasts of fine particulate matter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Website](https://img.shields.io/badge/website-ammarkheder.github.io%2FFoehn-1F5AA6)](https://ammarkheder.github.io/Foehn/)
+[![Website](https://img.shields.io/badge/website-ammarkheder.com%2FFoehn-1F5AA6)](https://ammarkheder.com/Foehn/)
 [![Paper](https://img.shields.io/badge/paper-submitted-lightgrey)](#citation)
 
 Foehn forecasts the daily fine particulate matter (PM<sub>2.5</sub>) of every inhabited place on Earth at 1 km, from one day to
@@ -17,7 +17,7 @@ the operational ECMWF weather forecast as input, generates whole continents in o
 than learns the transport of the air**: FLEXGREEN, a GPU re-implementation of the backward mode of the FLEXPART particle model,
 tells every receptor where its air was on the start day and which wildfire and anthropogenic emissions it took up on the way.
 
-[Interactive viewer](https://ammarkheder.github.io/Foehn/#viewer) · [Paper](#citation) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
+[Interactive viewer](https://ammarkheder.com/Foehn/#viewer) · [Paper](#citation) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
 
 ## Contents
 

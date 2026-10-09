@@ -4,7 +4,7 @@ title: "Foehn: global kilometre-scale probabilistic forecasts of fine particulat
 type: software
 license: MIT
 repository-code: "https://github.com/AmmarKheder/Foehn"
-url: "https://ammarkheder.github.io/Foehn/"
+url: "https://ammarkheder.com/Foehn/"
 authors:
   - family-names: Kheder
     given-names: Ammar
