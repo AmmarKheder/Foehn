@@ -3,8 +3,9 @@
   --bg: #ffffff; --bg-soft: #f6f8fa; --pink: #C2185B; --radius: 10px; --max: 1120px;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif; color: var(--ink); background: var(--bg); line-height: 1.55; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+img, video { max-width: 100%; height: auto; }
+body { margin: 0; overflow-x: hidden; font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif; color: var(--ink); background: var(--bg); line-height: 1.55; }
 a { color: var(--blue); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
@@ -44,6 +45,9 @@ h3 { font-size: 18px; margin: 18px 0 6px; }
 .step p { margin: 0; color: var(--muted); font-size: 14px; }
 figure { margin: 0; }
 figure img { width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.how-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; align-items: center; }
+.how-art img { border: none; border-radius: 50%; max-width: 340px; display: block; margin: 0 auto; }
+.how-art figcaption { text-align: center; }
 figcaption { font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
 .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .gallery figure.wide { grid-column: 1 / -1; }
@@ -58,12 +62,13 @@ figcaption { font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
 .layers { display: flex; gap: 6px; flex-wrap: wrap; }
 .layers button { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 13px; cursor: pointer; }
 .layers button.on { background: var(--blue); color: #fff; border-color: var(--blue); }
-.panels { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; }
+.panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .panel { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
 .panel .ttl { font-size: 13px; font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--bg-soft); display: flex; justify-content: space-between; }
 .panel .ttl span { color: var(--muted); font-weight: 400; }
 .panel img { width: 100%; display: block; background: #fff; }
-.side { display: grid; gap: 16px; }
+.panel .ttl { min-height: 38px; align-items: center; }
+.side { display: contents; }
 .cbars { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 12px; align-items: center; }
 .cbars img { height: 54px; }
 .note { font-size: 13px; color: var(--muted); margin-top: 10px; }
@@ -71,12 +76,29 @@ figcaption { font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
 pre { background: #0f1720; color: #e6edf3; padding: 16px; border-radius: var(--radius); overflow: auto; font-size: 13px; line-height: 1.5; }
 code { font-family: "SFMono-Regular", Menlo, Consolas, monospace; }
 table.links { width: 100%; border-collapse: collapse; font-size: 14px; }
-table.links td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.links td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; word-break: break-word; }
 table.links td:first-child { color: var(--muted); width: 32%; }
 footer { padding: 30px 0 50px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
 @media (max-width: 860px) {
-  .hero-grid, .steps, .gallery, .panels, .controls { grid-template-columns: 1fr; }
+  .hero-grid, .steps, .gallery, .panels, .controls, .how-grid { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr 1fr; }
   h1 { font-size: 34px; }
   .nav { display: none; }
+  .hero { padding: 32px 0 24px; }
+  section.band { padding: 32px 0; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 0 14px; }
+  .stats { grid-template-columns: 1fr; }
+  .stat b { font-size: 22px; }
+  .tag { font-size: 17px; }
+  .lede { font-size: 15px; }
+  h2 { font-size: 23px; }
+  .cta .btn { width: 100%; text-align: center; }
+  .viewer { padding: 12px; }
+  .layers button { font-size: 12px; padding: 6px 10px; }
+  .cbars { gap: 10px; }
+  .cbars img { height: 44px; }
+  pre { font-size: 11.5px; padding: 12px; }
+  .hero-art img { max-width: 300px; }
 }

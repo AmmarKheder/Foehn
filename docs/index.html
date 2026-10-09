@@ -77,11 +77,17 @@
   <div class="wrap">
     <h2>How Foehn works</h2>
     <p class="sub">The PM<sub>2.5</sub> that reaches a place is set by what the arriving air contained and by what happened to it on the way. Foehn separates the two.</p>
-    <figure><img src="figures/fig_gc1_schematic.png" alt="Schematic of Foehn: FLEXGREEN transport, learned tracers, flow-matching generator" /></figure>
-    <div class="steps">
-      <div class="step"><img src="assets/flexgreen_globe.gif" alt="FLEXGREEN origins of the air arriving in thirty cities, one to seven days before" style="width:100%;max-width:300px;display:block;margin:0 auto 10px;border-radius:50%" /><span class="n">1</span><h3>FLEXGREEN: computed transport</h3><p>Particles are released in every 0.5° land cell on the target day and followed backwards in the three-dimensional forecast wind, with turbulence and removal. The result is the Green's function of the transport: where the air was on the start day, at which height, and how much of its aerosol survived. No learned parameter.</p></div>
-      <div class="step"><span class="n">2</span><h3>Learned tracers</h3><p>A small encoder turns the start-day maps into 32 latent tracers that every receptor reads at the origins of its particles: the network chooses what to transport, the physics decides where the air comes from.</p></div>
-      <div class="step"><span class="n">3</span><h3>Flow-matching generator</h3><p>Conditioned on the 1&nbsp;km fields of the start day, the forecast weather and the transport maps, a network carries a noise field to a 1&nbsp;km forecast in four steps. Each noise field is one ensemble member; twenty-one continent-sized windows blend with no visible seam.</p></div>
+    <div class="how-grid">
+      <div>
+        <p><strong>FLEXGREEN, computed transport.</strong> A GPU re-implementation of the backward mode of the FLEXPART particle model
+          releases particles in every 0.5° land cell on the target day and follows them backwards in the three-dimensional
+          forecast wind, with turbulence and removal. The result is the Green's function of the transport: where the arriving
+          air was on the start day, at which height, and how much of its aerosol survived. It has no learned parameter.</p>
+        <p><strong>A generative network for what the air carries.</strong> The network reads the start-day fields where the physics
+          says the air was, and generates the 1&nbsp;km field of the target day by flow matching; each noise field gives one
+          ensemble member, and whole continents are produced in one pass with no visible seam. The design is described in the paper.</p>
+      </div>
+      <figure class="how-art"><img src="assets/flexgreen_globe.gif" alt="FLEXGREEN origins of the air arriving in thirty cities, one to seven days before" /><figcaption>Where the air arriving in thirty cities on 21 January 2022 was, one to seven days before (blue, near the ground on the start day; pink, aloft).</figcaption></figure>
     </div>
   </div>
 </section>

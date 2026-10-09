@@ -32,17 +32,16 @@ tells every receptor where its air was on the start day and which wildfire and a
 
 ## What is Foehn?
 
-Air pollution is forecast on grids about 40 km wide, while PM<sub>2.5</sub> changes from one street to the next. Two
-bottlenecks kept machine learning from forecasting it where it harms: resolution (kilometre-scale targets over the globe
-are recent, and tiling such large images leaves seams) and the peaks (squared-error training smooths them away). Foehn removes
-both:
+Air pollution is forecast on grids about 40 km wide, while PM<sub>2.5</sub> changes from one street to the next. Foehn
+forecasts it at the kilometre, for the whole planet, as a calibrated ensemble:
 
-- **Kilometre scale, one pass.** A flow-matching network generates windows of 29 million pixels (a continent at 1 km) in one
-  pass, with global attention at 64 km; twenty-one windows cover the land and blend with no visible seam.
-- **Sharp, calibrated ensembles.** Each sample is one plausible 1 km forecast; the ensemble is trained on the CRPS so that
-  its spread matches its error, to seven days ahead.
+- **Kilometre scale, one pass.** A generative network trained by flow matching produces whole continents at 1 km in one
+  pass, with no visible seam between the windows that cover the land.
+- **Sharp, calibrated ensembles.** Each sample is one plausible 1 km forecast; the ensemble is trained so that its spread
+  matches its error, to seven days ahead.
 - **Computed transport (FLEXGREEN).** The physics decides where the air comes from; the network learns only what it carries.
-  Every forecast comes with its Green's functions: where the air reaching each place was, at which height, and what it took up.
+  Every forecast comes with its Green's functions: where the air reaching each place was, at which height, and what it took
+  up on the way.
 
 <p align="center">
   <img src="docs/figures/fig_overview.png" width="880" alt="One forecast of the whole planet at 1 km, with four basin zooms against CAMS and GHAP">
@@ -50,24 +49,17 @@ both:
 
 ## How Foehn works
 
-<p align="center">
-  <img src="docs/figures/fig_gc1_schematic.png" width="880" alt="Schematic: FLEXGREEN transport, learned tracers, flow-matching generator">
-</p>
+FLEXGREEN, a GPU re-implementation of the backward mode of the FLEXPART particle model, releases particles in every 0.5°
+land cell on the target day and follows them backwards in the three-dimensional forecast wind, with turbulence and removal.
+The result is the Green's function of the transport: where the arriving air was on the start day, at which height, and how
+much of its aerosol survived the journey. It has no learned parameter. The network reads the start-day fields where the
+physics says the air was, and generates the 1 km field of the target day by flow matching; each noise field gives one
+ensemble member. The design is described in the paper.
 
 <p align="center">
   <img src="docs/assets/flexgreen_globe.gif" width="300" alt="FLEXGREEN: where the air arriving in thirty cities on 21 January 2022 was, one to seven days before">
   <br><sub>FLEXGREEN: where the air arriving in thirty cities on 21 January 2022 was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</sub>
 </p>
-
-1. **FLEXGREEN** releases particles in every 0.5° land cell on the target day and follows them backwards in the 3-D forecast
-   wind (Petterssen advection, boundary-layer turbulence, dry and wet removal), returning for each particle its origin on the
-   start day, its height relative to the mixed layer and its survival. No learned parameter.
-2. **Learned tracers.** A small encoder turns the start-day maps (PM<sub>2.5</sub>, fire emissions) into 32 latent tracers that
-   every receptor reads at the origins of its particles; with the advected PM<sub>2.5</sub>, the share of air from aloft, the
-   survival and the emissions met on the way, they form 44 transport maps.
-3. **Generator.** Conditioned on the 1 km fields of the start day, the forecast weather and the transport maps, a U-Net with
-   global attention carries a noise field to a 1 km forecast along the flow-matching path in four steps. Each noise field is one
-   ensemble member.
 
 ## Results
 
