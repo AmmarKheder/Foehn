@@ -54,6 +54,11 @@ both:
   <img src="docs/figures/fig_gc1_schematic.png" width="880" alt="Schematic: FLEXGREEN transport, learned tracers, flow-matching generator">
 </p>
 
+<p align="center">
+  <img src="docs/assets/flexgreen_globe.gif" width="300" alt="FLEXGREEN: where the air arriving in thirty cities on 21 January 2022 was, one to seven days before">
+  <br><sub>FLEXGREEN: where the air arriving in thirty cities on 21 January 2022 was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</sub>
+</p>
+
 1. **FLEXGREEN** releases particles in every 0.5° land cell on the target day and follows them backwards in the 3-D forecast
    wind (Petterssen advection, boundary-layer turbulence, dry and wet removal), returning for each particle its origin on the
    start day, its height relative to the mixed layer and its survival. No learned parameter.
