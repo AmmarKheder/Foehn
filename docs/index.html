@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css" />
+<link rel="stylesheet" href="assets/style.css?v=20261010b" />
 </head>
 <body>
 
@@ -52,8 +52,11 @@
     </div>
   </div>
   <div class="wrap hero-media">
-    <img src="assets/foehn_globes.gif" alt="Left: Foehn forecast of daily PM2.5 at 1 km for 21 January 2022. Right: FLEXGREEN, where the air arriving in thirty cities that day was, one to seven days before" />
-    <p class="cap">Left: Foehn's forecast of daily PM<sub>2.5</sub> at 1&nbsp;km for 21 January 2022, issued the evening before (ensemble mean). Right: FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</p>
+    <picture>
+      <source media="(max-width: 700px)" srcset="assets/foehn_globes_stack.gif" />
+      <img src="assets/foehn_globes.gif" alt="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, and FLEXGREEN: where the air arriving in thirty cities that day was, one to seven days before" />
+    </picture>
+    <p class="cap">Foehn's forecast of daily PM<sub>2.5</sub> at 1&nbsp;km for 21 January 2022, issued the evening before (ensemble mean), and FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</p>
   </div>
 </section>
 
