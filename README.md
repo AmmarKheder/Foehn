@@ -1,4 +1,7 @@
 <p align="center">
+  <img src="docs/assets/logo.svg" width="360" alt="Foehn">
+</p>
+<p align="center">
   <img src="docs/assets/foehn_globe.gif" width="400" alt="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, on a rotating globe">
 </p>
 
