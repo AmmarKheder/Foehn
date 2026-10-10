@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Otso" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="stylesheet" href="../assets/style.css?v=20261010k" />
+<link rel="stylesheet" href="../assets/style.css?v=20261011a" />
 <style>
   :root { --card: #ffffff; --amber-bg: #FFF8E8; --amber-line: #F3D9A4; --amber-ink: #4a3b12; --amber: #D99A1E; --shadow: 0 8px 24px rgba(28,37,48,.12); color-scheme: light; }
   :root[data-theme="dark"] { --bg: #0f1720; --bg-soft: #141d28; --card: #19232f; --ink: #e6edf3; --muted: #9aa7b4; --line: #27323e; --blue: #7fb0ff; --blue-dark: #5a8fe6; --blue-soft: #35507a; --pink: #ff6ea3;
@@ -261,8 +261,9 @@
   @media (max-width: 760px) { .acards { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 600px) {
     .mapbar { display: flex !important; flex-direction: column; align-items: stretch; gap: 8px; }
-    .mapbar > div:last-child { display: flex !important; flex-wrap: nowrap !important; gap: 8px; }
-    .mapbar > div:last-child select { flex: 1 1 0; min-width: 0; width: auto; }
+    .mapbar > div:last-child { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+    body.app .mapbar > div:last-child { grid-template-columns: minmax(0, 1fr); }
+    .mapbar > div:last-child select { width: 100%; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
     .mapbar .zoombtns { flex: none; } .mapbar .zoombtns #zreset { width: 44px; height: 40px; }
     #ct .full { display: none; } #ct .short { display: inline; }
     #ct .bars { gap: 1px; } #ct .bars i { width: 4px; }
@@ -734,12 +735,12 @@
     document.getElementById("pt-text").innerHTML = adviceOf(v0) + (imax > kNow + 1 ? " The highest value of the five days, <strong>" + fmt(mean[imax]) + "</strong> (" + PM_NAMES[pmClass(mean[imax])] + "), is expected " + whenPhrase(tmax) + "." : "") +
       "<br><span class='small'>Research forecast, not an official alert.</span>" + cityErrNote(name);
     // 5-day list: the valid times grouped by local day, a range bar on a common log scale
-    const days = []; for (let k = 0; k < 10; k++) { const t = validTime(day, k), key = t.toDateString(); let g = days.find((q) => q.key === key); if (!g) days.push(g = { key, t, ks: [] }); g.ks.push(k); }
-    const all = mean.filter((v) => v > 0), gl = Math.log10(Math.max(Math.min(...all), 0.5)), gh = Math.log10(Math.max(...all) * 1.05), pos = (v) => gh > gl ? 100 * (Math.log10(Math.max(v, 0.5)) - gl) / (gh - gl) : 50;
+    const days = []; for (let k = kNow; k < 10; k++) { const t = validTime(day, k), key = t.toDateString(); let g = days.find((q) => q.key === key); if (!g) days.push(g = { key, t, ks: [] }); g.ks.push(k); }
+    const all = mean.slice(kNow).filter((v) => v > 0), gl = Math.log10(Math.max(Math.min(...all), 0.5)), gh = Math.log10(Math.max(...all) * 1.05), pos = (v) => gh > gl ? 100 * (Math.log10(Math.max(v, 0.5)) - gl) / (gh - gl) : 50;
     document.getElementById("pt-days").innerHTML = days.map((g) => { const vs = g.ks.map((k) => mean[k]), mx = Math.max(...vs), mn = Math.min(...vs), kmx = g.ks[vs.indexOf(mx)];
       return `<div class="drow" data-k="${kmx}"><span class="dname">${dayLabel(g.t)}</span><span class="ddot" style="background:${pmHex(mx)}"></span><span class="dmin">${fmt(mn)}</span>` +
         `<span class="dbar"><i style="left:${pos(mn).toFixed(1)}%;right:${(100 - pos(mx)).toFixed(1)}%;background:linear-gradient(90deg, ${hexOf(rampPm(mn))}, ${hexOf(rampPm(mx))})"></i></span><span class="dmax">${fmt(mx)}</span></div>`; }).join("");
-    document.getElementById("pt-strip").innerHTML = mean.map((v, k) => { const t = validTime(day, k); return `<div class="sitem${k === state.lead ? " on" : ""}" data-k="${k}"><div class="d">${dayLabel(t)}</div><div class="h">${hourLabel(t)}</div><div class="dot" style="background:${pmHex(v)}"></div><div class="v">${fmt(v)}</div></div>`; }).join("");
+    document.getElementById("pt-strip").innerHTML = mean.map((v, k) => { if (k < kNow) return ""; const t = validTime(day, k); return `<div class="sitem${k === state.lead ? " on" : ""}" data-k="${k}"><div class="d">${dayLabel(t)}</div><div class="h">${hourLabel(t)}</div><div class="dot" style="background:${pmHex(v)}"></div><div class="v">${fmt(v)}</div></div>`; }).join("");
     series(mean, p90, prob);
   }
   document.getElementById("pt-days").addEventListener("click", (ev) => { const r = ev.target.closest(".drow"); if (!r) return; state.lead = +r.dataset.k; document.getElementById("lead").value = state.lead; show(); });
