@@ -328,6 +328,9 @@
       with and without the satellite fires, next to the CAMS operational forecast and persistence (the analysis of the morning kept unchanged). RMSE of the ensemble mean, µg m⁻³, cosine-latitude weighted.</p>
     <div class="tablewrap"><table class="ct scores" id="scores-table"><thead><tr><th>Lead</th><th>Otso 1.1 · land</th><th>without fires</th><th>CAMS forecast</th><th>persistence</th><th>Otso 1.1 · all cells</th><th>CAMS forecast</th><th>persistence</th></tr></thead>
       <tbody><tr><td>+12 h</td><td><b>14.4</b></td><td>18.1</td><td>–</td><td>20.1</td><td>8.5</td><td>–</td><td>11.4</td></tr><tr><td>+24 h</td><td><b>14.5</b></td><td>15.2</td><td>9.2</td><td>17.2</td><td>8.7</td><td>5.4</td><td>10.1</td></tr><tr><td>+48 h</td><td><b>15.6</b></td><td>16.4</td><td>–</td><td>19.9</td><td>9.4</td><td>–</td><td>11.8</td></tr><tr><td>+72 h</td><td><b>16.3</b></td><td>17.0</td><td>–</td><td>20.7</td><td>9.8</td><td>–</td><td>12.3</td></tr><tr><td>+96 h</td><td><b>16.2</b></td><td>16.8</td><td>–</td><td>20.3</td><td>9.8</td><td>–</td><td>12.1</td></tr><tr><td>+120 h</td><td><b>16.1</b></td><td>16.6</td><td>15.0</td><td>20.2</td><td>9.6</td><td>8.9</td><td>12.0</td></tr></tbody></table></div>
+    <h3 style="margin-top:26px">Live verification, updated every day</h3>
+    <p class="sub">Every morning the forecasts of the last five days are scored against the CAMS analyses that have arrived since (nothing is hidden: every day counts). Last 30 days, RMSE of the ensemble mean over land, and the mean absolute error in the 60 published cities. <span id="live-note"></span></p>
+    <div class="tablewrap"><table class="ct scores" id="live-table"><thead><tr><th>Lead</th><th>days</th><th>Otso 1.1 · land</th><th>CAMS forecast</th><th>persistence</th><th>cities · Otso</th><th>cities · CAMS</th></tr></thead><tbody><tr><td colspan="7" class="small">Loading…</td></tr></tbody></table></div>
     <ul class="scores-notes">
       <li><strong>The fires matter.</strong> With the GFAS fires (injection height <code>injh</code>, the variable that replaces the <code>mami</code> of the training), the error over land is 20 % lower at 12 h and 3–15 % lower afterwards, and the bias over fire cells is +1 instead of −3 µg m⁻³.</li>
       <li><strong>Skilful, but weaker than in the paper's 2022 test.</strong> Otso beats persistence by 25 % at 12 h and 20 % at 120 h; in 2022 it beat it by 45 % and 34 %, and overtook the CAMS forecast from 48 h on. Here the CAMS forecast stays ahead (9.2 vs 14.5 over land at 24 h, 15.0 vs 16.1 at 120 h). September 2026 is also a harder period: the persistence error is 25–55 % larger than in 2022.</li>
@@ -542,6 +545,12 @@
   }
   const dayLabel = (t) => t.toLocaleString("en-GB", { weekday: "short", timeZone: "UTC" }), hourLabel = (t) => t.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
   const lightText = (hex) => { const [r, g, b] = rgb(hex); return (0.299 * r + 0.587 * g + 0.114 * b) > 150; };
+  function cityErrNote(name) {
+    if (!LIVE_SC || !LIVE_SC.summary || !name) return "";
+    const key = Object.keys(LIVE_SC.summary.cities_24h || {}).find((n) => name.toLowerCase().startsWith(n.toLowerCase()));
+    if (!key) return ""; const c = LIVE_SC.summary.cities_24h[key];
+    return ` <span class='small'>Over the last ${c.n} verified days, Otso's error here at +24 h was ±${c.mae_otso} µg m⁻³ on average (observed level ${c.mean_truth}).</span>`;
+  }
   function renderPlace(P) {
     const { lat, lon, name, day, mean, p90, prob } = P; const el = document.getElementById("point"); el.hidden = false;
     const k1 = 1, t1 = mean[k1], c1 = pmClass(t1), imax = mean.indexOf(Math.max(...mean));
@@ -554,7 +563,7 @@
     document.getElementById("pt-range").innerHTML = "10–90 % of members<br />" + fmt(Math.max(0, 2 * mean[k1] - p90[k1])) + " – " + fmt(p90[k1]) + " · P(&gt;25) " + prob[k1] + " %";
     const peak = imax === k1 ? "" : " The peak of the five days is <strong>" + fmt(mean[imax]) + "</strong> (" + PM_NAMES[pmClass(mean[imax])] + ") on " + dayLabel(validTime(day, imax)) + " " + hourLabel(validTime(day, imax)) + " UTC.";
     document.getElementById("pt-text").innerHTML = (c1 <= 3 ? "Clean to fair air tomorrow." : c1 <= 5 ? "Moderate pollution tomorrow." : c1 <= 7 ? "Poor air tomorrow: sensitive people should limit long efforts outdoors." : "Very poor air tomorrow: everyone should limit efforts outdoors.") + peak +
-      " <span class='small'>Research forecast, not an alert.</span>";
+      " <span class='small'>Research forecast, not an alert.</span>" + cityErrNote(name);
     document.getElementById("pt-strip").innerHTML = mean.map((v, k) => { const t = validTime(day, k); return `<div class="sitem${k === state.lead ? " on" : ""}" data-k="${k}"><div class="d">${dayLabel(t)}</div><div class="h">${hourLabel(t)}</div><div class="dot" style="background:${pmHex(v)}"></div><div class="v">${fmt(v)}</div></div>`; }).join("");
     series(mean, p90, prob);
   }
@@ -618,6 +627,14 @@
   function links() { const d = state.day, f = state.idx[d].files;
     document.getElementById("dl-nc").href = BASE + d + "/" + (f.netcdf || ""); document.getElementById("dl-nc").textContent = f.netcdf || "(no NetCDF for this day)";
     document.getElementById("dl-cities").href = BASE + d + "/cities.json"; document.getElementById("dl-index").href = BASE + d + "/index.json"; document.getElementById("dl-map").href = BASE + d + "/" + f.map[1]; }
+  // ---- live verification table (scores_live.json on the live branch), and the typical error of each city in the place card
+  let LIVE_SC = null;
+  fetch(BASE + "scores_live.json", { cache: "no-cache" }).then((r) => { if (!r.ok) throw 0; return r.json(); }).then((j) => {
+    LIVE_SC = j; const S = j.summary || {}; const tb = document.querySelector("#live-table tbody"); const f = (x) => (x == null ? "–" : (+x).toFixed(1));
+    tb.innerHTML = Object.entries(S.leads || {}).map(([L, v]) => `<tr><td>+${L} h</td><td>${v.n}</td><td><b>${f(v.otso && v.otso.rmse_land)}</b></td><td>${f(v.cams && v.cams.rmse_land)}${v.cams && v.n_cams < v.n ? ` <span class="small">(${v.n_cams} d)</span>` : ""}</td><td>${f(v.persistence && v.persistence.rmse_land)}</td><td>${f(v.city_mae_otso)}</td><td>${f(v.city_mae_cams)}</td></tr>`).join("") || `<tr><td colspan="7" class="small">No verified day yet.</td></tr>`;
+    document.getElementById("live-note").textContent = "Window " + (S.from || "") + " to " + (S.to || "") + ", updated " + (j.updated || "").replace("T", " ") + ". Days before 10 October 2026 come from the hindcast on live inputs.";
+    if (state.place) renderPlace(state.place);
+  }).catch(() => { document.querySelector("#live-table tbody").innerHTML = `<tr><td colspan="7" class="small">The verification file could not be loaded.</td></tr>`; });
   // ---- cities
   let MY = []; try { MY = JSON.parse(localStorage.getItem("otso-mycities") || "[]"); } catch (e) {}
   async function cityRow(c) {                                                              // 3 x 3 cells around the place, from the layers of the shown day
