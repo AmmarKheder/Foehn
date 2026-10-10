@@ -105,3 +105,18 @@ footer { padding: 30px 0 50px; color: var(--muted); font-size: 13px; border-top:
   .cbars img { height: 44px; }
   pre { font-size: 11.5px; padding: 12px; }
 }
+
+/* viewer additions */
+.hero-video { width: 100%; max-width: 1020px; display: block; margin: 0 auto; border-radius: var(--radius); background: #fff; }
+@media (max-width: 700px) { .hero-video { max-width: 420px; } }
+.viewer:focus { outline: 2px solid var(--blue-soft); outline-offset: 2px; }
+.viewer-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.loc { width: 64px; height: 64px; flex: none; }
+.play { width: 34px; height: 30px; border-radius: 8px; border: 1px solid var(--blue); background: #fff; color: var(--blue); cursor: pointer; font-size: 12px; }
+.play:hover { background: var(--bg-soft); }
+.help { font-size: 13px; color: var(--muted); margin: 8px 0 12px; min-height: 18px; }
+.panel img { transition: opacity .15s ease; }
+.dl { font-size: 13px; margin-left: auto; }
+ul.limits { margin: 0; padding-left: 20px; color: var(--ink); }
+ul.limits li { margin-bottom: 8px; }
+@media (max-width: 480px) { .viewer-head { flex-direction: column; align-items: flex-start; } .loc { width: 56px; height: 56px; } .dl { margin-left: 0; } }

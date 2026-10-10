@@ -133,6 +133,31 @@ python eval_global_green.py runs/green_flow_shift25_global_L7_noant_whres_ghres_
 
 `figures/final_model.py` records these names so that every figure script reads the same evaluation.
 
+## Environment
+
+The scripts were run on the LUMI supercomputer (AMD MI250X, ROCm 6.1.3) inside the container
+`lumi-pytorch-rocm-6.1.3-python-3.12-pytorch-v2.4.1.sif` (PyTorch 2.4.1, Python 3.12, PyTorch Lightning), with the
+packages of `requirements.txt`. The data paths are absolute paths on LUMI, set at the top of each script (search for
+`/scratch/project_462001140`); on another machine, point them to your copies of the data listed in the paper's Data
+availability. A syntax check of every script runs on each push (`python -m compileall`).
+
+## Script map
+
+| Purpose | Scripts in `foehn/` |
+|---|---|
+| Download the inputs | `dl_wb2.py`, `dl_hres_global.py`, `dl_hres_global_ext.py`, `dl_cams_forecast12h.py`, `dl_cams_analysis.py` |
+| Build the 1 km tiles, the 0.25° inputs, the static fields, the stations, the population | `build_fine.py`, `build_fine_tiles.py`, `build_coarse.py`, `build_static.py`, `build_stations.py`, `build_india.py`, `build_japan.py`, `build_korea.py`, `korea_openaq_coords.py`, `build_population.py`, `build_hres_train.py`, `build_hres_year.py`, `build_cams_series.py` |
+| Computed transport | `flexgreen.py` (the Green's functions), `build_transport.py`, `tests/` |
+| Train the global model | `fullflow_global_green.py` (base model, emission fine-tuning and CRPS training; earlier stages `fullflow_global.py`, `fullflow_global_fp.py` are kept because it imports their data classes) |
+| Forecast and evaluate | `eval_global_green.py`, `summarize_eval.py`, `compare_models.py`, `compare_baselines.py`, `reliability_stations.py`, `traj_error.py`, `case_beijing_summary.py` |
+| Model selection on 2021 | `select_2021.py`, `select_crps_and_launch.py`, `prep_test.py` |
+| Foehn in Aurora's protocol | `foehn_cams.py`, `eval_cams12h.py`, `eval_cams12h_stations.py` |
+| Checks and profiling | `audit_inputs.py`, `check_stations.py`, `station_ghap_history.py`, `bench_loader.py`, `profile_loader.py`, `conv_summary.py` |
+| Not used by the final model | `calibrate.py` (EMOS post-processing experiment), `eval_global_fp*.py` (earlier stage) |
+
+The figure scripts in `figures/` are named after the figure they draw (`fig_*.py`, `figED_*.py`); `figdata_*.py`,
+`compare_fair.py`, `tail_events.py` and `extremes_stations.py` build their intermediate data from the evaluation outputs.
+
 ## Repository layout
 
 ```

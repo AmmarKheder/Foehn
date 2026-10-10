@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261010c" />
+<link rel="stylesheet" href="assets/style.css?v=20261010d" />
 </head>
 <body>
 
@@ -21,6 +21,7 @@
       <a href="#how">How it works</a>
       <a href="#viewer">Viewer</a>
       <a href="#figures">Figures</a>
+      <a href="#limits">Limitations</a>
       <a href="#code">Code &amp; data</a>
       <a href="#cite">Cite</a>
     </nav>
@@ -52,10 +53,9 @@
     </div>
   </div>
   <div class="wrap hero-media">
-    <picture>
-      <source media="(max-width: 700px)" srcset="assets/foehn_globes_stack.gif" />
-      <img src="assets/foehn_globes.gif" alt="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, and FLEXGREEN: where the air arriving in thirty cities that day was, one to seven days before" />
-    </picture>
+    <video id="hero-video" class="hero-video" autoplay muted loop playsinline preload="metadata"
+           aria-label="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, and FLEXGREEN: where the air arriving in thirty cities that day was, one to seven days before"></video>
+    <noscript><img src="assets/foehn_globes.gif" alt="Foehn forecast and FLEXGREEN origins on two rotating globes" /></noscript>
     <p class="cap">Foehn's forecast of daily PM<sub>2.5</sub> at 1&nbsp;km for 21 January 2022, issued the evening before (ensemble mean), and FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</p>
   </div>
 </section>
@@ -96,26 +96,28 @@
     <p class="sub">The forecasts of the three case studies of the paper, as issued: choose a case, a target day and how many days
       before the forecast was issued, and compare Foehn's ensemble with the 1&nbsp;km reference estimates (GHAP, made after the
       fact) and the CAMS operational forecast issued at the same time. Every panel is a genuine output of the final model
-      (16 members, 1&nbsp;km); nothing is recomputed in the browser.</p>
-    <div class="viewer">
+      (16 members, 1&nbsp;km); nothing is recomputed in the browser. The address bar follows your selection, so a view can be shared.</p>
+    <div class="viewer" id="viewer-box" tabindex="0" aria-label="Forecast viewer; use the left and right arrow keys to change the lead time">
       <div class="controls">
         <div><label for="case">Case</label><select id="case"></select></div>
         <div><label for="target">Target day</label><select id="target"></select></div>
-        <div><label>Issued … days before</label><div class="lead"><input type="range" id="lead" min="1" max="7" step="1" value="1" /><output id="leadout">1 day</output></div></div>
+        <div><label for="lead">Issued … days before</label><div class="lead"><input type="range" id="lead" min="1" max="7" step="1" value="1" aria-label="days before the target day" /><output id="leadout" for="lead">1 day</output><button type="button" id="play" class="play" aria-label="play through the lead times">▶</button></div></div>
       </div>
-      <div class="layers" id="layers">
-        <button data-layer="mean" class="on">Ensemble mean</button>
-        <button data-layer="member">One member</button>
-        <button data-layer="prob">Probability of exceedance</button>
-      </div>
-      <div class="panels" style="margin-top:14px">
-        <div class="panel"><div class="ttl">Foehn, 1 km <span id="foehn-sub"></span></div><img id="img-foehn" alt="Foehn forecast" /></div>
-        <div class="side">
-          <div class="panel"><div class="ttl">GHAP, 1 km <span>reference, not a forecast</span></div><img id="img-ghap" alt="GHAP reference" /></div>
-          <div class="panel"><div class="ttl">CAMS, 0.4° <span>issued at the same time</span></div><img id="img-cams" alt="CAMS forecast" /><div class="missing" id="cams-missing" style="display:none">The CAMS forecast covers four days ahead.</div></div>
+      <div class="viewer-head">
+        <div class="layers" id="layers" role="group" aria-label="layer">
+          <button type="button" data-layer="mean" class="on">Ensemble mean</button>
+          <button type="button" data-layer="member">One member</button>
+          <button type="button" data-layer="prob">Probability of exceedance</button>
         </div>
+        <img id="loc" class="loc" src="" alt="location of the case on the globe" />
       </div>
-      <div class="cbars"><img src="viewer/cbar_pm.png" alt="PM2.5 colour scale" /><img src="viewer/cbar_prob.png" alt="probability colour scale" id="cbar-prob" /></div>
+      <p class="help" id="help"></p>
+      <div class="panels">
+        <div class="panel"><div class="ttl">Foehn, 1 km <span id="foehn-sub"></span></div><img id="img-foehn" alt="Foehn forecast" /></div>
+        <div class="panel"><div class="ttl">GHAP, 1 km <span>reference, not a forecast</span></div><img id="img-ghap" alt="GHAP reference" /></div>
+        <div class="panel"><div class="ttl">CAMS, 0.4° <span>issued at the same time</span></div><img id="img-cams" alt="CAMS forecast" /><div class="missing" id="cams-missing" style="display:none">The CAMS forecast covers four days ahead.</div></div>
+      </div>
+      <div class="cbars"><img src="viewer/cbar_pm.png" alt="PM2.5 colour scale" /><img src="viewer/cbar_prob.png" alt="probability colour scale" id="cbar-prob" /><a id="dl" class="dl" href="#" download>Download the Foehn panel (PNG)</a></div>
       <p class="note" id="viewer-note"></p>
     </div>
   </div>
@@ -125,12 +127,25 @@
   <div class="wrap">
     <h2>Figures</h2>
     <div class="gallery">
-      <figure class="wide"><img src="figures/fig_overview.png" alt="One forecast of the whole planet at 1 km" /><figcaption>One forecast of the whole planet at 1&nbsp;km (21 January 2022), and four polluted basins against the CAMS forecast and the GHAP estimates, with the stations of four official networks.</figcaption></figure>
-      <figure><img src="figures/fig_hidden.png" alt="Why the kilometre matters" /><figcaption>The people a 40&nbsp;km forecast cannot warn: 186 million per day on average, and the detection of local extremes.</figcaption></figure>
-      <figure><img src="figures/fig_gc2_realism.png" alt="Sharp realistic samples over the North China Plain" /><figcaption>Sharp, realistic members: the January 2022 haze over the North China Plain, one and five days ahead, and the Beijing stations.</figcaption></figure>
-      <figure><img src="figures/fig_transport.png" alt="The pollution follows the air" /><figcaption>The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time.</figcaption></figure>
-      <figure><img src="figures/fig_smoke.png" alt="Forecasting wildfire smoke five days ahead" /><figcaption>The smoke of the Gironde fires of July 2022 at the Teich bird reserve, forecast five days ahead.</figcaption></figure>
+      <figure class="wide"><a href="figures/fig_overview.png" target="_blank" rel="noopener"><img src="figures/fig_overview.png" alt="One forecast of the whole planet at 1 km" loading="lazy" /></a><figcaption>One forecast of the whole planet at 1&nbsp;km (21 January 2022), and four polluted basins against the CAMS forecast and the GHAP estimates, with the stations of four official networks.</figcaption></figure>
+      <figure><a href="figures/fig_hidden.png" target="_blank" rel="noopener"><img src="figures/fig_hidden.png" alt="Why the kilometre matters" loading="lazy" /></a><figcaption>The people a 40&nbsp;km forecast cannot warn: 186 million per day on average, and the detection of local extremes.</figcaption></figure>
+      <figure><a href="figures/fig_gc2_realism.png" target="_blank" rel="noopener"><img src="figures/fig_gc2_realism.png" alt="Sharp realistic samples over the North China Plain" loading="lazy" /></a><figcaption>Sharp, realistic members: the January 2022 haze over the North China Plain, one and five days ahead, and the Beijing stations.</figcaption></figure>
+      <figure><a href="figures/fig_transport.png" target="_blank" rel="noopener"><img src="figures/fig_transport.png" alt="The pollution follows the air" loading="lazy" /></a><figcaption>The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time.</figcaption></figure>
+      <figure><a href="figures/fig_smoke.png" target="_blank" rel="noopener"><img src="figures/fig_smoke.png" alt="Forecasting wildfire smoke five days ahead" loading="lazy" /></a><figcaption>The smoke of the Gironde fires of July 2022 at the Teich bird reserve, forecast five days ahead.</figcaption></figure>
     </div>
+  </div>
+</section>
+
+<section class="band" id="limits">
+  <div class="wrap">
+    <h2>Limitations</h2>
+    <p class="sub">What Foehn is, and is not, in its present form.</p>
+    <ul class="limits">
+      <li>The 1&nbsp;km estimates Foehn learns from (GHAP) are produced after the fact; a real-time deployment would be trained on an operational analysis, as the comparison with Aurora on the CAMS analyses shows is possible.</li>
+      <li>Those estimates have their own errors at the stations (about 12&nbsp;µg&nbsp;m⁻³) and regional biases that Foehn inherits, as in India and Japan.</li>
+      <li>All members share one deterministic weather forecast; the spread represents the uncertainty of the weather only statistically.</li>
+      <li>The viewer shows precomputed forecasts of 2022; Foehn is not run on demand here, because a forecast needs the 1&nbsp;km inputs of the start day.</li>
+    </ul>
   </div>
 </section>
 
@@ -165,12 +180,38 @@
 <script>
 (function () {
   const $ = (id) => document.getElementById(id);
+  // hero video: the stacked cut on narrow screens, the side-by-side cut otherwise
+  const hv = $("hero-video");
+  if (hv) {
+    const narrow = window.matchMedia("(max-width: 700px)").matches;
+    hv.poster = narrow ? "assets/foehn_globes_stack_poster.jpg" : "assets/foehn_globes_poster.jpg";
+    hv.src = narrow ? "assets/foehn_globes_stack.mp4" : "assets/foehn_globes.mp4";
+    hv.addEventListener("error", () => { const im = document.createElement("img"); im.src = narrow ? "assets/foehn_globes_stack.gif" : "assets/foehn_globes.gif"; im.alt = hv.getAttribute("aria-label"); hv.replaceWith(im); });
+  }
   const sel = { case: $("case"), target: $("target"), lead: $("lead"), leadout: $("leadout") };
-  let DB = null, layer = "mean";
+  const HELP = { mean: "Ensemble mean: the average of the 16 members, the single best guess of the forecast.",
+                 member: "One member: a single plausible 1 km forecast; the members differ where the forecast is uncertain.",
+                 prob: "Probability of exceedance: the share of the 16 members above the threshold at each pixel." };
+  let DB = null, layer = "mean", timer = null;
+  const dayOf = (doy) => new Date(Date.UTC(2022, 0, 1 + doy));
+  const fmt = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", timeZone: "UTC" });
+  function readHash() {
+    const m = location.hash.match(/viewer\?(.*)$/); if (!m) return {};
+    return Object.fromEntries(new URLSearchParams(m[1]).entries());
+  }
+  function writeHash() {
+    const q = new URLSearchParams({ case: sel.case.value, t: sel.target.value, h: sel.lead.value, layer }).toString();
+    history.replaceState(null, "", "#viewer?" + q);
+  }
   fetch("viewer/index.json").then((r) => r.json()).then((db) => {
     DB = db;
     for (const [k, c] of Object.entries(db.cases)) { const o = document.createElement("option"); o.value = k; o.textContent = c.name; sel.case.appendChild(o); }
-    sel.case.value = "beijing"; fillTargets(); render();
+    const h0 = readHash();
+    sel.case.value = h0.case && db.cases[h0.case] ? h0.case : "beijing"; fillTargets();
+    if (h0.t && [...sel.target.options].some((o) => o.value === h0.t)) sel.target.value = h0.t;
+    if (h0.h) sel.lead.value = h0.h;
+    if (h0.layer && HELP[h0.layer]) setLayer(h0.layer);
+    render();
   }).catch(() => { $("viewer-note").textContent = "The viewer data could not be loaded."; });
   function fillTargets() {
     const c = DB.cases[sel.case.value]; sel.target.innerHTML = "";
@@ -179,32 +220,44 @@
     sel.lead.max = Math.max(...c.leads); sel.lead.min = Math.min(...c.leads);
     if (+sel.lead.value > +sel.lead.max) sel.lead.value = sel.lead.max;
     document.querySelector('[data-layer="prob"]').textContent = "Probability of PM₂.₅ > " + c.thr + " µg m⁻³";
+    $("loc").src = "viewer/loc_" + sel.case.value + ".png";
   }
   function available(c, t, h) { return c.available.find((e) => e[0] === +t && e[1] === +h); }
+  function setImg(el, src) { el.style.opacity = 0.35; el.onload = () => { el.style.opacity = 1; }; el.src = src; }
   function render() {
     const key = sel.case.value, c = DB.cases[key], t = sel.target.value, h = +sel.lead.value;
     sel.leadout.textContent = h + (h > 1 ? " days" : " day");
     const e = available(c, t, h);
     const base = "viewer/" + key + "/" + t + "_h" + h + "_";
-    $("img-foehn").src = e ? base + layer + ".png" : "";
+    if (e) setImg($("img-foehn"), base + layer + ".png");
     $("img-foehn").style.display = e ? "block" : "none";
-    $("img-ghap").src = "viewer/" + key + "/" + t + "_ghap.png";
+    setImg($("img-ghap"), "viewer/" + key + "/" + t + "_ghap.png");
     const hasCams = e && e[2];
     $("img-cams").style.display = hasCams ? "block" : "none"; $("cams-missing").style.display = hasCams ? "none" : "block";
-    if (hasCams) $("img-cams").src = base + "cams.png";
+    if (hasCams) setImg($("img-cams"), base + "cams.png");
     $("cbar-prob").style.display = layer === "prob" ? "inline" : "none";
-    const label = sel.target.options[sel.target.selectedIndex].textContent;
-    $("foehn-sub").textContent = e ? (layer === "prob" ? "probability from 16 members" : layer === "member" ? "member 1 of 16" : "ensemble mean of 16 members") + ", issued " + h + (h > 1 ? " days" : " day") + " before " + label : "no forecast at this lead time";
+    const issued = fmt(dayOf(+t - h)), label = sel.target.options[sel.target.selectedIndex].textContent;
+    $("foehn-sub").textContent = e ? (layer === "prob" ? "probability from 16 members" : layer === "member" ? "member 1 of 16" : "ensemble mean of 16 members") + ", issued on " + issued + " for " + label : "no forecast at this lead time";
+    $("help").textContent = HELP[layer];
     $("viewer-note").textContent = c.note + ". Box: " + c.box[1] + "–" + c.box[0] + "°N, " + c.box[2] + "–" + c.box[3] + "°E" + (c.ds > 1 ? "; displayed at " + c.ds + " km." : "; displayed at 1 km.");
-    // preload the neighbouring lead times
+    $("dl").href = e ? base + layer + ".png" : "#"; $("dl").download = e ? "foehn_" + key + "_" + t + "_h" + h + "_" + layer + ".png" : "";
     for (const hh of [h - 1, h + 1]) { const ee = available(c, t, hh); if (ee) { const im = new Image(); im.src = "viewer/" + key + "/" + t + "_h" + hh + "_" + layer + ".png"; } }
+    writeHash();
   }
+  function setLayer(l) { layer = l; document.querySelectorAll("#layers button").forEach((x) => x.classList.toggle("on", x.dataset.layer === l)); }
+  function step(d) {
+    const c = DB.cases[sel.case.value], hs = c.leads.filter((h) => available(c, sel.target.value, h));
+    if (!hs.length) return; let i = hs.indexOf(+sel.lead.value); i = (i + d + hs.length) % hs.length; sel.lead.value = hs[i]; render();
+  }
+  $("play").addEventListener("click", () => {
+    if (timer) { clearInterval(timer); timer = null; $("play").textContent = "▶"; return; }
+    $("play").textContent = "❚❚"; timer = setInterval(() => step(1), 900);
+  });
+  $("viewer-box").addEventListener("keydown", (ev) => { if (ev.key === "ArrowRight") { step(1); ev.preventDefault(); } if (ev.key === "ArrowLeft") { step(-1); ev.preventDefault(); } });
   sel.case.addEventListener("change", () => { fillTargets(); render(); });
   sel.target.addEventListener("change", render);
   sel.lead.addEventListener("input", render);
-  document.querySelectorAll("#layers button").forEach((b) => b.addEventListener("click", () => {
-    document.querySelectorAll("#layers button").forEach((x) => x.classList.remove("on")); b.classList.add("on"); layer = b.dataset.layer; render();
-  }));
+  document.querySelectorAll("#layers button").forEach((b) => b.addEventListener("click", () => { setLayer(b.dataset.layer); render(); }));
 })();
 </script>
 </body>
