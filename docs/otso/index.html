@@ -119,13 +119,13 @@
   .twocol li { margin-bottom: 8px; }
   .small { font-size: 13px; color: var(--muted); }
   .credit { display: flex; align-items: center; gap: 18px; padding: 0 0 18px; margin: 0 0 18px; border-bottom: 1px solid var(--line); }
-  .credit-logo img { height: 72px; width: 72px; display: block; border-radius: 50%; box-shadow: 0 4px 14px rgba(28,37,48,.15); background: #fff; }
+  .credit-logo { flex: none; display: block; } .credit-logo img { height: 64px; width: 64px; display: block; object-fit: contain; }
   .credit-by { font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; } .credit-by a { color: var(--ink); }
   .credit-by a:hover { color: var(--blue); text-decoration: none; border-bottom: 2px solid var(--blue); }
   .credit-org { font-size: 14px; color: var(--muted); margin-top: 3px; } .credit-links { font-size: 13px; margin-top: 6px; }
   .fine { font-size: 12px; color: var(--muted); margin: 14px 0 0; line-height: 1.6; }
-  body.app .credit { padding: 0 0 10px; margin: 0 0 10px; gap: 12px; } body.app .credit-logo img { height: 44px; width: 44px; } body.app .credit-by { font-size: 15px; } body.app .credit-org { font-size: 12px; } body.app .credit-links { display: none; } body.app .fine { font-size: 11px; }
-  @media (max-width: 480px) { .credit { gap: 12px; } .credit-logo img { height: 56px; width: 56px; } .credit-by { font-size: 17px; } }
+  body.app .credit { padding: 0 0 10px; margin: 0 0 10px; gap: 12px; } body.app .credit-logo img { height: 40px; width: 40px; } body.app .credit-by { font-size: 15px; } body.app .credit-org { font-size: 12px; } body.app .credit-links { display: none; } body.app .fine { font-size: 11px; }
+  @media (max-width: 480px) { .credit { gap: 12px; align-items: flex-start; } .credit-logo img { height: 52px; width: 52px; } .credit-by { font-size: 17px; } .credit-org, .credit-links { font-size: 13px; } }
   .logos { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
   .logos img { height: 40px; width: auto; display: block; }
   .logos img.logo-amc { height: 52px; }
@@ -164,7 +164,7 @@
   @media (max-width: 600px) {
     .layers .full { display: none; } .layers .short { display: inline; } .layers { gap: 5px; } .layers button { padding: 7px 11px; }
     .mapbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .mapbar .layers { grid-column: 1 / -1; }
-    .mapbar > div:last-child { display: contents; } .mapbar select { width: 100%; min-width: 0; font-size: 15px; padding: 8px 8px; }
+    .mapbar > div:last-child { display: contents; } .mapbar select { width: 100%; min-width: 0; font-size: 16px; padding: 8px 8px; }
     .zoombtns { grid-column: 1 / -1; justify-content: flex-end; } .zoombtns #zin, .zoombtns #zout { display: none; }
     .mapfoot { flex-direction: column; align-items: stretch; gap: 8px; } .mapfoot .lead { flex-wrap: wrap; row-gap: 4px; }
     .mapfoot .lead output { flex-basis: 100%; min-width: 0; font-size: 13.5px; white-space: normal; padding-left: 2px; }
