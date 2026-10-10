@@ -332,7 +332,7 @@
   </div>
 </section>
 
-<section class="band band-soft" id="scores">
+<section class="band" id="scores">
   <div class="wrap">
     <h2>How good is it? The first scores on live inputs</h2>
     <p class="sub">Before publishing, Otso 1.1 was run on the live inputs of 1–20 September 2026 (20 start days) and scored against the CAMS analysis of each valid time,
@@ -340,7 +340,7 @@
     <div class="tablewrap"><table class="ct scores" id="scores-table"><thead><tr><th>Lead</th><th>Otso 1.1 · land</th><th>without fires</th><th>CAMS forecast</th><th>persistence</th><th>Otso 1.1 · all cells</th><th>CAMS forecast</th><th>persistence</th></tr></thead>
       <tbody><tr><td>+12 h</td><td><b>14.4</b></td><td>18.1</td><td>–</td><td>20.1</td><td>8.5</td><td>–</td><td>11.4</td></tr><tr><td>+24 h</td><td><b>14.5</b></td><td>15.2</td><td>9.2</td><td>17.2</td><td>8.7</td><td>5.4</td><td>10.1</td></tr><tr><td>+48 h</td><td><b>15.6</b></td><td>16.4</td><td>–</td><td>19.9</td><td>9.4</td><td>–</td><td>11.8</td></tr><tr><td>+72 h</td><td><b>16.3</b></td><td>17.0</td><td>–</td><td>20.7</td><td>9.8</td><td>–</td><td>12.3</td></tr><tr><td>+96 h</td><td><b>16.2</b></td><td>16.8</td><td>–</td><td>20.3</td><td>9.8</td><td>–</td><td>12.1</td></tr><tr><td>+120 h</td><td><b>16.1</b></td><td>16.6</td><td>15.0</td><td>20.2</td><td>9.6</td><td>8.9</td><td>12.0</td></tr></tbody></table></div>
     <ul class="scores-notes">
-      <li><strong>The fires matter.</strong> With the GFAS fires (injection height <code>injh</code>, the variable that replaces the <code>mami</code> of the training), the error over land is 20 % lower at 12 h and 3–8 % lower afterwards, and the bias over fire cells is +1 instead of −3 µg m⁻³.</li>
+      <li><strong>The fires matter.</strong> With the GFAS fires (injection height <code>injh</code>, the variable that replaces the <code>mami</code> of the training), the error over land is 20 % lower at 12 h and 3–15 % lower afterwards, and the bias over fire cells is +1 instead of −3 µg m⁻³.</li>
       <li><strong>Skilful, but weaker than in the paper's 2022 test.</strong> Otso beats persistence by 25 % at 12 h and 20 % at 120 h; in 2022 it beat it by 45 % and 34 %, and overtook the CAMS forecast from 48 h on. Here the CAMS forecast stays ahead (9.2 vs 14.5 over land at 24 h, 15.0 vs 16.1 at 120 h). September 2026 is also a harder period: the persistence error is 25–55 % larger than in 2022.</li>
       <li><strong>Why.</strong> The inputs of the live chain were checked channel by channel against the archive (winds, temperatures, humidity, pressure, rain, 13 CAMS species): all in range. What changed is the CAMS system itself, whose 2026 analyses are more variable (and richer in CO, NO₂, SO₂) than the 2017–2022 analyses Otso was trained on, and the fire product (v1.4.2 detects about twice as many burning cells). The obvious next step, Otso 1.2, is a fine-tuning on the 2025–2026 analyses.</li>
       <li>All numbers: <a href="scores.json">scores.json</a> (with the 2022 figures of the paper for comparison).</li>
@@ -348,7 +348,7 @@
   </div>
 </section>
 
-<section class="band" id="about">
+<section class="band band-soft" id="about">
   <div class="wrap">
     <h2>What Otso 1.1 is, and is not</h2>
     <div class="twocol">
@@ -374,7 +374,7 @@
   </div>
 </section>
 
-<section class="band band-soft" id="data">
+<section class="band" id="data">
   <div class="wrap">
     <h2>Data</h2>
     <p class="sub">Everything the page shows is in the <code>live</code> branch of the repository, rewritten every day with the last seven forecasts.</p>
