@@ -74,6 +74,15 @@
   .mapfoot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
   .mapfoot .lead { flex: 1; min-width: 280px; }
   .mapfoot .lead output { min-width: 220px; }
+  .tlwrap { position: relative; margin-top: 10px; }
+  .tlwrap::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 36px; pointer-events: none; background: linear-gradient(90deg, rgba(255,255,255,0), var(--card)); border-radius: 0 8px 8px 0; }
+  .timeline { display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x proximity; padding: 2px 36px 8px 2px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+  .tl { flex: 0 0 auto; scroll-snap-align: center; min-width: 64px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); text-align: center; cursor: pointer; }
+  .tl .d { font-size: 11px; color: var(--muted); white-space: nowrap; } .tl .h { font-size: 14px; font-weight: 700; } .tl .l { font-size: 10.5px; color: var(--muted); }
+  .tl.on { background: var(--blue); border-color: var(--blue); } .tl.on .d, .tl.on .h, .tl.on .l { color: #fff; }
+  :root[data-theme="dark"] .tl.on .d, :root[data-theme="dark"] .tl.on .h, :root[data-theme="dark"] .tl.on .l { color: #0f1720; }
+  .tl.day0 { border-left: 3px solid var(--blue-soft); }
+  @media (max-width: 600px) { .mapfoot .lead input[type=range] { display: none; } .mapfoot .lead output { flex-basis: auto; flex: 1; } }
   .cbar { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
   .cbar canvas { height: 14px; width: 260px; border: 1px solid var(--line); border-radius: 3px; }
   .zoomhint { font-size: 12.5px; color: var(--muted); }
@@ -93,7 +102,9 @@
   .place-unit { font-size: 13px; color: var(--muted); line-height: 1.2; } .place-when { font-weight: 600; color: var(--ink); }
   .place-range { font-size: 13px; color: var(--muted); margin-left: auto; text-align: right; }
   .place-text { margin: 6px 0 10px; font-size: 14px; color: var(--ink); }
-  .strip { display: flex; gap: 6px; overflow-x: auto; padding: 6px 2px 8px; margin: 0 -2px 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+  .stripwrap { position: relative; } .stripwrap::after { content: ""; position: absolute; top: 0; right: 0; bottom: 8px; width: 36px; pointer-events: none; background: linear-gradient(90deg, rgba(255,255,255,0), var(--bg-soft)); }
+  .strip { display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x proximity; padding: 6px 36px 8px 2px; margin: 0 -2px 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+  .sitem { scroll-snap-align: center; }
   .sitem { flex: 0 0 auto; min-width: 54px; text-align: center; padding: 8px 4px; border-radius: 10px; border: 1px solid transparent; background: var(--card); cursor: pointer; }
   .sitem.on { border-color: var(--blue); } .sitem .d { font-size: 11px; color: var(--muted); } .sitem .h { font-size: 11px; color: var(--muted); }
   .sitem .dot { width: 14px; height: 14px; border-radius: 50%; margin: 5px auto; border: 1px solid rgba(0,0,0,.15); } .sitem .v { font-size: 14px; font-weight: 700; }
@@ -271,6 +282,7 @@
         <canvas id="map-canvas" class="otso-canvas" width="1200" height="480" aria-label="Otso PM2.5 forecast map"></canvas>
         <div class="tip" id="tip"></div>
       </div>
+      <div class="tlwrap"><div class="timeline" id="timeline" aria-label="Forecast time"></div></div>
       <div class="mapfoot">
         <div class="lead">
           <button type="button" class="play" id="play" aria-label="Play">▶</button>
@@ -290,7 +302,7 @@
           <div class="place-head"><div><div class="place-name" id="pt-title">Selected place</div><div class="place-sub" id="pt-sub"></div></div><span class="place-pill" id="pt-pill">—</span></div>
           <div class="place-now"><span class="place-big" id="pt-big">—</span><span class="place-unit">µg m⁻³<br /><span class="place-when" id="pt-when">tomorrow 00 UTC</span></span><span class="place-range" id="pt-range"></span></div>
           <p class="place-text" id="pt-text">Click a place on the map.</p>
-          <div class="strip" id="pt-strip" aria-label="The ten leads"></div>
+          <div class="stripwrap"><div class="strip" id="pt-strip" aria-label="The ten leads"></div></div>
           <svg class="series" id="series" viewBox="0 0 560 150" preserveAspectRatio="none" role="img" aria-label="Forecast at the selected place"></svg>
           <p class="small place-foot">Line: ensemble mean · band: 10–90 % of the members · dashed: 25 µg m⁻³. Values are for a 0.4° cell (about 40 km): a city average, not a street.</p>
         </div>
@@ -472,9 +484,17 @@
       for (let i = 1; i < n; i++) x.fillText(String(PM_BOUNDS[i]), i * w, 26);
       document.getElementById("cbar-lab").innerHTML = "PM<sub>2.5</sub> (µg m⁻³)"; }
   }
+  const dayNum = (t) => t.toLocaleString("en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" });
+  function centerChip(el) { const p = el.parentElement; p.scrollTo({ left: el.offsetLeft - p.clientWidth / 2 + el.offsetWidth / 2, behavior: "smooth" }); }
+  function timeline() {
+    const tl = document.getElementById("timeline"); if (tl.dataset.day === state.day) return; tl.dataset.day = state.day;
+    tl.innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => { const t = validTime(state.day, k); return `<div class="tl${t.getUTCHours() === 0 ? " day0" : ""}" data-k="${k}"><div class="d">${dayNum(t)}</div><div class="h">${hourLabel(t)}</div><div class="l">+${12 * (k + 1)} h</div></div>`; }).join("");
+  }
+  document.getElementById("timeline").addEventListener("click", (ev) => { const c = ev.target.closest(".tl"); if (!c) return; state.lead = +c.dataset.k; document.getElementById("lead").value = state.lead; show(); });
   async function show() {
     const day = state.day, lead = state.lead; document.getElementById("leadout").textContent = "+" + 12 * (lead + 1) + " h · " + fmtTime(validTime(day, lead));
-    for (const x of document.querySelectorAll(".sitem")) x.classList.toggle("on", +x.dataset.k === lead);
+    timeline(); for (const x of document.querySelectorAll(".tl")) { const on = +x.dataset.k === lead; x.classList.toggle("on", on); if (on) centerChip(x); }
+    for (const x of document.querySelectorAll(".sitem")) { const on = +x.dataset.k === lead; x.classList.toggle("on", on); if (on) centerChip(x); }
     try { cur = await loadLayer(day, state.field, lead); } catch (e) { setStatus("The forecast layer could not be loaded (" + e.message + ").", false); return; }
     draw(); drawCbar();
     const names = { mean: "Ensemble mean of " + state.idx[day].members + " members", p90: "90th percentile of the " + state.idx[day].members + " members (a plausible bad case)", prob: "Share of the " + state.idx[day].members + " members above 25 µg m⁻³" };
