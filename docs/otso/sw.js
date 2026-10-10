@@ -3,8 +3,8 @@
      the cached copy is the offline fallback
    - static assets (style, gazetteer, coastlines, icons) are served from the cache and refreshed in the background
    - the live forecast (raw.githubusercontent.com) is network first; the last successful copy is kept for offline use */
-const VERSION = "otso-1.1-20261010t";
-const SHELL = ["./", "./index.html", "../assets/style.css?v=20261010j", "./lines.json", "./gazetteer.json", "./manifest.webmanifest",
+const VERSION = "otso-1.1-20261010u";
+const SHELL = ["./", "./index.html", "../assets/style.css?v=20261010k", "./lines.json", "./gazetteer.json", "./manifest.webmanifest",
                "./icon-192.png", "./icon-512.png", "../assets/logo_mark.svg", "../assets/favicon.png", "./qr.svg", "../assets/amc_logo_full.png", "../assets/lumi_logo.png", "../assets/csc_logo.svg"];
 self.addEventListener("install", (ev) => { ev.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (ev) => { ev.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSION && k !== VERSION + "-data").map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
