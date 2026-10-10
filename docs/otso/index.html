@@ -183,7 +183,7 @@
     .mapfoot .lead output { flex-basis: 100%; min-width: 0; font-size: 13.5px; white-space: normal; padding-left: 2px; }
     .cbar { width: 100%; } .cbar canvas { flex: 1; width: auto; min-width: 0; max-width: 420px; }
   }
-  @media (max-width: 600px) { table.ct th:nth-child(3), table.ct td:nth-child(3), table.ct th:nth-child(4), table.ct td:nth-child(4), table.ct th:nth-child(6), table.ct td:nth-child(6) { display: none; }
+  @media (max-width: 600px) { #ct th:nth-child(3), #ct td:nth-child(3), #ct th:nth-child(4), #ct td:nth-child(4), #ct th:nth-child(6), #ct td:nth-child(6) { display: none; }
     table.ct td, table.ct th { padding: 8px 6px; } .cities-top { gap: 8px; } }
   @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } }
 
@@ -251,6 +251,28 @@
   body.app .ah-value { font-size: 112px; }
   body.app .topbar { background: color-mix(in srgb, var(--bg) 78%, transparent); border-bottom-color: transparent; }
   .app-meta { display: none; } body.app .app-meta { display: block; text-align: center; font-size: 12px; color: var(--muted); margin: 6px 0 2px; }
+
+  /* ===== phone layout fixes (tested at 390 px) ===== */
+  .acards { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } .acards > * { min-width: 0; }
+  .ah-value { display: flex; } .ah-class { display: flex; justify-content: center; width: 100%; margin-top: 2px; }
+  #ct .short { display: none; }
+  @media (max-width: 760px) { .acards { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 600px) {
+    .mapbar { display: flex !important; flex-direction: column; align-items: stretch; gap: 8px; }
+    .mapbar > div:last-child { display: flex !important; flex-wrap: nowrap !important; gap: 8px; }
+    .mapbar > div:last-child select { flex: 1 1 0; min-width: 0; width: auto; }
+    .mapbar .zoombtns { flex: none; } .mapbar .zoombtns #zreset { width: 44px; height: 40px; }
+    #ct .full { display: none; } #ct .short { display: inline; }
+    #ct .bars { gap: 1px; } #ct .bars i { width: 4px; }
+    #scores-table th:nth-child(3), #scores-table td:nth-child(3), #scores-table th:nth-child(n+6), #scores-table td:nth-child(n+6) { display: none; }
+    #live-table th:nth-child(2), #live-table td:nth-child(2), #live-table th:nth-child(n+6), #live-table td:nth-child(n+6) { display: none; }
+    .foot-logos { justify-content: flex-start; gap: 8px; } .foot-logos a { height: 44px; padding: 4px 8px; border-radius: 8px; }
+    .foot-logos img { height: 28px; max-width: 120px; } .foot-logos img.lg-uh { height: 22px; } .foot-logos img.lg-lut { height: 26px; } .foot-logos img.lg-lumi { height: 20px; } .foot-logos img.lg-csc { height: 28px; }
+    .foot-logos a.tile-amc { height: 60px; padding: 4px 8px; } .foot-logos img.lg-amc { height: 52px; }
+    .ah-value { font-size: 88px; } body.app .ah-value { font-size: 96px; } .air-hero { padding: 22px 14px 18px; }
+    .acard { padding: 12px 14px 10px; border-radius: 18px; }
+    .drow { grid-template-columns: minmax(70px, 1fr) 14px 30px minmax(0, 2.4fr) 30px; gap: 8px; font-size: 15px; }
+  }
 </style>
 </head>
 <body>
@@ -407,7 +429,7 @@
         <span class="small" id="cities-note"></span>
       </div>
       <div class="tablewrap" id="tablewrap"><table class="ct" id="ct"><thead><tr>
-        <th data-k="name">City</th><th data-k="d1">Tomorrow (+24 h)</th><th data-k="d3">+72 h</th><th data-k="d5">+120 h</th><th data-k="max">Max of the 5 days</th><th data-k="pmax">P &gt; 25 (max)</th><th>12 → 120 h</th>
+        <th data-k="name">City</th><th data-k="d1"><span class="full">Tomorrow (+24 h)</span><span class="short">Tomorrow</span></th><th data-k="d3">+72 h</th><th data-k="d5">+120 h</th><th data-k="max"><span class="full">Max of the 5 days</span><span class="short">5-day max</span></th><th data-k="pmax">P &gt; 25 (max)</th><th><span class="full">12 → 120 h</span><span class="short">Trend</span></th>
       </tr></thead><tbody></tbody></table></div>
       <button type="button" class="btn btn-ghost showall" id="showall" hidden>Show all cities</button>
     </div>
