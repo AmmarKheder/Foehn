@@ -1,7 +1,7 @@
 /* Otso 1.1 service worker: the app shell is cached (so the page opens offline and installs as a PWA); the live forecast
    (raw.githubusercontent.com) is fetched from the network first and the last successful copy is kept as a fallback, so the
    last forecast is still shown without a connection. */
-const VERSION = "otso-1.1-20261010f";
+const VERSION = "otso-1.1-20261010g";
 const SHELL = ["./", "./index.html", "../assets/style.css?v=20261010g", "./lines.json", "./gazetteer.json", "./manifest.webmanifest",
                "./icon-192.png", "./icon-512.png", "../assets/logo_mark.svg", "../assets/favicon.png", "./qr.svg"];
 self.addEventListener("install", (ev) => { ev.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });

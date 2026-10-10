@@ -19,6 +19,18 @@
 <link rel="stylesheet" href="../assets/style.css?v=20261010g" />
 <style>
   [hidden] { display: none !important; }
+  /* app mode (installed on the home screen, or ?source=pwa): no paperwork */
+  body.app .hero .kicker, body.app .hero .lede, body.app .hero .cta, body.app .hero .tag, body.app .hero .disclaimer .long, body.app #install, body.app #about, body.app #data,
+  body.app .sub, body.app .city-note, body.app #help, body.app section h2, body.app footer .logos, body.app .nav a:not(.full-site), body.app .pill-beta, body.app .mapbar .zoombtns,
+  body.app #region-wrap-never { display: none !important; }
+  body.app .hero { padding: 12px 0 6px; } body.app .hero h1 { font-size: 26px; } body.app .otso-head { gap: 10px; }
+  body.app .status { font-size: 12.5px; margin: 4px 0 0; } body.app .disclaimer { margin: 10px 0 0; padding: 7px 10px; font-size: 12px; border-radius: 8px; }
+  body.app section.band { padding: 12px 0; } body.app .city { margin-bottom: 10px; padding: 10px; } body.app .city-lab { display: none; }
+  body.app .point { margin: 0 0 12px; } body.app .point .card:last-child .small { display: none; }
+  body.app .mapcard, body.app .cities { padding: 10px; } body.app footer { padding: 14px 0 40px; font-size: 12px; }
+  body.app .nav { display: flex !important; } .full-site { display: none; } body.app .full-site { display: inline; font-size: 13px; }
+  .disclaimer .short { display: none; } body.app .disclaimer .short { display: inline; }
+  body.app .topbar-row { height: 48px; }
   .otso-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
   .pill-beta { background: #FFF1D6; color: #8A5A00; border: 1px solid #F3D9A4; }
@@ -128,6 +140,7 @@
       <a href="#about">What Otso is</a>
       <a href="#data">Data</a>
       <a href="../">← Foehn</a>
+      <a href="?full=1" class="full-site">Full site</a>
     </nav>
   </div>
 </header>
@@ -146,9 +159,9 @@
         <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
       <div class="cta" style="margin:14px 0 0"><a class="btn btn-primary" href="#install">📲 Install Otso on your phone</a><a class="btn btn-ghost" href="#map">See the forecast</a></div>
-      <div class="disclaimer"><strong>Research forecast.</strong> Otso 1.1 is an experiment of a university group, not an official service. It has not yet
+      <div class="disclaimer"><strong>Research forecast.</strong> <span class="long">Otso 1.1 is an experiment of a university group, not an official service. It has not yet
         been evaluated in real time, it is not monitored around the clock, and it does not replace the air-quality forecasts, indices and alerts
-        of your national or local authorities. If you must decide something about your health, use those.</div>
+        of your national or local authorities. If you must decide something about your health, use those.</span><span class="short">Not an official alert: for health decisions use your national air-quality service.</span></div>
     </div>
   </div>
 </section>
@@ -603,6 +616,16 @@
     }
   })();
   window.addEventListener("resize", () => { if (cur) size(); });
+  // ---- app mode: installed on the home screen (standalone), or opened from the manifest's start_url
+  const APP = !/[?&]full=1/.test(location.search) && (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true || /[?&]source=pwa/.test(location.search) || location.hash === "#app");
+  if (APP) {
+    document.body.classList.add("app");
+    const mapSec = document.querySelector("#map .wrap"), mapcard = document.querySelector(".mapcard"), point = document.getElementById("point");
+    mapSec.insertBefore(point, mapcard);                                              // the selected place right under the search box
+    document.title = "Otso 1.1 — PM2.5 forecast";
+    const cq0 = document.getElementById("city-q"); let rem = null; try { rem = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
+    if (!rem) setTimeout(() => { cq0.placeholder = "Your city: type it, or use your position"; }, 0);
+  }
   // ---- install tutorial: the tab of the visitor's system is opened first
   const ua = navigator.userAgent || ""; const os = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "desktop";
   function showOs(o) { for (const b of document.querySelectorAll(".ostabs button")) b.classList.toggle("on", b.dataset.os === o); for (const d of document.querySelectorAll(".istep[data-os]")) d.hidden = d.dataset.os !== o; }
