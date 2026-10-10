@@ -1,0 +1,19 @@
+{
+  "name": "Otso 1.1 — PM2.5 forecast (Foehn project)",
+  "short_name": "Otso",
+  "description": "Where will the fine particles be tomorrow? Daily research forecast of PM2.5, 12 h to 5 days ahead, for any city. Not an official alert.",
+  "id": "/Foehn/otso/",
+  "start_url": "/Foehn/otso/?source=pwa",
+  "scope": "/Foehn/otso/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#1F5AA6",
+  "lang": "en",
+  "categories": ["weather", "health", "education"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
