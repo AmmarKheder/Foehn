@@ -743,17 +743,19 @@
   document.getElementById("pt-days").addEventListener("click", (ev) => { const r = ev.target.closest(".drow"); if (!r) return; state.lead = +r.dataset.k; document.getElementById("lead").value = state.lead; show(); });
   document.getElementById("pt-strip").addEventListener("click", (ev) => { const it = ev.target.closest(".sitem"); if (!it) return; state.lead = +it.dataset.k; document.getElementById("lead").value = state.lead; show(); for (const x of document.querySelectorAll(".sitem")) x.classList.toggle("on", x === it); });
   function series(mean, p90, prob) {
-    const s = document.getElementById("series"); const Wd = 560, Hd = 150, L = 34, R = 8, T = 10, B = 26; const top = Math.max(30, Math.ceil(Math.max(...p90) * 1.15 / 10) * 10);
+    const s = document.getElementById("series"); const cw = Math.round(s.getBoundingClientRect().width) || 560;     // drawn at the real width: text at its real size
+    const Wd = Math.max(280, Math.min(900, cw)), Hd = Wd < 480 ? 180 : 170, L = 34, R = 10, T = 12, B = 26; const top = Math.max(30, Math.ceil(Math.max(...p90) * 1.15 / 10) * 10);
+    s.setAttribute("viewBox", `0 0 ${Wd} ${Hd}`); s.style.aspectRatio = `${Wd} / ${Hd}`;
     const X = (k) => L + (Wd - L - R) * k / 9, Y = (v) => T + (Hd - T - B) * (1 - Math.min(v, top) / top);
     const dark = isDark(); const cardC = dark ? "#19232f" : "#fff", lineC = dark ? "#27323e" : "#e3e8ee", gridC = dark ? "#1f2a36" : "#eef1f4", txtC = dark ? "#9aa7b4" : "#5b6977";
     let h = `<rect x="${L}" y="${T}" width="${Wd - L - R}" height="${Hd - T - B}" fill="${cardC}" stroke="${lineC}"/>`;
-    for (const g of [0, top / 2, top]) h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(g)}" y2="${Y(g)}" stroke="${gridC}"/><text x="${L - 4}" y="${Y(g) + 4}" font-size="10" fill="${txtC}" text-anchor="end">${Math.round(g)}</text>`;
+    for (const g of [0, top / 2, top]) h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(g)}" y2="${Y(g)}" stroke="${gridC}"/><text x="${L - 5}" y="${Y(g) + 4}" font-size="11" fill="${txtC}" text-anchor="end">${Math.round(g)}</text>`;
     const band = mean.map((v, k) => `${X(k)},${Y(p90[k])}`).concat(mean.map((v, k) => `${X(9 - k)},${Y(Math.max(0, 2 * mean[9 - k] - p90[9 - k]))}`)).join(" ");
     h += `<polygon points="${band}" fill="#8FB2DD" fill-opacity="0.35"/>`;
     h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(25)}" y2="${Y(25)}" stroke="#C2185B" stroke-dasharray="4 3" stroke-width="1"/>`;
     h += `<polyline points="${mean.map((v, k) => X(k) + "," + Y(v)).join(" ")}" fill="none" stroke="${dark ? "#7fb0ff" : "#1F5AA6"}" stroke-width="2.2"/>`;
     mean.forEach((v, k) => { h += `<circle cx="${X(k)}" cy="${Y(v)}" r="3.2" fill="${pmHex(v)}" stroke="${dark ? "#e6edf3" : "#1c2530"}" stroke-width="0.8"/>`; });
-    [0, 1, 3, 5, 7, 9].forEach((k) => { h += `<text x="${X(k)}" y="${Hd - 8}" font-size="10" fill="${txtC}" text-anchor="middle">+${12 * (k + 1)} h</text>`; });
+    (Wd < 480 ? [0, 3, 5, 7, 9] : [0, 1, 3, 5, 7, 9]).forEach((k) => { h += `<text x="${X(k)}" y="${Hd - 8}" font-size="11" fill="${txtC}" text-anchor="${k === 0 ? "start" : k === 9 ? "end" : "middle"}">+${12 * (k + 1)} h</text>`; });
     s.innerHTML = h;
   }
   // ---- zoom and pan
@@ -938,7 +940,7 @@
       cur = null; ctx.fillStyle = "#f6f8fa"; ctx.fillRect(0, 0, cv.width, cv.height); ctx.fillStyle = "#5b6977"; ctx.font = "16px Helvetica, Arial"; ctx.textAlign = "center"; ctx.fillText("No live forecast available", cv.width / 2, cv.height / 2);
     }
   })();
-  window.addEventListener("resize", () => { if (cur) size(); });
+  window.addEventListener("resize", () => { if (cur) size(); if (state.place) series(state.place.mean, state.place.p90, state.place.prob); });
   const offlineNote = () => { document.getElementById("offline").hidden = navigator.onLine !== false; };
   window.addEventListener("online", offlineNote); window.addEventListener("offline", offlineNote); offlineNote();
   // ---- theme: the system's preference, or the remembered choice (button in the top bar)
