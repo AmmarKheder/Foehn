@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Otso — live PM2.5 forecast of the Foehn project (beta)</title>
+<meta name="description" content="Otso runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles will be up to five days ahead. Research forecast, not an official alert." />
+<meta property="og:title" content="Otso — live PM2.5 forecast (beta)" />
+<meta property="og:description" content="Where will the fine particles be tomorrow? The coarse Foehn model, run daily on live inputs. Research forecast." />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/png" href="../assets/favicon.png" />
+<link rel="stylesheet" href="../assets/style.css?v=20261010f" />
+<style>
+  .otso-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+  .pill-beta { background: #FFF1D6; color: #8A5A00; border: 1px solid #F3D9A4; }
+  .pill-live { background: #E6F4EA; color: #1E6B35; border: 1px solid #BFE3C9; }
+  .pill-live::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2E9E57; margin-right: 6px; vertical-align: 1px; }
+  .disclaimer { background: #FFF8E8; border: 1px solid #F3D9A4; border-left: 4px solid #D99A1E; border-radius: var(--radius); padding: 12px 16px; font-size: 14px; margin: 18px 0 0; color: #4a3b12; }
+  .status { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+  .status b { color: var(--ink); font-weight: 600; }
+  .mapcard { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .mapbar .layers button { font-size: 13px; }
+  .mapbar select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: #fff; }
+  .mapwrap { position: relative; }
+  .otso-canvas { width: 100%; display: block; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; }
+  .tip { position: absolute; pointer-events: none; background: rgba(28,37,48,.92); color: #fff; font-size: 12.5px; padding: 6px 9px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -130%); display: none; z-index: 5; }
+  .tip b { font-size: 14px; }
+  .mapfoot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+  .mapfoot .lead { flex: 1; min-width: 280px; }
+  .mapfoot .lead output { min-width: 220px; }
+  .cbar { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+  .cbar canvas { height: 14px; width: 260px; border: 1px solid var(--line); border-radius: 3px; }
+  .zoomhint { font-size: 12.5px; color: var(--muted); }
+  .zoombtns { display: flex; gap: 6px; }
+  .zoombtns button { width: 32px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 15px; }
+  .zoombtns button:hover { border-color: var(--blue); color: var(--blue); }
+  .point { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; margin-top: 16px; align-items: start; }
+  .point .card { background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+  .point h4 { margin: 0 0 6px; font-size: 14px; }
+  .point p { margin: 0; font-size: 13.5px; color: var(--muted); }
+  .series { width: 100%; height: 150px; display: block; }
+  .cities { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .cities-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .cities input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; min-width: 220px; }
+  .tablewrap { overflow-x: auto; }
+  table.ct { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.ct th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; cursor: pointer; user-select: none; }
+  table.ct th.on { color: var(--blue); }
+  table.ct td { padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  table.ct tr:hover td { background: var(--bg-soft); cursor: pointer; }
+  .chip { display: inline-block; min-width: 46px; text-align: center; padding: 2px 7px; border-radius: 6px; font-weight: 600; font-size: 12.5px; }
+  .bars { display: inline-flex; gap: 2px; align-items: flex-end; height: 22px; vertical-align: middle; }
+  .bars i { display: block; width: 6px; border-radius: 2px 2px 0 0; min-height: 2px; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .twocol h3 { margin-top: 0; }
+  .twocol p, .twocol li { font-size: 14.5px; color: var(--ink); }
+  .twocol ul { padding-left: 20px; margin: 0; }
+  .twocol li { margin-bottom: 8px; }
+  .small { font-size: 13px; color: var(--muted); }
+  @media (max-width: 860px) { .point, .twocol { grid-template-columns: 1fr; } .mapfoot .lead { min-width: 0; } .mapfoot .lead output { min-width: 0; } .cbar canvas { width: 200px; } }
+  @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } .mapbar select { width: 100%; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-row">
+    <a class="brand" href="../"><img src="../assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span><span style="color:var(--muted);font-weight:400">/ Otso</span></a>
+    <nav class="nav">
+      <a href="#map">Map</a>
+      <a href="#cities">Cities</a>
+      <a href="#about">What Otso is</a>
+      <a href="#data">Data</a>
+      <a href="../">← Foehn</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero" style="padding-bottom:28px">
+  <div class="wrap">
+    <div class="hero-text">
+      <p class="kicker">Foehn project · live research forecast</p>
+      <div class="otso-head"><h1 style="margin:0">Otso</h1><span class="pill pill-beta">beta</span><span class="pill pill-live" id="pill-live" hidden>updated today</span></div>
+      <p class="tag" style="margin-top:10px">Where will the fine particles be tomorrow, and the days after?</p>
+      <p class="lede">Every morning Otso takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather
+        forecast of the same hour and the fires seen by satellite, computes the transport of the air with FLEXGREEN and forecasts
+        PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
+        <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
+      <p class="status" id="status">Loading the latest forecast…</p>
+      <div class="disclaimer"><strong>Research forecast.</strong> Otso is an experiment of a university group, not an official service. It has not yet
+        been evaluated in real time, it is not monitored around the clock, and it does not replace the air-quality forecasts, indices and alerts
+        of your national or local authorities. If you must decide something about your health, use those.</div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-soft" id="map">
+  <div class="wrap">
+    <h2>The forecast</h2>
+    <p class="sub">Hover or tap a place for its value; click to keep it and see how it evolves over the five days. Scroll or pinch to zoom, drag to pan.
+      Fields: the mean of the 8 members, their 90<sup>th</sup> percentile (a plausible bad case), and the share of members above 25&nbsp;µg&nbsp;m<sup>−3</sup>,
+      the limit of the "moderate" class of the European Air Quality Index for PM<sub>2.5</sub>.</p>
+    <div class="mapcard">
+      <div class="mapbar">
+        <div class="layers" id="fields">
+          <button type="button" data-f="mean" class="on">Ensemble mean</button>
+          <button type="button" data-f="p90">90th percentile</button>
+          <button type="button" data-f="prob">Probability &gt; 25 µg m⁻³</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="region" aria-label="Region">
+            <option value="world">World</option><option value="europe">Europe</option><option value="sasia">South Asia</option>
+            <option value="easia">East Asia</option><option value="seasia">South-East Asia</option><option value="mideast">Middle East</option>
+            <option value="africa">Africa</option><option value="namerica">North America</option><option value="samerica">South America</option>
+            <option value="oceania">Australia</option>
+          </select>
+          <select id="day" aria-label="Forecast day"></select>
+          <div class="zoombtns"><button type="button" id="zin" title="Zoom in">+</button><button type="button" id="zout" title="Zoom out">−</button><button type="button" id="zreset" title="Reset view">⟲</button></div>
+        </div>
+      </div>
+      <div class="mapwrap">
+        <canvas id="map-canvas" class="otso-canvas" width="1200" height="480" aria-label="Otso PM2.5 forecast map"></canvas>
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="mapfoot">
+        <div class="lead">
+          <button type="button" class="play" id="play" aria-label="Play">▶</button>
+          <input type="range" id="lead" min="0" max="9" step="1" value="1" aria-label="Lead time" />
+          <output id="leadout">+24 h</output>
+        </div>
+        <div class="cbar"><span id="cbar-lab">PM<sub>2.5</sub> (µg m⁻³)</span><canvas id="cbar" width="520" height="28"></canvas></div>
+      </div>
+      <p class="help" id="help">Ensemble mean of 8 members, 0.4° grid, instantaneous value at the valid time. Ocean is white: Otso forecasts over land.</p>
+      <div class="point" id="point" hidden>
+        <div class="card">
+          <h4 id="pt-title">Selected place</h4>
+          <svg class="series" id="series" viewBox="0 0 560 150" preserveAspectRatio="none" role="img" aria-label="Forecast at the selected place"></svg>
+          <p class="small">Line: ensemble mean · band: 10–90 % of the members · dashed: 25 µg m⁻³</p>
+        </div>
+        <div class="card">
+          <h4>Reading it</h4>
+          <p id="pt-text">Click a place on the map.</p>
+          <p class="small" style="margin-top:8px">Values are for a 0.4° cell (about 40 km): a city average, not a street. The 1 km detail of Foehn is in the <a href="../#viewer">paper's viewer</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="cities">
+  <div class="wrap">
+    <h2>Sixty cities</h2>
+    <p class="sub">Ensemble mean over the 3 × 3 cells around each city, at each lead; the bars show the ten leads from +12 h to +120 h. Click a city to centre the map on it. Sort by any column.</p>
+    <div class="cities">
+      <div class="cities-top">
+        <input type="search" id="search" placeholder="Find a city…" aria-label="Find a city" />
+        <span class="small" id="cities-note"></span>
+      </div>
+      <div class="tablewrap"><table class="ct" id="ct"><thead><tr>
+        <th data-k="name">City</th><th data-k="d1">Tomorrow (+24 h)</th><th data-k="d3">+72 h</th><th data-k="d5">+120 h</th><th data-k="max">Max of the 5 days</th><th data-k="pmax">P &gt; 25 (max)</th><th>12 → 120 h</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-soft" id="about">
+  <div class="wrap">
+    <h2>What Otso is, and is not</h2>
+    <div class="twocol">
+      <div>
+        <h3>What it is</h3>
+        <ul>
+          <li><strong>The coarse Foehn model of the paper, unchanged.</strong> Otso is Foehn-CAMS, the 0.4° version trained on the CAMS analyses of 2017–2022 in the protocol of Microsoft's Aurora, with the weights used for the paper's results. Nothing is retrained or tuned for the live run.</li>
+          <li><strong>Live inputs, every morning.</strong> The 00 UTC CAMS analysis (13 species and columns), the 00 UTC ECMWF IFS forecast from the open-data service (winds, temperature, humidity, pressure, rain, to +192 h), and the fires of the previous day from GFAS. FLEXGREEN recomputes, for every land cell and every lead, where its air was.</li>
+          <li><strong>A probabilistic forecast.</strong> Eight members per day. The map shows their mean, their 90<sup>th</sup> percentile and the share of members above 25 µg m⁻³; the city table and the NetCDF file also give the 10 % and 90 % quantiles.</li>
+          <li><strong>Reproducible.</strong> Each day's inputs, their sources and the exact variables used are logged with the forecast (see the <code>inputs</code> field of <code>index.json</code>). The code is on the <code>main</code> branch of the <a href="https://github.com/AmmarKheder/Foehn">Foehn repository</a>, folder <code>experiments/global1km/realtime</code>.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>What it is not, yet</h3>
+        <ul>
+          <li><strong>Not the 1 km Foehn.</strong> The paper's kilometre-scale forecasts need the 1 km record that exists only for the past; Otso works at 0.4°, about 40 km.</li>
+          <li><strong>Not evaluated in real time.</strong> The scores of the paper were measured on 2022 in a hindcast. The live chain differs in two ways we know of: the fire injection height comes from the GFAS variable <code>injh</code>, because the variable the model was trained with (<code>mami</code>) is no longer produced since GFAS v1.4.2 (January 2026); and the weather comes from the open-data IFS at 0.25° instead of the archived HRES. A hindcast over September 2026 is being run to measure the effect of both; its scores will be published here.</li>
+          <li><strong>Not an operational service.</strong> It runs on a shared supercomputer (LUMI) when a GPU is free; a day can be late or missing. The last seven days are kept.</li>
+          <li><strong>Not an alert.</strong> See the notice at the top. Otso is named after the bear of Finnish folklore: a thing of the forest, best observed from a distance.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="data">
+  <div class="wrap">
+    <h2>Data</h2>
+    <p class="sub">Everything the page shows is in the <code>live</code> branch of the repository, rewritten every day with the last seven forecasts.</p>
+    <table class="links">
+      <tr><td>NetCDF of the day</td><td><a id="dl-nc" href="#">otso_&lt;date&gt;.nc</a> — mean, 10/50/90 % quantiles and P(&gt;25) of PM<sub>2.5</sub>, 0.4°, ten leads, 0.1 µg m⁻³ precision</td></tr>
+      <tr><td>Cities</td><td><a id="dl-cities" href="#">cities.json</a> — the table above</td></tr>
+      <tr><td>Inputs and provenance</td><td><a id="dl-index" href="#">index.json</a> — sources, versions, the fire-injection variable, land mean by lead</td></tr>
+      <tr><td>Maps</td><td><a id="dl-map" href="#">map_&lt;lead&gt;.png</a> — the rendered map of each lead; the <code>mean_</code>, <code>p90_</code> and <code>prob_</code> PNGs are 8-bit data layers (see <code>png</code> in index.json)</td></tr>
+      <tr><td>Branch</td><td><a href="https://github.com/AmmarKheder/Foehn/tree/live">github.com/AmmarKheder/Foehn/tree/live</a> — <code>latest.json</code> lists the available days</td></tr>
+      <tr><td>Sources</td><td>Contains modified Copernicus Atmosphere Monitoring Service information 2026 (CAMS analysis, GFAS). ECMWF open data, CC BY 4.0. Neither the European Commission nor ECMWF is responsible for any use of this forecast.</td></tr>
+      <tr><td>Citing</td><td>Please cite the Foehn paper (see the <a href="../#cite">main page</a>) and name the day's forecast by its issue date.</td></tr>
+    </table>
+  </div>
+</section>
+
+</main>
+<footer><div class="wrap">Otso · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · Atmospheric Modelling Centre Lahti. Computations on the LUMI supercomputer (CSC, EuroHPC). Research forecast, not an official alert.</div></footer>
+
+<script>
+(() => {
+  const BASE = "https://raw.githubusercontent.com/AmmarKheder/Foehn/live/";
+  const NLAT = 361, NLON = 900, LAT0 = 84, DLAT = 0.4, LON0 = -180, DLON = 0.4;
+  const PM_COLORS = ["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"];
+  const PM_BOUNDS = [0, 5, 10, 15, 25, 37.5, 50, 75, 100, 150, 250];
+  const PM_NAMES = ["very clean", "clean", "good", "fair", "moderate", "moderate", "poor", "poor", "very poor", "extremely poor", "extremely poor"];
+  const PROB_COLORS = ["#FFFFFF", "#F1F6FB", "#DCE9F5", "#C6DBEF", "#9ECAE1", "#6BAED6", "#4292C6", "#2171B5", "#08519C", "#08306B"];
+  const REGIONS = { world: [-180, 180, -60, 84], europe: [-12, 42, 34, 66], sasia: [60, 98, 5, 38], easia: [95, 145, 18, 50], seasia: [92, 130, -12, 24],
+    mideast: [25, 65, 12, 42], africa: [-20, 52, -36, 38], namerica: [-130, -60, 15, 60], samerica: [-85, -33, -56, 13], oceania: [112, 155, -45, -10] };
+  const cv = document.getElementById("map-canvas"), ctx = cv.getContext("2d"), tip = document.getElementById("tip");
+  const state = { field: "mean", lead: 1, day: null, days: [], idx: null, layers: {}, lines: null, view: REGIONS.world.slice(), pick: null, cities: null, timer: null, sort: "d1", desc: true };
+  const rgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const PMC = PM_COLORS.map(rgb), PRC = PROB_COLORS.map(rgb);
+  const dec = (v) => Math.pow(10, -1 + 4 * (v - 1) / 254);                              // 8-bit value -> ug m-3
+  const pmClass = (x) => { let c = 0; for (let i = 0; i < PM_BOUNDS.length; i++) if (x >= PM_BOUNDS[i]) c = i; return c; };
+  const pmHex = (x) => PM_COLORS[pmClass(x)];
+  const fmt = (x) => x >= 100 ? x.toFixed(0) : x >= 10 ? x.toFixed(0) : x.toFixed(1);
+  const LUT = {}; (() => {                                                                 // value byte -> colour, for both kinds
+    LUT.pm = new Uint8Array(256 * 3); for (let v = 1; v < 256; v++) { const c = PMC[pmClass(dec(v))]; LUT.pm.set(c, 3 * v); }
+    LUT.prob = new Uint8Array(256 * 3); for (let v = 0; v <= 100; v++) { const c = PRC[Math.min(9, Math.floor(v / 10))]; LUT.prob.set(c, 3 * v); }
+  })();
+  function validTime(day, lead) { const t = new Date(day + "T00:00:00Z"); t.setUTCHours(t.getUTCHours() + 12 * (lead + 1)); return t; }
+  const fmtTime = (t) => t.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC";
+  function setStatus(msg, ok) { const s = document.getElementById("status"); s.innerHTML = msg; if (ok) document.getElementById("pill-live").hidden = false; }
+
+  // ---- data loading: one 8-bit PNG per field and lead, decoded through a canvas
+  function loadLayer(day, field, lead) {
+    const key = day + "/" + field + "/" + lead; if (state.layers[key]) return state.layers[key];
+    const fn = state.idx[day].files[field][lead];
+    state.layers[key] = new Promise((res, rej) => {
+      const im = new Image(); im.crossOrigin = "anonymous";
+      im.onload = () => { const c = document.createElement("canvas"); c.width = NLON; c.height = NLAT; const x = c.getContext("2d"); x.drawImage(im, 0, 0);
+        const d = x.getImageData(0, 0, NLON, NLAT).data, a = new Uint8Array(NLON * NLAT); for (let i = 0; i < a.length; i++) a[i] = d[4 * i]; res(a); };
+      im.onerror = () => rej(new Error("layer " + fn)); im.src = BASE + day + "/" + fn;
+    });
+    return state.layers[key];
+  }
+  async function loadDay(day) {
+    if (!state.idx[day]) state.idx[day] = await (await fetch(BASE + day + "/index.json", { cache: "no-cache" })).json();
+    return state.idx[day];
+  }
+  // ---- drawing
+  let W = 1200, H = 480, img = null, cur = null;
+  function size() {
+    const b = cv.getBoundingClientRect(); const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const [l0, l1, a0, a1] = state.view; const asp = ((l1 - l0) / (a1 - a0)) * Math.cos(((a0 + a1) / 2) * Math.PI / 180) ; // mild Mercator-ish feel
+    W = Math.round(b.width * dpr); H = Math.round(Math.max(0.28, Math.min(0.75, 1 / Math.max(asp, 1.2))) * W);
+    cv.width = W; cv.height = H; cv.style.height = (H / dpr) + "px"; img = ctx.createImageData(W, H); draw();
+  }
+  function draw() {
+    if (!cur) return;
+    const [l0, l1, a0, a1] = state.view, lut = state.field === "prob" ? LUT.prob : LUT.pm, ocean = state.field === "prob" ? 255 : 0;
+    const d = img.data; const kx = (l1 - l0) / W, ky = (a1 - a0) / H;
+    for (let y = 0; y < H; y++) {
+      const lat = a1 - (y + 0.5) * ky; const r = Math.floor((LAT0 - lat) / DLAT); const rowOk = r >= 0 && r < NLAT;
+      for (let x = 0; x < W; x++) {
+        let lon = l0 + (x + 0.5) * kx; lon = ((lon + 180) % 360 + 360) % 360 - 180; const c = Math.floor((lon - LON0) / DLON);
+        const o = 4 * (y * W + x);
+        if (!rowOk) { d[o] = 246; d[o + 1] = 248; d[o + 2] = 250; d[o + 3] = 255; continue; }
+        const v = cur[r * NLON + c];
+        if (v === ocean) { d[o] = 255; d[o + 1] = 255; d[o + 2] = 255; d[o + 3] = 255; continue; }
+        d[o] = lut[3 * v]; d[o + 1] = lut[3 * v + 1]; d[o + 2] = lut[3 * v + 2]; d[o + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    if (state.lines) {
+      const X = (lon) => (lon - l0) / (l1 - l0) * W, Y = (lat) => (a1 - lat) / (a1 - a0) * H;
+      const strokeLines = (lines, color, w) => { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath();
+        for (const ln of lines) { let pen = false; for (let i = 0; i < ln.length; i++) { const x = X(ln[i][0]), y = Y(ln[i][1]); if (i && Math.abs(ln[i][0] - ln[i - 1][0]) > 180) pen = false; if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y); } } ctx.stroke(); };
+      const zoom = 360 / (l1 - l0);
+      strokeLines(state.lines.borders, "rgba(60,70,80,0.35)", Math.max(0.5, 0.4 * Math.sqrt(zoom)));
+      strokeLines(state.lines.coast, "rgba(28,37,48,0.75)", Math.max(0.7, 0.6 * Math.sqrt(zoom)));
+    }
+    if (state.pick) { const X = (state.pick.lon - l0) / (l1 - l0) * W, Y = (a1 - state.pick.lat) / (a1 - a0) * H;
+      ctx.beginPath(); ctx.arc(X, Y, 7, 0, 2 * Math.PI); ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = "#1c2530"; ctx.stroke();
+      ctx.beginPath(); ctx.arc(X, Y, 2.5, 0, 2 * Math.PI); ctx.fillStyle = "#1c2530"; ctx.fill(); }
+  }
+  function drawCbar() {
+    const c = document.getElementById("cbar"), x = c.getContext("2d"); x.clearRect(0, 0, c.width, c.height); x.font = "11px Helvetica, Arial, sans-serif"; x.fillStyle = "#5b6977"; x.textAlign = "center";
+    if (state.field === "prob") { const n = 10, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PROB_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = "#5b6977";
+      for (let i = 0; i <= n; i += 2) x.fillText(i * 10 + (i === n ? " %" : ""), Math.min(c.width - 14, Math.max(10, i * w)), 26);
+      document.getElementById("cbar-lab").textContent = "members above 25 µg m⁻³"; }
+    else { const n = PM_COLORS.length, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PM_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = "#5b6977";
+      for (let i = 1; i < n; i++) x.fillText(String(PM_BOUNDS[i]), i * w, 26);
+      document.getElementById("cbar-lab").innerHTML = "PM<sub>2.5</sub> (µg m⁻³)"; }
+  }
+  async function show() {
+    const day = state.day, lead = state.lead; document.getElementById("leadout").textContent = "+" + 12 * (lead + 1) + " h · " + fmtTime(validTime(day, lead));
+    try { cur = await loadLayer(day, state.field, lead); } catch (e) { setStatus("The forecast layer could not be loaded (" + e.message + ").", false); return; }
+    draw(); drawCbar();
+    const names = { mean: "Ensemble mean of " + state.idx[day].members + " members", p90: "90th percentile of the " + state.idx[day].members + " members (a plausible bad case)", prob: "Share of the " + state.idx[day].members + " members above 25 µg m⁻³" };
+    document.getElementById("help").textContent = names[state.field] + ", 0.4° grid, instantaneous value at the valid time, issued from the 00 UTC run of " + day + ". Ocean is white: Otso forecasts over land.";
+    for (let k = 0; k < 10; k++) loadLayer(day, state.field, k).catch(() => {});                                   // warm the other leads for the slider
+  }
+  // ---- picking
+  function cellAt(ev) {
+    const b = cv.getBoundingClientRect(); const [l0, l1, a0, a1] = state.view;
+    let lon = l0 + (ev.clientX - b.left) / b.width * (l1 - l0); const lat = a1 - (ev.clientY - b.top) / b.height * (a1 - a0);
+    lon = ((lon + 180) % 360 + 360) % 360 - 180; const r = Math.floor((LAT0 - lat) / DLAT), c = Math.floor((lon - LON0) / DLON);
+    return { lat, lon, r, c, ok: r >= 0 && r < NLAT };
+  }
+  const coord = (lat, lon) => Math.abs(lat).toFixed(1) + "°" + (lat >= 0 ? "N" : "S") + ", " + Math.abs(lon).toFixed(1) + "°" + (lon >= 0 ? "E" : "W");
+  function hover(ev) {
+    if (!cur) return; const p = cellAt(ev); const b = cv.getBoundingClientRect();
+    if (!p.ok) { tip.style.display = "none"; return; }
+    const v = cur[p.r * NLON + p.c], ocean = state.field === "prob" ? 255 : 0;
+    if (v === ocean) { tip.style.display = "none"; return; }
+    tip.style.display = "block"; tip.style.left = (ev.clientX - b.left) + "px"; tip.style.top = (ev.clientY - b.top) + "px";
+    tip.innerHTML = state.field === "prob" ? "<b>" + v + " %</b> of members above 25<br>" + coord(p.lat, p.lon) : "<b>" + fmt(dec(v)) + "</b> µg m⁻³ · " + PM_NAMES[pmClass(dec(v))] + "<br>" + coord(p.lat, p.lon);
+  }
+  async function pick(lat, lon, name) {
+    state.pick = { lat, lon, name }; draw();
+    const r = Math.floor((LAT0 - lat) / DLAT), c = Math.floor(((((lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON);
+    if (r < 0 || r >= NLAT) return;
+    const day = state.day; const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k)));
+    const q = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "p90", k)));
+    const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
+    const i = r * NLON + c; if (m[0][i] === 0) { document.getElementById("pt-text").textContent = "No land there: Otso forecasts over land. Choose a place on land."; document.getElementById("point").hidden = false; return; }
+    const mean = m.map((a) => dec(a[i])), p90 = q.map((a) => dec(a[i])), prob = pr.map((a) => a[i]);
+    document.getElementById("point").hidden = false;
+    document.getElementById("pt-title").textContent = (name ? name + " · " : "") + coord(lat, lon) + " · issued " + day;
+    const imax = mean.indexOf(Math.max(...mean)), t1 = mean[1], c1 = PM_NAMES[pmClass(t1)];
+    document.getElementById("pt-text").innerHTML = "Tomorrow at this time (+24 h) Otso expects <strong>" + fmt(t1) + " µg m⁻³</strong> (" + c1 + "), with " + prob[1] + " % of the members above 25. " +
+      "The highest value of the five days is <strong>" + fmt(mean[imax]) + "</strong> at +" + 12 * (imax + 1) + " h (" + fmtTime(validTime(day, imax)) + "); the 90th percentile then is " + fmt(p90[imax]) + ".";
+    series(mean, p90, prob);
+  }
+  function series(mean, p90, prob) {
+    const s = document.getElementById("series"); const Wd = 560, Hd = 150, L = 34, R = 8, T = 10, B = 26; const top = Math.max(30, Math.ceil(Math.max(...p90) * 1.15 / 10) * 10);
+    const X = (k) => L + (Wd - L - R) * k / 9, Y = (v) => T + (Hd - T - B) * (1 - Math.min(v, top) / top);
+    let h = `<rect x="${L}" y="${T}" width="${Wd - L - R}" height="${Hd - T - B}" fill="#fff" stroke="#e3e8ee"/>`;
+    for (const g of [0, top / 2, top]) h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(g)}" y2="${Y(g)}" stroke="#eef1f4"/><text x="${L - 4}" y="${Y(g) + 4}" font-size="10" fill="#5b6977" text-anchor="end">${Math.round(g)}</text>`;
+    const band = mean.map((v, k) => `${X(k)},${Y(p90[k])}`).concat(mean.map((v, k) => `${X(9 - k)},${Y(Math.max(0, 2 * mean[9 - k] - p90[9 - k]))}`)).join(" ");
+    h += `<polygon points="${band}" fill="#8FB2DD" fill-opacity="0.35"/>`;
+    h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(25)}" y2="${Y(25)}" stroke="#C2185B" stroke-dasharray="4 3" stroke-width="1"/>`;
+    h += `<polyline points="${mean.map((v, k) => X(k) + "," + Y(v)).join(" ")}" fill="none" stroke="#1F5AA6" stroke-width="2.2"/>`;
+    mean.forEach((v, k) => { h += `<circle cx="${X(k)}" cy="${Y(v)}" r="3.2" fill="${pmHex(v)}" stroke="#1c2530" stroke-width="0.8"/>`; });
+    [0, 1, 3, 5, 7, 9].forEach((k) => { h += `<text x="${X(k)}" y="${Hd - 8}" font-size="10" fill="#5b6977" text-anchor="middle">+${12 * (k + 1)} h</text>`; });
+    s.innerHTML = h;
+  }
+  // ---- zoom and pan
+  function zoomAt(f, fx, fy) {
+    const [l0, l1, a0, a1] = state.view; const lon = l0 + fx * (l1 - l0), lat = a1 - fy * (a1 - a0);
+    let w = (l1 - l0) / f, hgt = (a1 - a0) / f; w = Math.min(360, Math.max(4, w)); hgt = Math.min(144, Math.max(2, hgt));
+    let n0 = lon - fx * w, n1 = n0 + w, m1 = lat + fy * hgt, m0 = m1 - hgt;
+    if (w >= 360) { n0 = -180; n1 = 180; } else { if (n0 < -180) { n1 += -180 - n0; n0 = -180; } if (n1 > 180) { n0 -= n1 - 180; n1 = 180; } }
+    if (m1 > 84) { m0 -= m1 - 84; m1 = 84; } if (m0 < -60) { m1 += -60 - m0; m0 = -60; }
+    state.view = [n0, n1, m0, m1]; size();
+  }
+  cv.addEventListener("wheel", (ev) => { ev.preventDefault(); const b = cv.getBoundingClientRect(); zoomAt(ev.deltaY < 0 ? 1.25 : 0.8, (ev.clientX - b.left) / b.width, (ev.clientY - b.top) / b.height); }, { passive: false });
+  let drag = null, pinch = null;
+  cv.addEventListener("pointerdown", (ev) => { drag = { x: ev.clientX, y: ev.clientY, view: state.view.slice(), moved: false }; cv.setPointerCapture(ev.pointerId); });
+  cv.addEventListener("pointermove", (ev) => {
+    if (drag && (ev.buttons & 1)) { const b = cv.getBoundingClientRect(); const dx = (ev.clientX - drag.x) / b.width * (drag.view[1] - drag.view[0]), dy = (ev.clientY - drag.y) / b.height * (drag.view[3] - drag.view[2]);
+      if (Math.abs(ev.clientX - drag.x) + Math.abs(ev.clientY - drag.y) > 4) drag.moved = true;
+      let [l0, l1, a0, a1] = drag.view; const w = l1 - l0; if (w < 360) { l0 -= dx; l1 -= dx; if (l0 < -180) { l1 += -180 - l0; l0 = -180; } if (l1 > 180) { l0 -= l1 - 180; l1 = 180; } }
+      a0 += dy; a1 += dy; if (a1 > 84) { a0 -= a1 - 84; a1 = 84; } if (a0 < -60) { a1 += -60 - a0; a0 = -60; }
+      state.view = [l0, l1, a0, a1]; draw(); tip.style.display = "none"; return; }
+    if (ev.pointerType === "mouse") hover(ev);
+  });
+  cv.addEventListener("pointerup", (ev) => { if (drag && !drag.moved) { const p = cellAt(ev); if (p.ok) pick(p.lat, p.lon); if (ev.pointerType !== "mouse") hover(ev); } drag = null; });
+  cv.addEventListener("pointerleave", () => { tip.style.display = "none"; });
+  cv.addEventListener("touchstart", (ev) => { if (ev.touches.length === 2) { pinch = Math.hypot(ev.touches[0].clientX - ev.touches[1].clientX, ev.touches[0].clientY - ev.touches[1].clientY); drag = null; } }, { passive: true });
+  cv.addEventListener("touchmove", (ev) => { if (ev.touches.length === 2 && pinch) { ev.preventDefault(); const d = Math.hypot(ev.touches[0].clientX - ev.touches[1].clientX, ev.touches[0].clientY - ev.touches[1].clientY);
+    const b = cv.getBoundingClientRect(); const cx = (ev.touches[0].clientX + ev.touches[1].clientX) / 2, cy = (ev.touches[0].clientY + ev.touches[1].clientY) / 2;
+    if (Math.abs(d / pinch - 1) > 0.05) { zoomAt(d / pinch, (cx - b.left) / b.width, (cy - b.top) / b.height); pinch = d; } } }, { passive: false });
+  cv.addEventListener("touchend", () => { pinch = null; });
+  document.getElementById("zin").addEventListener("click", () => zoomAt(1.6, 0.5, 0.5));
+  document.getElementById("zout").addEventListener("click", () => zoomAt(0.625, 0.5, 0.5));
+  document.getElementById("zreset").addEventListener("click", () => { state.view = REGIONS.world.slice(); document.getElementById("region").value = "world"; size(); });
+  document.getElementById("region").addEventListener("change", (ev) => { state.view = REGIONS[ev.target.value].slice(); size(); });
+  // ---- controls
+  document.getElementById("fields").addEventListener("click", (ev) => { const b = ev.target.closest("button"); if (!b) return; state.field = b.dataset.f;
+    for (const x of document.querySelectorAll("#fields button")) x.classList.toggle("on", x === b); show(); });
+  document.getElementById("lead").addEventListener("input", (ev) => { state.lead = +ev.target.value; show(); });
+  document.getElementById("play").addEventListener("click", () => { const b = document.getElementById("play");
+    if (state.timer) { clearInterval(state.timer); state.timer = null; b.textContent = "▶"; return; }
+    b.textContent = "❚❚"; state.timer = setInterval(() => { state.lead = (state.lead + 1) % 10; document.getElementById("lead").value = state.lead; show(); }, 900); });
+  document.getElementById("day").addEventListener("change", async (ev) => { state.day = ev.target.value; await loadDay(state.day); await loadCities(state.day); links(); show(); if (state.pick) pick(state.pick.lat, state.pick.lon, state.pick.name); });
+  window.addEventListener("keydown", (ev) => { if (ev.target.tagName === "INPUT" || ev.target.tagName === "SELECT") return;
+    if (ev.key === "ArrowRight") { state.lead = Math.min(9, state.lead + 1); document.getElementById("lead").value = state.lead; show(); }
+    if (ev.key === "ArrowLeft") { state.lead = Math.max(0, state.lead - 1); document.getElementById("lead").value = state.lead; show(); } });
+  function links() { const d = state.day, f = state.idx[d].files;
+    document.getElementById("dl-nc").href = BASE + d + "/" + (f.netcdf || ""); document.getElementById("dl-nc").textContent = f.netcdf || "(no NetCDF for this day)";
+    document.getElementById("dl-cities").href = BASE + d + "/cities.json"; document.getElementById("dl-index").href = BASE + d + "/index.json"; document.getElementById("dl-map").href = BASE + d + "/" + f.map[1]; }
+  // ---- cities
+  async function loadCities(day) { state.cities = await (await fetch(BASE + day + "/cities.json", { cache: "no-cache" })).json(); table(); }
+  const chip = (v) => `<span class="chip" style="background:${pmHex(v)};color:${pmClass(v) >= 3 && pmClass(v) <= 6 ? "#1c2530" : "#fff"}">${fmt(v)}</span>`;
+  function table() {
+    if (!state.cities) return; const q = (document.getElementById("search").value || "").toLowerCase();
+    const rows = Object.entries(state.cities.cities).map(([name, c]) => ({ name, c, d1: c.mean[1], d3: c.mean[5], d5: c.mean[9], max: Math.max(...c.mean), pmax: Math.max(...c.p_above_25) }))
+      .filter((r) => r.name.toLowerCase().includes(q));
+    rows.sort((a, b) => state.sort === "name" ? (state.desc ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)) : (state.desc ? b[state.sort] - a[state.sort] : a[state.sort] - b[state.sort]));
+    const top = Math.max(50, ...rows.map((r) => r.max));
+    document.querySelector("#ct tbody").innerHTML = rows.map((r) => `<tr data-n="${r.name}"><td><strong>${r.name}</strong></td><td>${chip(r.d1)}</td><td>${chip(r.d3)}</td><td>${chip(r.d5)}</td><td>${chip(r.max)}</td><td>${Math.round(100 * r.pmax)} %</td>` +
+      `<td><span class="bars">${r.c.mean.map((v) => `<i style="height:${Math.max(2, 22 * Math.min(v, top) / top)}px;background:${pmHex(v)}" title="${fmt(v)}"></i>`).join("")}</span></td></tr>`).join("");
+    for (const th of document.querySelectorAll("#ct th[data-k]")) th.classList.toggle("on", th.dataset.k === state.sort);
+    document.getElementById("cities-note").textContent = rows.length + " cities · issued " + state.cities.date + " · mean of 3 × 3 cells of 0.4°";
+  }
+  document.getElementById("search").addEventListener("input", table);
+  document.querySelector("#ct thead").addEventListener("click", (ev) => { const th = ev.target.closest("th[data-k]"); if (!th) return; if (state.sort === th.dataset.k) state.desc = !state.desc; else { state.sort = th.dataset.k; state.desc = th.dataset.k !== "name"; } table(); });
+  document.querySelector("#ct tbody").addEventListener("click", (ev) => { const tr = ev.target.closest("tr"); if (!tr) return; const c = state.cities.cities[tr.dataset.n];
+    state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, tr.dataset.n); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); });
+  // ---- start
+  (async () => {
+    try {
+      const [latest, lines] = await Promise.all([fetch(BASE + "latest.json", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error("latest.json " + r.status); return r.json(); }), fetch("lines.json").then((r) => r.json())]);
+      state.lines = lines; state.days = latest.days.slice().reverse(); state.idx = {}; state.day = latest.latest;
+      const sel = document.getElementById("day"); sel.innerHTML = state.days.map((d) => `<option value="${d}">${d === latest.latest ? "Latest: " : ""}${d}</option>`).join("");
+      await loadDay(state.day); const ix = state.idx[state.day];
+      const age = (Date.now() - new Date(state.day + "T00:00:00Z")) / 864e5;
+      setStatus("<b>Forecast issued from the 00 UTC run of " + state.day + "</b>, published " + latest.updated.replace("T", " ") + " · " + ix.members + " members · leads +12 h to +120 h · inputs: CAMS analysis 00 UTC, ECMWF IFS 00 UTC (" + (ix.inputs.ifs_source || "").replace("https://", "") + "), GFAS " + (ix.inputs.gfas_version || "") + " fires of " + (ix.inputs.gfas_day || "") + " (injection height: <code>" + (ix.inputs.fire_injection_variable || "") + "</code>)." +
+        (age > 1.5 ? " <span style='color:#8A5A00'>This forecast is " + Math.floor(age) + " days old: the daily run may have failed or be late.</span>" : ""), age <= 1.5);
+      links(); size(); await show(); await loadCities(state.day);
+      const m = location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)/); if (m) pick(+m[1], +m[2]);
+    } catch (e) {
+      setStatus("The live forecast could not be loaded (" + e.message + "). The daily run may be paused; the code and the paper's forecasts are on the <a href='../'>Foehn page</a>.", false);
+      cur = null; ctx.fillStyle = "#f6f8fa"; ctx.fillRect(0, 0, cv.width, cv.height); ctx.fillStyle = "#5b6977"; ctx.font = "16px Helvetica, Arial"; ctx.textAlign = "center"; ctx.fillText("No live forecast available", cv.width / 2, cv.height / 2);
+    }
+  })();
+  window.addEventListener("resize", () => { if (cur) size(); });
+})();
+</script>
+</body>
+</html>

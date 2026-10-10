@@ -79,6 +79,17 @@ RMSE and CRPS at the 6,612 stations (the CRPS is the fair CRPS of four members; 
   <img src="docs/figures/fig_smoke.png" width="880" alt="Forecasting the smoke of the Gironde fires of July 2022 at the Teich bird reserve, five days ahead">
 </p>
 
+## Otso: the live forecast (beta)
+
+Otso is the coarse Foehn model of the paper (Foehn-CAMS, 0.4°, the model evaluated in Aurora's protocol) run every morning on live
+inputs: the 00 UTC CAMS analysis, the 00 UTC ECMWF IFS forecast from the open-data service, and the GFAS fires of the previous day,
+with FLEXGREEN recomputing the transport. Eight members, 12 h to 120 h ahead, over all land. The forecasts are shown at
+<https://ammarkheder.com/Foehn/otso/> and published on the `live` branch (last seven days, rewritten daily). The chain is in
+`experiments/global1km/realtime/` (`fetch.py`, `build.py`, `predict.py`, `products.py`, `publish.py`, `otso_job.sh`, `daily.sh`;
+`compare.py` is the non-regression test against the paper's predictions, `hindcast.py` the validation of the 2026 inputs).
+Otso is a research forecast: it is not an official product and does not replace the air-quality forecasts and alerts of national
+or local authorities.
+
 ## Getting started
 
 The code was developed and run on the LUMI supercomputer (AMD MI250X, ROCm) with PyTorch and PyTorch Lightning; it has no
