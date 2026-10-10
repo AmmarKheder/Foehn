@@ -50,6 +50,8 @@
   .tabbar a { flex: 1; text-align: center; font-size: 11px; color: var(--muted); text-decoration: none; } .tabbar a span { display: block; font-size: 20px; line-height: 1.1; }
   body.app { padding-bottom: calc(64px + env(safe-area-inset-bottom)); } body.app .tabbar { display: flex !important; }
   body.app .place-foot { display: none; }
+  body.app #tablewrap:not(.all) table.ct tbody tr:nth-child(n+13) { display: none; } body.app .showall { display: block !important; width: 100%; margin-top: 10px; }
+  body.app #tablewrap.all + .showall { display: none !important; }
   .otso-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
   .pill-beta { background: #FFF1D6; color: #8A5A00; border: 1px solid #F3D9A4; }
@@ -306,9 +308,10 @@
         <div class="city-box" style="min-width:260px"><input type="search" id="search" placeholder="Find or add any city…" aria-label="Find or add any city" autocomplete="off" /><ul class="city-list" id="search-list" hidden></ul></div>
         <span class="small" id="cities-note"></span>
       </div>
-      <div class="tablewrap"><table class="ct" id="ct"><thead><tr>
+      <div class="tablewrap" id="tablewrap"><table class="ct" id="ct"><thead><tr>
         <th data-k="name">City</th><th data-k="d1">Tomorrow (+24 h)</th><th data-k="d3">+72 h</th><th data-k="d5">+120 h</th><th data-k="max">Max of the 5 days</th><th data-k="pmax">P &gt; 25 (max)</th><th>12 → 120 h</th>
       </tr></thead><tbody></tbody></table></div>
+      <button type="button" class="btn btn-ghost showall" id="showall" hidden>Show all cities</button>
     </div>
   </div>
 </section>
@@ -619,6 +622,7 @@
     document.getElementById("cities-note").textContent = rows.length + " cities · issued " + state.cities.date + " · mean of 3 × 3 cells of 0.4°";
   }
   document.getElementById("search").addEventListener("input", table);
+  document.getElementById("showall").addEventListener("click", () => { document.getElementById("tablewrap").classList.add("all"); });
   document.querySelector("#ct tbody").addEventListener("click", (ev) => { const b = ev.target.closest("button.rm"); if (!b) return; ev.stopPropagation(); const n = b.dataset.rm; delete state.cities.cities[n]; MY = MY.filter((x) => x.name !== n); try { localStorage.setItem("otso-mycities", JSON.stringify(MY)); } catch (e) {} table(); }, true);
   document.querySelector("#ct thead").addEventListener("click", (ev) => { const th = ev.target.closest("th[data-k]"); if (!th) return; if (state.sort === th.dataset.k) state.desc = !state.desc; else { state.sort = th.dataset.k; state.desc = th.dataset.k !== "name"; } table(); });
   document.querySelector("#ct tbody").addEventListener("click", (ev) => { const tr = ev.target.closest("tr"); if (!tr) return; const c = state.cities.cities[tr.dataset.n];
@@ -720,7 +724,7 @@
   if (APP) {
     document.body.classList.add("app");
     const mapSec = document.querySelector("#map .wrap"), mapcard = document.querySelector(".mapcard"), point = document.getElementById("point");
-    mapSec.insertBefore(point, mapcard);                                              // the selected place right under the search box
+    mapSec.insertBefore(document.getElementById("welcome"), mapcard); mapSec.insertBefore(point, mapcard);   // the welcome card and the selected place right under the search box
     document.title = "Otso 1.1 — PM2.5 forecast";
     const cq0 = document.getElementById("city-q"); let rem = null; try { rem = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
     if (!rem) setTimeout(() => { cq0.placeholder = "Your city: type it, or use your position"; }, 0);
