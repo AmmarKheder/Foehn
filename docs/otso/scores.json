@@ -1,0 +1,341 @@
+{
+ "title": "Otso 1.1 hindcast on live inputs, September 2026",
+ "window": "2026-09-01 .. 2026-09-20 (20 start days, 00 UTC runs, leads 12 .. 120 h)",
+ "truth": "CAMS analysis at the valid time (00 and 12 UTC)",
+ "statistic": "RMSE of the ensemble mean, cosine-latitude weighted, mean over the 20 days, ug m-3",
+ "systems": {
+  "otso": "Otso 1.1 with GFAS fires (injh)",
+  "otso_no_fires": "Otso 1.1 without fires",
+  "cams_forecast": "CAMS operational forecast of the same 00 UTC run (leads 24 and 120 h fetched)",
+  "persistence": "the 00 UTC analysis kept unchanged"
+ },
+ "fire_cells": "0.4 deg cells with FRP > 0.3 W m-2 on at least one day of the window (5.7 % of the grid)",
+ "paper_2022": {
+  "note": "Same protocol on 1 May - 30 Nov 2022 (214 days, archived HRES, GFAS v1.2 with mami, 2022 emissions), RMSE all cells",
+  "leads_h": [
+   12,
+   24,
+   48,
+   72,
+   120
+  ],
+  "otso": [
+   4.01,
+   5.12,
+   5.53,
+   5.8,
+   6.33
+  ],
+  "cams_forecast": [
+   2.74,
+   4.61,
+   5.74,
+   6.53,
+   7.71
+  ],
+  "persistence": [
+   7.29,
+   7.54,
+   8.79,
+   9.29,
+   9.6
+  ]
+ },
+ "rows": [
+  {
+   "lead_h": 12,
+   "rmse_all": {
+    "otso": 8.53,
+    "otso_no_fires": 10.37,
+    "cams_forecast": null,
+    "persistence": 11.37
+   },
+   "rmse_land": {
+    "otso": 14.42,
+    "otso_no_fires": 18.07,
+    "cams_forecast": null,
+    "persistence": 20.07
+   },
+   "rmse_fire_cells": {
+    "otso": 23.55,
+    "otso_no_fires": 32.0,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 0.9,
+    "otso_no_fires": -1.95
+   },
+   "bias_land": {
+    "otso": 0.29,
+    "otso_no_fires": -0.42
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 24,
+   "rmse_all": {
+    "otso": 8.71,
+    "otso_no_fires": 9.09,
+    "cams_forecast": 5.43,
+    "persistence": 10.13
+   },
+   "rmse_land": {
+    "otso": 14.47,
+    "otso_no_fires": 15.18,
+    "cams_forecast": 9.16,
+    "persistence": 17.21
+   },
+   "rmse_fire_cells": {
+    "otso": 14.45,
+    "otso_no_fires": 16.74,
+    "cams_forecast": 11.56
+   },
+   "bias_fire_cells": {
+    "otso": 2.04,
+    "otso_no_fires": -2.2
+   },
+   "bias_land": {
+    "otso": 0.18,
+    "otso_no_fires": -0.94
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 36,
+   "rmse_all": {
+    "otso": 10.22,
+    "otso_no_fires": 11.75,
+    "cams_forecast": null,
+    "persistence": 13.36
+   },
+   "rmse_land": {
+    "otso": 17.04,
+    "otso_no_fires": 20.05,
+    "cams_forecast": null,
+    "persistence": 23.12
+   },
+   "rmse_fire_cells": {
+    "otso": 27.63,
+    "otso_no_fires": 34.96,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 0.93,
+    "otso_no_fires": -2.71
+   },
+   "bias_land": {
+    "otso": 0.16,
+    "otso_no_fires": -0.8
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 48,
+   "rmse_all": {
+    "otso": 9.43,
+    "otso_no_fires": 9.86,
+    "cams_forecast": null,
+    "persistence": 11.77
+   },
+   "rmse_land": {
+    "otso": 15.63,
+    "otso_no_fires": 16.35,
+    "cams_forecast": null,
+    "persistence": 19.9
+   },
+   "rmse_fire_cells": {
+    "otso": 16.33,
+    "otso_no_fires": 18.69,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 1.8,
+    "otso_no_fires": -2.75
+   },
+   "bias_land": {
+    "otso": 0.08,
+    "otso_no_fires": -1.13
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 60,
+   "rmse_all": {
+    "otso": 11.08,
+    "otso_no_fires": 12.19,
+    "cams_forecast": null,
+    "persistence": 13.95
+   },
+   "rmse_land": {
+    "otso": 18.54,
+    "otso_no_fires": 20.61,
+    "cams_forecast": null,
+    "persistence": 24.0
+   },
+   "rmse_fire_cells": {
+    "otso": 30.6,
+    "otso_no_fires": 35.86,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 0.38,
+    "otso_no_fires": -2.98
+   },
+   "bias_land": {
+    "otso": -0.05,
+    "otso_no_fires": -1.02
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 72,
+   "rmse_all": {
+    "otso": 9.85,
+    "otso_no_fires": 10.3,
+    "cams_forecast": null,
+    "persistence": 12.26
+   },
+   "rmse_land": {
+    "otso": 16.28,
+    "otso_no_fires": 17.0,
+    "cams_forecast": null,
+    "persistence": 20.68
+   },
+   "rmse_fire_cells": {
+    "otso": 17.33,
+    "otso_no_fires": 19.83,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 1.32,
+    "otso_no_fires": -2.95
+   },
+   "bias_land": {
+    "otso": -0.03,
+    "otso_no_fires": -1.23
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 84,
+   "rmse_all": {
+    "otso": 11.01,
+    "otso_no_fires": 11.96,
+    "cams_forecast": null,
+    "persistence": 13.8
+   },
+   "rmse_land": {
+    "otso": 18.28,
+    "otso_no_fires": 20.02,
+    "cams_forecast": null,
+    "persistence": 23.59
+   },
+   "rmse_fire_cells": {
+    "otso": 30.17,
+    "otso_no_fires": 34.77,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 0.33,
+    "otso_no_fires": -2.98
+   },
+   "bias_land": {
+    "otso": 0.0,
+    "otso_no_fires": -0.99
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 96,
+   "rmse_all": {
+    "otso": 9.76,
+    "otso_no_fires": 10.17,
+    "cams_forecast": null,
+    "persistence": 12.1
+   },
+   "rmse_land": {
+    "otso": 16.17,
+    "otso_no_fires": 16.78,
+    "cams_forecast": null,
+    "persistence": 20.29
+   },
+   "rmse_fire_cells": {
+    "otso": 17.22,
+    "otso_no_fires": 19.57,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 1.27,
+    "otso_no_fires": -2.91
+   },
+   "bias_land": {
+    "otso": 0.05,
+    "otso_no_fires": -1.16
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 108,
+   "rmse_all": {
+    "otso": 10.85,
+    "otso_no_fires": 11.71,
+    "cams_forecast": null,
+    "persistence": 13.67
+   },
+   "rmse_land": {
+    "otso": 18.01,
+    "otso_no_fires": 19.55,
+    "cams_forecast": null,
+    "persistence": 23.3
+   },
+   "rmse_fire_cells": {
+    "otso": 30.12,
+    "otso_no_fires": 34.26,
+    "cams_forecast": null
+   },
+   "bias_fire_cells": {
+    "otso": 0.25,
+    "otso_no_fires": -2.88
+   },
+   "bias_land": {
+    "otso": 0.1,
+    "otso_no_fires": -0.86
+   },
+   "days": 20
+  },
+  {
+   "lead_h": 120,
+   "rmse_all": {
+    "otso": 9.62,
+    "otso_no_fires": 10.0,
+    "cams_forecast": 8.93,
+    "persistence": 12.02
+   },
+   "rmse_land": {
+    "otso": 16.06,
+    "otso_no_fires": 16.6,
+    "cams_forecast": 14.99,
+    "persistence": 20.16
+   },
+   "rmse_fire_cells": {
+    "otso": 17.44,
+    "otso_no_fires": 19.57,
+    "cams_forecast": 18.15
+   },
+   "bias_fire_cells": {
+    "otso": 1.14,
+    "otso_no_fires": -3.08
+   },
+   "bias_land": {
+    "otso": 0.25,
+    "otso_no_fires": -0.95
+   },
+   "days": 20
+  }
+ ],
+ "notes": [
+  "Live inputs: CAMS analysis 00 UTC; IFS open data at 0.25 deg (the paper used the archived HRES); GFAS v1.4.2 with injh instead of mami (v1.4.2 also detects about twice as many fire cells); anthropogenic emissions of the same month of 2022.",
+  "September 2026 is a harder period than the 2022 test: the persistence error is 25-55 % larger. Relative to persistence, Otso is weaker than in 2022 (0.75 vs 0.55 of the persistence error at 12 h; 0.80 vs 0.66 at 120 h) while the CAMS forecast is stronger: the CAMS system changed since 2022 and Otso has not been retrained on its new analyses.",
+  "The CAMS forecast is produced by the same model that produces the analysis used as truth, which favours it at short leads."
+ ]
+}
