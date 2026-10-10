@@ -186,6 +186,71 @@
   @media (max-width: 600px) { table.ct th:nth-child(3), table.ct td:nth-child(3), table.ct th:nth-child(4), table.ct td:nth-child(4), table.ct th:nth-child(6), table.ct td:nth-child(6) { display: none; }
     table.ct td, table.ct th { padding: 8px 6px; } .cities-top { gap: 8px; } }
   @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } }
+
+  /* ===== Apple-like layer (2026-10-10): content first, large type, soft cards, segmented controls ===== */
+  body { -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 1; }
+  .city { border: 0; background: transparent; padding: 0; margin: 0 0 14px; }
+  .city-box input { background: var(--bg-soft); border: 1px solid transparent; border-radius: 12px; height: 44px; padding: 0 14px; }
+  .city-box input:focus { background: var(--card); border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 18%, transparent); }
+  .city-geo { border-radius: 12px; height: 44px; }
+  .welcome { flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 26px 18px; border: 0; border-radius: 22px; background: var(--bg-soft); margin: 0 0 16px; }
+  .welcome-ico { font-size: 40px; } .welcome-t { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+  .welcome p { max-width: 420px; margin: 4px auto 0; font-size: 14.5px; }
+  .welcome-b { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; } .welcome-b .btn { border-radius: 12px; padding: 11px 18px; font-size: 15px; }
+  .point { margin: 0 0 18px; }
+  .air-hero { text-align: center; padding: 26px 18px 22px; border-radius: 24px; color: var(--ink); background: var(--bg-soft);
+    background: linear-gradient(165deg, color-mix(in srgb, var(--pc, #74add1) 42%, var(--card)) 0%, color-mix(in srgb, var(--pc, #74add1) 14%, var(--card)) 78%);
+    box-shadow: 0 14px 40px color-mix(in srgb, var(--pc, #74add1) 22%, transparent); }
+  .ah-place { font-size: 30px; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; }
+  .ah-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .ah-value { display: inline-flex; align-items: flex-start; justify-content: center; margin: 10px 0 2px; font-weight: 200; font-size: 104px; line-height: .95; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
+  .ah-unit { font-size: 17px; font-weight: 500; letter-spacing: 0; margin: 14px 0 0 8px; color: var(--muted); }
+  .ah-class { display: inline-flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 600; letter-spacing: -.01em; text-transform: capitalize; }
+  .ah-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--pc, #74add1); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc, #74add1) 30%, transparent); }
+  .ah-line { font-size: 15.5px; margin-top: 4px; } .ah-range { font-size: 14px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .acards { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; margin-top: 14px; }
+  .acard-hours { grid-column: 1 / -1; }
+  .acard { background: var(--card); border-radius: 20px; padding: 14px 16px 12px; box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06); }
+  :root[data-theme="dark"] .acard { box-shadow: none; border: 1px solid var(--line); }
+  .acard-h { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); padding-bottom: 9px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+  .acard .place-text { margin: 8px 0 4px; font-size: 15px; line-height: 1.5; }
+  .days { display: block; }
+  .drow { display: grid; grid-template-columns: minmax(78px, 1.1fr) 20px 34px 3fr 34px; align-items: center; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: 16px; cursor: pointer; border-radius: 8px; }
+  .drow:last-child { border-bottom: 0; } .drow:hover { background: var(--bg-soft); }
+  .dname { font-weight: 600; white-space: nowrap; } .ddot { width: 12px; height: 12px; border-radius: 50%; justify-self: center; }
+  .dmin { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; } .dmax { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .dbar { position: relative; height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--muted) 22%, transparent); }
+  .dbar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; min-width: 6px; }
+  .strip { gap: 8px; } .sitem { min-width: 58px; border-radius: 14px; background: var(--bg-soft); border: 1px solid transparent; padding: 8px 4px; }
+  .sitem.on { background: color-mix(in srgb, var(--blue) 12%, var(--card)); border-color: color-mix(in srgb, var(--blue) 45%, transparent); }
+  .sitem .v { font-size: 15px; }
+  .stripwrap::after { background: linear-gradient(90deg, rgba(255,255,255,0), var(--card)); }
+  .mapcard { border: 0; border-radius: 22px; padding: 14px; box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06); }
+  :root[data-theme="dark"] .mapcard { box-shadow: none; border: 1px solid var(--line); }
+  .otso-canvas { border: 0; border-radius: 14px; }
+  #fields.layers { display: inline-flex; flex-wrap: nowrap; gap: 2px; padding: 3px; border-radius: 11px; background: var(--bg-soft); border: 1px solid var(--line); }
+  #fields.layers button { border: 0; background: transparent; color: var(--ink); border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 500; min-height: 0; }
+  #fields.layers button.on { background: var(--card); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(16,24,40,.14), 0 1px 1px rgba(16,24,40,.06); }
+  :root[data-theme="dark"] #fields.layers button.on { background: #2b3847; color: var(--ink); }
+  .mapbar select { border-radius: 10px; background: var(--bg-soft); border: 1px solid var(--line); }
+  .tl { border: 0; background: var(--bg-soft); border-radius: 12px; } .tl.day0 { border-left: 0; box-shadow: inset 3px 0 0 color-mix(in srgb, var(--blue) 35%, transparent); }
+  .tl.on { background: var(--blue); box-shadow: none; }
+  .tlwrap::after { background: linear-gradient(90deg, rgba(255,255,255,0), var(--card)); }
+  .pin { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; border: 3px solid var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,.35); pointer-events: none; z-index: 3; }
+  .pin::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--ink); opacity: 0; animation: pinpulse 2.2s ease-out infinite; }
+  @keyframes pinpulse { 0% { transform: scale(.4); opacity: .55; } 100% { transform: scale(1.8); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .pin::after { animation: none; } }
+  .cbar canvas { border: 0; border-radius: 4px; height: 12px; }
+  @media (max-width: 760px) { .acards { grid-template-columns: 1fr; } .ah-value { font-size: 92px; } .ah-place { font-size: 27px; } }
+  @media (max-width: 600px) { .mapcard { padding: 10px; border-radius: 20px; } #fields.layers { width: 100%; } #fields.layers button { flex: 1; padding: 8px 6px; } .drow { font-size: 15.5px; gap: 8px; } }
+  /* app mode: a page that belongs to the place */
+  body.app { background: linear-gradient(180deg, color-mix(in srgb, var(--pc, var(--blue)) 16%, var(--bg)) 0, var(--bg) 640px) no-repeat, var(--bg); }
+  body.app .hero { display: none; } body.app section.band, body.app section.band-soft { background: transparent; border: 0; }
+  body.app #map { padding-top: 10px; } body.app .mapbar #day { display: none; }
+  body.app .air-hero { background: transparent; box-shadow: none; padding: 18px 8px 12px; }
+  body.app .ah-value { font-size: 112px; }
+  body.app .topbar { background: color-mix(in srgb, var(--bg) 78%, transparent); border-bottom-color: transparent; }
+  .app-meta { display: none; } body.app .app-meta { display: block; text-align: center; font-size: 12px; color: var(--muted); margin: 6px 0 2px; }
 </style>
 </head>
 <body>
@@ -266,6 +331,31 @@
       </div>
       <p class="small city-note">Any city, town or village: 34,000 places above 15,000 inhabitants answer instantly (<a href="https://www.geonames.org/">GeoNames</a>, CC BY 4.0), the others come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> as you type (© OpenStreetMap contributors). You can also click the map or use your position. The forecast is for the 0.4° cell (about 40 km) that contains the place.</p>
     </div>
+    <div class="welcome" id="welcome" hidden>
+      <div class="welcome-ico">📍</div>
+      <div class="welcome-t">Where are you?</div>
+      <p>Otso shows the forecast for the place you are, and keeps it for next time. Your position stays on this device.</p>
+      <div class="welcome-b"><button type="button" class="btn btn-primary" id="welcome-geo">Use my location</button><button type="button" class="btn btn-ghost" id="welcome-type">Type a city</button></div>
+    </div>
+    <div class="point" id="point" hidden>
+      <div class="air-hero">
+        <div class="ah-place" id="pt-title">Selected place</div>
+        <div class="ah-sub" id="pt-sub"></div>
+        <div class="ah-value"><span id="pt-big">—</span><span class="ah-unit">µg/m³</span></div>
+        <div class="ah-class"><span class="ah-dot"></span><span id="pt-pill">—</span></div>
+        <div class="ah-line" id="pt-when"></div>
+        <div class="ah-range" id="pt-range"></div>
+      </div>
+      <div class="acards">
+        <div class="acard acard-days"><div class="acard-h"><span>📅</span>5-day forecast</div><div class="days" id="pt-days"></div></div>
+        <div class="acard acard-advice"><div class="acard-h"><span>💬</span>What it means</div><p class="place-text" id="pt-text"></p></div>
+        <div class="acard acard-hours"><div class="acard-h"><span>🕒</span>Every 12 hours</div>
+          <div class="stripwrap"><div class="strip" id="pt-strip" aria-label="The ten leads"></div></div>
+          <svg class="series" id="series" viewBox="0 0 560 150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Forecast at the selected place"></svg>
+          <p class="small place-foot">Line: ensemble mean · band: 10–90 % of the 8 members · dashed: 25 µg m⁻³. A 0.4° cell (about 40 km): a city average, not a street.</p>
+        </div>
+      </div>
+    </div>
     <div class="mapcard">
       <div class="offline" id="offline" hidden>You are offline: this is the last forecast stored on this device.</div>
       <div class="mapbar">
@@ -288,6 +378,7 @@
       <div class="mapwrap">
         <canvas id="map-canvas" class="otso-canvas" width="1200" height="480" aria-label="Otso PM2.5 forecast map"></canvas>
         <div class="tip" id="tip"></div>
+        <div class="pin" id="pin" hidden></div>
         <div class="overlay" id="overlay"><span>Loading the forecast…</span></div>
       </div>
       <div class="tlwrap"><div class="timeline" id="timeline" aria-label="Forecast time"></div></div>
@@ -301,20 +392,6 @@
       </div>
       <p class="help" id="help">Ensemble mean of 8 members, 0.4° grid, instantaneous value at the valid time. Ocean is white: Otso forecasts over land.</p>
       <p class="small tznote" id="tznote"></p>
-      <div class="welcome" id="welcome" hidden>
-        <div class="welcome-ico">📍</div>
-        <div><b>Where are you?</b><p>Otso can show the forecast for the place you are, and keep it for next time. Your position stays on this device; nothing is sent to us.</p>
-          <div class="cta" style="margin:10px 0 0"><button type="button" class="btn btn-primary" id="welcome-geo">Use my location</button><button type="button" class="btn btn-ghost" id="welcome-type">Type a city</button></div></div>
-      </div>
-      <div class="point" id="point" hidden>
-        <div class="place">
-          <div class="place-head"><div><div class="place-name" id="pt-title">Selected place</div><div class="place-sub" id="pt-sub"></div></div><span class="place-pill" id="pt-pill">—</span></div>
-          <div class="place-now"><span class="place-big" id="pt-big">—</span><span class="place-unit">µg m⁻³<br /><span class="place-when" id="pt-when">tomorrow 00 UTC</span></span><span class="place-range" id="pt-range"></span></div>
-          <p class="place-text" id="pt-text">Click a place on the map.</p>
-          <div class="stripwrap"><div class="strip" id="pt-strip" aria-label="The ten leads"></div></div>
-          <svg class="series" id="series" viewBox="0 0 560 150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Forecast at the selected place"></svg>
-          <p class="small place-foot">Line: ensemble mean · band: 10–90 % of the members · dashed: 25 µg m⁻³. Values are for a 0.4° cell (about 40 km): a city average, not a street.</p>
-        </div>
       </div>
     </div>
   </div>
@@ -444,9 +521,17 @@
   const fmt = (x) => x >= 100 ? x.toFixed(0) : x >= 10 ? x.toFixed(0) : x.toFixed(1);
   const LUT = {}; (() => {                                                                 // value byte -> colour, for both kinds
   })();
+  const PM_ANCH = (() => { const b = PM_BOUNDS.concat([400]); return PMC.map((c, i) => [(Math.log10(Math.max(b[i], 1)) + Math.log10(b[i + 1])) / 2, c]); })();
+  function ramp(anch, l) {                                                               // continuous colour between the class anchors
+    if (l <= anch[0][0]) return anch[0][1]; const n = anch.length; if (l >= anch[n - 1][0]) return anch[n - 1][1];
+    for (let i = 1; i < n; i++) if (l < anch[i][0]) { const t = (l - anch[i - 1][0]) / (anch[i][0] - anch[i - 1][0]), a = anch[i - 1][1], b = anch[i][1]; return [a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]), a[2] + t * (b[2] - a[2])]; }
+  }
+  const PROB_ANCH = PRC.map((c, i) => [5 + 10 * i, c]);
+  const rampPm = (x) => ramp(PM_ANCH, Math.log10(Math.max(x, 0.1)));
+  const hexOf = (c) => "#" + c.map((u) => Math.round(u).toString(16).padStart(2, "0")).join("");
   function buildLut() {
-    LUT.pm = new Uint8Array(256 * 3); for (let v = 1; v < 256; v++) { const c = PMC[pmClass(dec(v))]; LUT.pm.set(c, 3 * v); }
-    LUT.prob = new Uint8Array(256 * 3); for (let v = 0; v < 251; v++) { const c = PRC[Math.min(9, Math.floor(probOf(v) / 10))]; LUT.prob.set(c, 3 * v); }
+    LUT.pm = new Uint8Array(256 * 3); for (let v = 1; v < 256; v++) LUT.pm.set(rampPm(dec(v)).map(Math.round), 3 * v);
+    LUT.prob = new Uint8Array(256 * 3); for (let v = 0; v < 251; v++) LUT.prob.set(ramp(PROB_ANCH, probOf(v)).map(Math.round), 3 * v);
   }
   buildLut();
   function validTime(day, lead) { const t = new Date(day + "T00:00:00Z"); t.setUTCHours(t.getUTCHours() + 12 * (lead + 1)); return t; }
@@ -481,42 +566,70 @@
     W = Math.round(b.width * dpr); H = Math.round(Math.max(0.28, Math.min(0.75, 1 / Math.max(asp, 1.2))) * W);
     cv.width = W; cv.height = H; cv.style.height = (H / dpr) + "px"; img = ctx.createImageData(W, H); draw();
   }
-  function draw() {
+  let LABELS = null, fullTimer = null;
+  function draw(fast) {
     if (!cur) return;
     const [l0, l1, a0, a1] = state.view, lut = state.field === "prob" ? LUT.prob : LUT.pm, isOcean = state.field === "prob" ? isOceanProb : isOceanPm;
     const d = img.data; const kx = (l1 - l0) / W, ky = (a1 - a0) / H; const dark = isDark(); const SEA = dark ? [27, 38, 52] : [255, 255, 255], OUT = dark ? [15, 23, 32] : [246, 248, 250];
+    const J0 = new Int32Array(W), J1 = new Int32Array(W), TX = new Float32Array(W);              // columns: grid nodes on both sides
+    for (let x = 0; x < W; x++) { let lon = l0 + (x + 0.5) * kx; lon = ((lon + 180) % 360 + 360) % 360; const fx = lon / DLON; const j = Math.floor(fx); J0[x] = j % NLON; J1[x] = (j + 1) % NLON; TX[x] = fx - j; }
     for (let y = 0; y < H; y++) {
-      const lat = a1 - (y + 0.5) * ky; const r = Math.floor((LAT0 - lat) / DLAT); const rowOk = r >= 0 && r < NLAT;
+      const fy = (LAT0 - (a1 - (y + 0.5) * ky)) / DLAT;
+      if (fy < -0.5 || fy > NLAT - 0.5) { for (let x = 0; x < W; x++) { const o = 4 * (y * W + x); d[o] = OUT[0]; d[o + 1] = OUT[1]; d[o + 2] = OUT[2]; d[o + 3] = 255; } continue; }
+      const i0 = Math.max(0, Math.min(NLAT - 2, Math.floor(fy))), ty = Math.max(0, Math.min(1, fy - i0)), b0 = i0 * NLON, b1 = b0 + NLON, bn = ty < 0.5 ? b0 : b1;
       for (let x = 0; x < W; x++) {
-        let lon = l0 + (x + 0.5) * kx; lon = ((lon + 180) % 360 + 360) % 360 - 180; const c = Math.floor((lon - LON0) / DLON);
-        const o = 4 * (y * W + x);
-        if (!rowOk) { d[o] = OUT[0]; d[o + 1] = OUT[1]; d[o + 2] = OUT[2]; d[o + 3] = 255; continue; }
-        const v = cur[r * NLON + c];
-        if (isOcean(v)) { d[o] = SEA[0]; d[o + 1] = SEA[1]; d[o + 2] = SEA[2]; d[o + 3] = 255; continue; }
+        const o = 4 * (y * W + x), j0 = J0[x], j1 = J1[x], tx = TX[x];
+        let v;
+        if (fast) {                                                                        // while dragging: the nearest node
+          v = cur[bn + (tx < 0.5 ? j0 : j1)];
+          if (isOcean(v)) { d[o] = SEA[0]; d[o + 1] = SEA[1]; d[o + 2] = SEA[2]; d[o + 3] = 255; continue; }
+        } else {                                                                           // bilinear: land where the land fraction is >= 1/2 (a smooth coast), log PM2.5 averaged over the land nodes
+          const v00 = cur[b0 + j0], v01 = cur[b0 + j1], v10 = cur[b1 + j0], v11 = cur[b1 + j1];
+          const w00 = isOcean(v00) ? 0 : (1 - tx) * (1 - ty), w01 = isOcean(v01) ? 0 : tx * (1 - ty), w10 = isOcean(v10) ? 0 : (1 - tx) * ty, w11 = isOcean(v11) ? 0 : tx * ty;
+          const ws = w00 + w01 + w10 + w11;
+          if (ws < 0.5) { d[o] = SEA[0]; d[o + 1] = SEA[1]; d[o + 2] = SEA[2]; d[o + 3] = 255; continue; }
+          v = Math.round((w00 * v00 + w01 * v01 + w10 * v10 + w11 * v11) / ws);
+        }
         d[o] = lut[3 * v]; d[o + 1] = lut[3 * v + 1]; d[o + 2] = lut[3 * v + 2]; d[o + 3] = 255;
       }
     }
     ctx.putImageData(img, 0, 0);
+    if (fast) { clearTimeout(fullTimer); fullTimer = setTimeout(() => draw(false), 160); }
     if (state.lines) {
       const X = (lon) => (lon - l0) / (l1 - l0) * W, Y = (lat) => (a1 - lat) / (a1 - a0) * H;
       const strokeLines = (lines, color, w) => { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath();
         for (const ln of lines) { let pen = false; for (let i = 0; i < ln.length; i++) { const x = X(ln[i][0]), y = Y(ln[i][1]); if (i && Math.abs(ln[i][0] - ln[i - 1][0]) > 180) pen = false; if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y); } } ctx.stroke(); };
-      const zoom = 360 / (l1 - l0);
-      strokeLines(state.lines.borders, dark ? "rgba(230,237,243,0.28)" : "rgba(60,70,80,0.35)", Math.max(0.5, 0.4 * Math.sqrt(zoom)));
-      strokeLines(state.lines.coast, dark ? "rgba(230,237,243,0.75)" : "rgba(28,37,48,0.75)", Math.max(0.7, 0.6 * Math.sqrt(zoom)));
+      const zoom = 360 / (l1 - l0), dpr = W / cv.getBoundingClientRect().width || 1;
+      if (zoom >= 3 && !state.linesHi && !state.linesHiLoading) { state.linesHiLoading = true; fetch("lines_hi.json").then((r) => r.json()).then((j) => { state.linesHi = j; draw(); }).catch(() => {}); }
+      const L = zoom >= 3 && state.linesHi ? state.linesHi : state.lines;
+      strokeLines(L.borders, dark ? "rgba(230,237,243,0.30)" : "rgba(40,50,60,0.30)", dpr * Math.max(0.5, Math.min(1.1, 0.35 * Math.sqrt(zoom))));
+      strokeLines(L.coast, dark ? "rgba(230,237,243,0.70)" : "rgba(28,37,48,0.62)", dpr * Math.max(0.6, Math.min(1.3, 0.45 * Math.sqrt(zoom))));
+      if (LABELS) {                                                                        // city names, by population, without overlaps
+        const thr = 9000 / (zoom * zoom), maxN = Math.max(3, Math.round(W * H / (dpr * dpr) / 15000)), boxes = [];
+        ctx.font = `600 ${Math.round(11.5 * dpr)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`; ctx.textBaseline = "middle"; ctx.lineJoin = "round";
+        for (const [nm, la, lo, pop] of LABELS) {
+          if (pop < thr || boxes.length >= maxN) break;
+          if (la < a0 || la > a1 || lo < l0 || lo > l1) continue;
+          const x = X(lo), y = Y(la), w = ctx.measureText(nm).width, bx = [x - 4 * dpr, y - 8 * dpr, x + 7 * dpr + w, y + 8 * dpr];
+          if (bx[2] > W - 2 || bx[1] < 2 || bx[3] > H - 2 || boxes.some((q) => bx[0] < q[2] && bx[2] > q[0] && bx[1] < q[3] && bx[3] > q[1])) continue;
+          boxes.push(bx);
+          ctx.beginPath(); ctx.arc(x, y, 2.6 * dpr, 0, 2 * Math.PI); ctx.fillStyle = dark ? "#e6edf3" : "#1c2530"; ctx.fill();
+          ctx.lineWidth = 3.2 * dpr; ctx.strokeStyle = dark ? "rgba(15,23,32,0.85)" : "rgba(255,255,255,0.9)"; ctx.strokeText(nm, x + 6 * dpr, y); ctx.fillText(nm, x + 6 * dpr, y);
+        }
+      }
     }
-    if (state.pick) { const X = (state.pick.lon - l0) / (l1 - l0) * W, Y = (a1 - state.pick.lat) / (a1 - a0) * H;
-      ctx.beginPath(); ctx.arc(X, Y, 7, 0, 2 * Math.PI); ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = "#1c2530"; ctx.stroke();
-      ctx.beginPath(); ctx.arc(X, Y, 2.5, 0, 2 * Math.PI); ctx.fillStyle = "#1c2530"; ctx.fill(); }
+    const pin = document.getElementById("pin");
+    if (state.pick) { const X = (state.pick.lon - l0) / (l1 - l0), Y = (a1 - state.pick.lat) / (a1 - a0); pin.hidden = !(X >= 0 && X <= 1 && Y >= 0 && Y <= 1); pin.style.left = (100 * X) + "%"; pin.style.top = (100 * Y) + "%"; }
+    else pin.hidden = true;
   }
   function drawCbar() {
     const c = document.getElementById("cbar"), x = c.getContext("2d"); x.clearRect(0, 0, c.width, c.height); x.font = "11px -apple-system, Helvetica, Arial, sans-serif"; x.fillStyle = isDark() ? "#9aa7b4" : "#5b6977"; x.textAlign = "center";
     const tc = isDark() ? "#9aa7b4" : "#5b6977";
-    if (state.field === "prob") { const n = 10, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PROB_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = tc;
+    if (state.field === "prob") { for (let px = 0; px < c.width; px++) { x.fillStyle = hexOf(ramp(PROB_ANCH, 100 * (px + 0.5) / c.width)); x.fillRect(px, 0, 1, 14); } const n = 10, w = c.width / n; x.fillStyle = tc;
       for (let i = 0; i <= n; i += 2) x.fillText(i * 10 + (i === n ? " %" : ""), Math.min(c.width - 14, Math.max(10, i * w)), 26);
       document.getElementById("cbar-lab").textContent = "members above 25 µg m⁻³"; }
-    else { const n = PM_COLORS.length, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PM_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = tc;
-      for (let i = 1; i < n; i++) x.fillText(String(PM_BOUNDS[i]), i * w, 26);
+    else { const L0 = 0, L1 = Math.log10(400); for (let px = 0; px < c.width; px++) { x.fillStyle = hexOf(ramp(PM_ANCH, L0 + (L1 - L0) * (px + 0.5) / c.width)); x.fillRect(px, 0, 1, 14); } x.fillStyle = tc;
+      for (const t of [5, 10, 25, 50, 100, 250]) x.fillText(String(t), c.width * (Math.log10(t) - L0) / (L1 - L0), 26);
       document.getElementById("cbar-lab").innerHTML = "PM<sub>2.5</sub> (µg m⁻³)"; }
   }
   const dayNum = (t) => dayWord(t);
@@ -540,7 +653,7 @@
   function cellAt(ev) {
     const b = cv.getBoundingClientRect(); const [l0, l1, a0, a1] = state.view;
     let lon = l0 + (ev.clientX - b.left) / b.width * (l1 - l0); const lat = a1 - (ev.clientY - b.top) / b.height * (a1 - a0);
-    lon = ((lon + 180) % 360 + 360) % 360 - 180; const r = Math.floor((LAT0 - lat) / DLAT), c = Math.floor((lon - LON0) / DLON);
+    lon = ((lon + 180) % 360 + 360) % 360 - 180; const r = Math.round((LAT0 - lat) / DLAT), c = Math.round((lon - LON0) / DLON) % NLON;
     return { lat, lon, r, c, ok: r >= 0 && r < NLAT };
   }
   const coord = (lat, lon) => Math.abs(lat).toFixed(1) + "°" + (lat >= 0 ? "N" : "S") + ", " + Math.abs(lon).toFixed(1) + "°" + (lon >= 0 ? "E" : "W");
@@ -555,14 +668,16 @@
   async function pick(lat, lon, name) {
     state.pick = { lat, lon, name }; draw();
     history.replaceState(null, "", "#lat=" + lat.toFixed(2) + "&lon=" + lon.toFixed(2) + (name ? "&name=" + encodeURIComponent(name) : ""));
-    const r = Math.floor((LAT0 - lat) / DLAT), c = Math.floor(((((lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON);
+    const r = Math.round((LAT0 - lat) / DLAT), c = Math.round(((((lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON) % NLON;
     if (r < 0 || r >= NLAT) return;
     const day = state.day; const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k)));
     const q = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "p90", k)));
     const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
-    const i = r * NLON + c; if (isOceanPm(m[0][i])) { document.getElementById("pt-text").textContent = "No land there: Otso forecasts over land. Choose a place on land."; document.getElementById("point").hidden = false;
-      document.getElementById("pt-title").textContent = name || coord(lat, lon); document.getElementById("pt-sub").textContent = ""; document.getElementById("pt-pill").textContent = "sea"; document.getElementById("pt-big").textContent = "—"; document.getElementById("pt-big").style.color = ""; document.getElementById("pt-range").textContent = ""; document.getElementById("pt-strip").innerHTML = ""; document.getElementById("series").innerHTML = ""; state.place = null; return; }
-    const mean = m.map((a) => dec(a[i])), p90 = q.map((a) => dec(a[i])), prob = pr.map((a) => probOf(a[i]));
+    let nodes = []; for (const R of [1, 2]) { if (nodes.length) break; for (let dr = -R; dr <= R; dr++) for (let dc = -R; dc <= R; dc++) { const rr = r + dr; if (rr < 0 || rr >= NLAT) continue; const ii = rr * NLON + (c + dc + NLON) % NLON; if (!isOceanPm(m[0][ii])) nodes.push(ii); } }
+    if (!nodes.length) { document.getElementById("pt-text").textContent = "No land there: Otso forecasts over land. Choose a place on land."; document.getElementById("point").hidden = false;
+      document.getElementById("pt-title").textContent = name || coord(lat, lon); document.getElementById("pt-sub").textContent = coord(lat, lon); document.getElementById("pt-pill").textContent = "sea"; document.getElementById("pt-big").textContent = "—"; document.getElementById("pt-when").textContent = ""; document.getElementById("pt-range").textContent = ""; document.getElementById("pt-days").innerHTML = ""; document.getElementById("pt-strip").innerHTML = ""; document.getElementById("series").innerHTML = ""; state.place = null; return; }
+    const avg = (a, f) => nodes.reduce((t, ii) => t + f(a[ii]), 0) / nodes.length;
+    const mean = m.map((a) => avg(a, dec)), p90 = q.map((a) => avg(a, dec)), prob = pr.map((a) => Math.round(avg(a, probOf)));
     state.place = { lat, lon, name, day, mean, p90, prob }; renderPlace(state.place);
   }
   const dayLabel = (t) => dayWord(t), hourLabel = (t) => t.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit" });
@@ -573,22 +688,37 @@
     if (!key) return ""; const c = LIVE_SC.summary.cities_24h[key];
     return ` <span class='small'>Over the last ${c.n} verified days, Otso's error here at +24 h was ±${c.mae_otso} µg m⁻³ on average (observed level ${c.mean_truth}).</span>`;
   }
+  const ADVICE = [[15, "Good air. Enjoy your usual outdoor activities."], [25, "Fair air. Usual activities are fine; very sensitive people may notice it."],
+    [50, "Moderate pollution. Sensitive people should consider reducing long or intense efforts outdoors."],
+    [100, "Poor air. Sensitive people should limit efforts outdoors; everyone else should consider reducing them."], [1e9, "Very poor air. Everyone should limit efforts outdoors."]];
+  const adviceOf = (x) => ADVICE.find((a) => x < a[0])[1];
+  function whenPhrase(t) { const w = dayLabel(t); return (w === "Today" || w === "Tomorrow" ? w.toLowerCase() : "on " + w) + " at " + hourLabel(t); }
   function renderPlace(P) {
-    const { lat, lon, name, day, mean, p90, prob } = P; const el = document.getElementById("point"); el.hidden = false;
-    const k1 = 1, t1 = mean[k1], c1 = pmClass(t1), imax = mean.indexOf(Math.max(...mean));
-    const pc = pmHex(t1); el.querySelector(".place").style.setProperty("--pc", pc); el.querySelector(".place").style.setProperty("--pct", lightText(pc) ? "#1c2530" : "#fff");
-    document.getElementById("pt-title").textContent = name || coord(lat, lon);
-    document.getElementById("pt-sub").textContent = (name ? coord(lat, lon) + " · " : "") + "issued " + day + " 00 UTC · " + (state.idx[day] ? state.idx[day].members : 8) + " members";
-    document.getElementById("pt-pill").textContent = PM_NAMES[c1];
-    document.getElementById("pt-big").textContent = fmt(t1); document.getElementById("pt-big").style.color = pc;
-    document.getElementById("pt-when").textContent = dayLabel(validTime(day, k1)).toLowerCase() + " " + hourLabel(validTime(day, k1)) + (TZ === "UTC" ? " UTC" : "");
-    document.getElementById("pt-range").innerHTML = "10–90 % of members<br />" + fmt(Math.max(0, 2 * mean[k1] - p90[k1])) + " – " + fmt(p90[k1]) + " · P(&gt;25) " + prob[k1] + " %";
-    const peak = imax === k1 ? "" : " The peak of the five days is <strong>" + fmt(mean[imax]) + "</strong> (" + PM_NAMES[pmClass(mean[imax])] + ") " + dayLabel(validTime(day, imax)).replace(/^([A-Z])/, (c) => c.toLowerCase()) + " at " + hourLabel(validTime(day, imax)) + ".";
-    document.getElementById("pt-text").innerHTML = (c1 <= 3 ? "Clean to fair air tomorrow." : c1 <= 5 ? "Moderate pollution tomorrow." : c1 <= 7 ? "Poor air tomorrow: sensitive people should limit long efforts outdoors." : "Very poor air tomorrow: everyone should limit efforts outdoors.") + peak +
-      " <span class='small'>Research forecast, not an alert.</span>" + cityErrNote(name);
+    const { lat, lon, name, day, mean, p90, prob } = P; const el = document.getElementById("point"); el.hidden = false; document.getElementById("welcome").hidden = true;
+    const now = Date.now(); let kNow = 9; for (let k = 9; k >= 0; k--) if (validTime(day, k) >= now - 3 * 3600e3) kNow = k;   // the current or next valid time
+    const v0 = mean[kNow], c0 = pmClass(v0), pc = pmHex(v0), t0 = validTime(day, kNow), isNow = Math.abs(t0 - now) < 1.5 * 3600e3;
+    el.style.setProperty("--pc", pc); document.body.style.setProperty("--pc", pc);
+    const nm = name || coord(lat, lon), parts = nm.split(","), city = parts[0].trim(), rest = parts.slice(1).join(",").trim();
+    document.getElementById("pt-title").textContent = city;
+    document.getElementById("pt-sub").textContent = (rest ? rest + " · " : "") + coord(lat, lon);
+    document.getElementById("pt-big").textContent = fmt(v0);
+    document.getElementById("pt-pill").textContent = PM_NAMES[c0];
+    document.getElementById("pt-when").textContent = (isNow ? "Now" : dayLabel(t0)) + " · " + hourLabel(t0);
+    const n24 = mean.slice(kNow, kNow + 2), hi = Math.max(...n24), lo = Math.min(...n24);
+    document.getElementById("pt-range").textContent = "Next 24 h  ·  max " + fmt(hi) + "  ·  min " + fmt(lo);
+    const imax = mean.indexOf(Math.max(...mean)), tmax = validTime(day, imax);
+    document.getElementById("pt-text").innerHTML = adviceOf(v0) + (imax > kNow + 1 ? " The highest value of the five days, <strong>" + fmt(mean[imax]) + "</strong> (" + PM_NAMES[pmClass(mean[imax])] + "), is expected " + whenPhrase(tmax) + "." : "") +
+      "<br><span class='small'>Research forecast, not an official alert.</span>" + cityErrNote(name);
+    // 5-day list: the valid times grouped by local day, a range bar on a common log scale
+    const days = []; for (let k = 0; k < 10; k++) { const t = validTime(day, k), key = t.toDateString(); let g = days.find((q) => q.key === key); if (!g) days.push(g = { key, t, ks: [] }); g.ks.push(k); }
+    const all = mean.filter((v) => v > 0), gl = Math.log10(Math.max(Math.min(...all), 0.5)), gh = Math.log10(Math.max(...all) * 1.05), pos = (v) => gh > gl ? 100 * (Math.log10(Math.max(v, 0.5)) - gl) / (gh - gl) : 50;
+    document.getElementById("pt-days").innerHTML = days.map((g) => { const vs = g.ks.map((k) => mean[k]), mx = Math.max(...vs), mn = Math.min(...vs), kmx = g.ks[vs.indexOf(mx)];
+      return `<div class="drow" data-k="${kmx}"><span class="dname">${dayLabel(g.t)}</span><span class="ddot" style="background:${pmHex(mx)}"></span><span class="dmin">${fmt(mn)}</span>` +
+        `<span class="dbar"><i style="left:${pos(mn).toFixed(1)}%;right:${(100 - pos(mx)).toFixed(1)}%;background:linear-gradient(90deg, ${hexOf(rampPm(mn))}, ${hexOf(rampPm(mx))})"></i></span><span class="dmax">${fmt(mx)}</span></div>`; }).join("");
     document.getElementById("pt-strip").innerHTML = mean.map((v, k) => { const t = validTime(day, k); return `<div class="sitem${k === state.lead ? " on" : ""}" data-k="${k}"><div class="d">${dayLabel(t)}</div><div class="h">${hourLabel(t)}</div><div class="dot" style="background:${pmHex(v)}"></div><div class="v">${fmt(v)}</div></div>`; }).join("");
     series(mean, p90, prob);
   }
+  document.getElementById("pt-days").addEventListener("click", (ev) => { const r = ev.target.closest(".drow"); if (!r) return; state.lead = +r.dataset.k; document.getElementById("lead").value = state.lead; show(); });
   document.getElementById("pt-strip").addEventListener("click", (ev) => { const it = ev.target.closest(".sitem"); if (!it) return; state.lead = +it.dataset.k; document.getElementById("lead").value = state.lead; show(); for (const x of document.querySelectorAll(".sitem")) x.classList.toggle("on", x === it); });
   function series(mean, p90, prob) {
     const s = document.getElementById("series"); const Wd = 560, Hd = 150, L = 34, R = 8, T = 10, B = 26; const top = Math.max(30, Math.ceil(Math.max(...p90) * 1.15 / 10) * 10);
@@ -621,7 +751,7 @@
       if (Math.abs(ev.clientX - drag.x) + Math.abs(ev.clientY - drag.y) > 4) drag.moved = true;
       let [l0, l1, a0, a1] = drag.view; const w = l1 - l0; if (w < 360) { l0 -= dx; l1 -= dx; if (l0 < -180) { l1 += -180 - l0; l0 = -180; } if (l1 > 180) { l0 -= l1 - 180; l1 = 180; } }
       a0 += dy; a1 += dy; if (a1 > 84) { a0 -= a1 - 84; a1 = 84; } if (a0 < -60) { a1 += -60 - a0; a0 = -60; }
-      state.view = [l0, l1, a0, a1]; draw(); tip.style.display = "none"; return; }
+      state.view = [l0, l1, a0, a1]; draw(true); tip.style.display = "none"; return; }
     if (ev.pointerType === "mouse") hover(ev);
   });
   cv.addEventListener("pointerup", (ev) => { if (drag && !drag.moved) { const p = cellAt(ev); if (p.ok) pick(p.lat, p.lon); if (ev.pointerType !== "mouse") hover(ev); } drag = null; });
@@ -660,7 +790,7 @@
   // ---- cities
   let MY = []; try { MY = JSON.parse(localStorage.getItem("otso-mycities") || "[]"); } catch (e) {}
   async function cityRow(c) {                                                              // 3 x 3 cells around the place, from the layers of the shown day
-    const day = state.day; const r = Math.floor((LAT0 - c.lat) / DLAT), cc = Math.floor(((((c.lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON);
+    const day = state.day; const r = Math.round((LAT0 - c.lat) / DLAT), cc = Math.round(((((c.lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON) % NLON;
     const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k))); const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
     const mean = [], p = [];
     for (let k = 0; k < 10; k++) { let s1 = 0, s2 = 0, n = 0; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const rr = r + dr, c2 = (cc + dc + NLON) % NLON; if (rr < 0 || rr >= NLAT) continue; const v = m[k][rr * NLON + c2]; if (isOceanPm(v)) continue; s1 += dec(v); s2 += probOf(pr[k][rr * NLON + c2]) / 100; n++; }
@@ -754,9 +884,11 @@
     try {
       const [latest, lines] = await Promise.all([fetch(BASE + "latest.json", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error("latest.json " + r.status); return r.json(); }), fetch("lines.json").then((r) => r.json())]);
       state.lines = lines; state.days = latest.days.slice().reverse(); state.idx = {}; state.day = latest.latest;
+      fetch("labels.json").then((r) => r.json()).then((j) => { LABELS = j; draw(); }).catch(() => {});
       const sel = document.getElementById("day"); sel.innerHTML = state.days.map((d) => `<option value="${d}">${d === latest.latest ? "Latest: " : ""}${d}</option>`).join("");
       await loadDay(state.day); const ix = state.idx[state.day];
       const age = (Date.now() - new Date(state.day + "T00:00:00Z")) / 864e5;
+      if (document.getElementById("app-meta")) document.getElementById("app-meta").textContent = "Otso 1.1 · forecast of " + new Date(state.day + "T00:00:00Z").toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + " · research forecast, not an alert";
       document.getElementById("status-short").innerHTML = "<b>Forecast of " + new Date(state.day + "T00:00:00Z").toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + "</b> (00 UTC run) · published " + latest.updated.slice(11, 16) + " UTC · " + ix.members + " members";
       setStatus("<b>Forecast issued from the 00 UTC run of " + state.day + "</b>, published " + latest.updated.replace("T", " ") + " · " + ix.members + " members · leads +12 h to +120 h · inputs: CAMS analysis 00 UTC, ECMWF IFS 00 UTC (" + (ix.inputs.ifs_source || "").replace("https://", "") + "), GFAS " + (ix.inputs.gfas_version || "") + " fires of " + (ix.inputs.gfas_day || "") + " (injection height: <code>" + (ix.inputs.fire_injection_variable || "") + "</code>)." +
         (age > 1.5 ? " <span style='color:#8A5A00'>This forecast is " + Math.floor(age) + " days old: the daily run may have failed or be late.</span>" : ""), age <= 1.5);
@@ -771,7 +903,8 @@
       }
       document.getElementById("tznote").textContent = TZ === "UTC" ? "Times in UTC." : "Times are shown in your time zone (" + TZ.replace(/_/g, " ") + ").";
       links(); size(); await show(); await loadCities(state.day);
-      const m = location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
+      const qs = new URLSearchParams(location.search);                                   // a shared place: ?lat=..&lon=..&name=.. or the same in the hash
+      const m = qs.get("lat") && qs.get("lon") ? [null, qs.get("lat"), qs.get("lon"), qs.get("name") ? encodeURIComponent(qs.get("name")) : undefined] : location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
       let remembered = null; try { remembered = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
       if (m) { const nm = m[3] ? decodeURIComponent(m[3]) : null; if (nm) cq.value = nm; state.view = [+m[2] - 22, +m[2] + 22, +m[1] - 9, +m[1] + 9]; zoomAt(1, 0.5, 0.5); pick(+m[1], +m[2], nm); }
       else if (remembered && isFinite(remembered.lat)) { cq.value = remembered.name; state.view = [remembered.lon - 22, remembered.lon + 22, remembered.lat - 9, remembered.lat + 9]; zoomAt(1, 0.5, 0.5); pick(remembered.lat, remembered.lon, remembered.name);
@@ -798,6 +931,7 @@
   if (APP) {
     document.body.classList.add("app");
     document.querySelector("footer .wrap").insertBefore(document.getElementById("stats"), document.querySelector("footer .fine"));
+    const am = document.createElement("p"); am.className = "app-meta"; am.id = "app-meta"; document.querySelector(".air-hero").appendChild(am);
     const mapSec = document.querySelector("#map .wrap"), mapcard = document.querySelector(".mapcard"), point = document.getElementById("point");
     mapSec.insertBefore(document.getElementById("welcome"), mapcard); mapSec.insertBefore(point, mapcard);   // the welcome card and the selected place right under the search box
     document.title = "Otso 1.1 — PM2.5 forecast";
