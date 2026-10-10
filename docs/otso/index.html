@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Otso 1.1 — live PM2.5 forecast of the Foehn project (beta)</title>
 <meta name="description" content="Otso 1.1 runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles will be up to five days ahead. Research forecast, not an official alert." />
 <meta property="og:title" content="Otso 1.1 — live PM2.5 forecast (beta)" />
@@ -18,6 +18,21 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="stylesheet" href="../assets/style.css?v=20261010g" />
 <style>
+  :root { --card: #ffffff; --amber-bg: #FFF8E8; --amber-line: #F3D9A4; --amber-ink: #4a3b12; --amber: #D99A1E; --shadow: 0 8px 24px rgba(28,37,48,.12); color-scheme: light; }
+  :root[data-theme="dark"] { --bg: #0f1720; --bg-soft: #141d28; --card: #19232f; --ink: #e6edf3; --muted: #9aa7b4; --line: #27323e; --blue: #7fb0ff; --blue-dark: #5a8fe6; --blue-soft: #35507a; --pink: #ff6ea3;
+    --amber-bg: #2a2412; --amber-line: #5a4a1a; --amber-ink: #f3d9a4; --amber: #e0b04a; --shadow: 0 8px 24px rgba(0,0,0,.5); color-scheme: dark; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--ink); }
+  :root[data-theme="dark"] .topbar { background: rgba(15,23,32,.92); }
+  :root[data-theme="dark"] .btn-ghost, :root[data-theme="dark"] .layers button, :root[data-theme="dark"] .play, :root[data-theme="dark"] .zoombtns button, :root[data-theme="dark"] .ostabs button,
+  :root[data-theme="dark"] .mapbar select, :root[data-theme="dark"] .city-box input, :root[data-theme="dark"] .cities input, :root[data-theme="dark"] .city-list, :root[data-theme="dark"] .city-list li.more:hover { background: var(--card); color: var(--ink); border-color: var(--line); }
+  :root[data-theme="dark"] .layers button.on, :root[data-theme="dark"] .ostabs button.on { background: var(--blue); color: #0f1720; border-color: var(--blue); }
+  :root[data-theme="dark"] .btn-primary { background: var(--blue); color: #0f1720; border-color: var(--blue); } :root[data-theme="dark"] .btn-primary:hover { background: var(--blue-dark); }
+  :root[data-theme="dark"] .kbd { background: var(--bg-soft); } :root[data-theme="dark"] table.links td, :root[data-theme="dark"] table.ct td, :root[data-theme="dark"] table.ct th { border-color: var(--line); }
+  :root[data-theme="dark"] table.ct tr:hover td { background: var(--bg-soft); } :root[data-theme="dark"] .install-qr img { background: #fff; border-radius: 8px; padding: 6px; }
+  :root[data-theme="dark"] .pill-beta { background: #3a2f10; color: #f3d9a4; border-color: #5a4a1a; } :root[data-theme="dark"] .pill-live { background: #12301c; color: #9fe0b4; border-color: #1e5a30; }
+  :root[data-theme="dark"] .tip { background: rgba(230,237,243,.95); color: #0f1720; }
+  .theme-btn { width: 34px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); cursor: pointer; font-size: 15px; line-height: 1; margin-left: 12px; color: var(--ink); }
+  .theme-btn:hover { border-color: var(--blue); }
   [hidden] { display: none !important; }
   /* app mode (installed on the home screen, or ?source=pwa): no paperwork */
   body.app .hero .kicker, body.app .hero .lede, body.app .hero .cta, body.app .hero .tag, body.app .hero .disclaimer .long, body.app #install, body.app #about, body.app #data,
@@ -31,20 +46,24 @@
   body.app .nav { display: flex !important; } .full-site { display: none; } body.app .full-site { display: inline; font-size: 13px; }
   .disclaimer .short { display: none; } body.app .disclaimer .short { display: inline; }
   body.app .topbar-row { height: 48px; }
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: space-around; background: var(--card); border-top: 1px solid var(--line); padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); }
+  .tabbar a { flex: 1; text-align: center; font-size: 11px; color: var(--muted); text-decoration: none; } .tabbar a span { display: block; font-size: 20px; line-height: 1.1; }
+  body.app { padding-bottom: calc(64px + env(safe-area-inset-bottom)); } body.app .tabbar { display: flex !important; }
+  body.app .place-foot { display: none; }
   .otso-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
   .pill-beta { background: #FFF1D6; color: #8A5A00; border: 1px solid #F3D9A4; }
   .pill-live { background: #E6F4EA; color: #1E6B35; border: 1px solid #BFE3C9; }
   .pill-live::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2E9E57; margin-right: 6px; vertical-align: 1px; }
-  .disclaimer { background: #FFF8E8; border: 1px solid #F3D9A4; border-left: 4px solid #D99A1E; border-radius: var(--radius); padding: 12px 16px; font-size: 14px; margin: 18px 0 0; color: #4a3b12; }
+  .disclaimer { background: var(--amber-bg); border: 1px solid var(--amber-line); border-left: 4px solid var(--amber); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; margin: 18px 0 0; color: var(--amber-ink); }
   .status { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
   .status b { color: var(--ink); font-weight: 600; }
-  .mapcard { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
   .mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
   .mapbar .layers button { font-size: 13px; }
-  .mapbar select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: #fff; }
+  .mapbar select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: var(--card); color: var(--ink); }
   .mapwrap { position: relative; }
-  .otso-canvas { width: 100%; display: block; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; }
+  .otso-canvas { width: 100%; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--card); cursor: crosshair; touch-action: none; }
   .tip { position: absolute; pointer-events: none; background: rgba(28,37,48,.92); color: #fff; font-size: 12.5px; padding: 6px 9px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -130%); display: none; z-index: 5; }
   .tip b { font-size: 14px; }
   .mapfoot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
@@ -54,16 +73,27 @@
   .cbar canvas { height: 14px; width: 260px; border: 1px solid var(--line); border-radius: 3px; }
   .zoomhint { font-size: 12.5px; color: var(--muted); }
   .zoombtns { display: flex; gap: 6px; }
-  .zoombtns button { width: 32px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 15px; }
+  .zoombtns button { width: 32px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); cursor: pointer; font-size: 15px; }
   .zoombtns button:hover { border-color: var(--blue); color: var(--blue); }
-  .point { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; margin-top: 16px; align-items: start; }
-  .point .card { background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
-  .point h4 { margin: 0 0 6px; font-size: 14px; }
-  .point p { margin: 0; font-size: 13.5px; color: var(--muted); }
+  .point { margin-top: 16px; }
+  .place { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; border-left: 6px solid var(--pc, var(--blue)); }
+  .place-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .place-name { font-size: 18px; font-weight: 700; letter-spacing: -.01em; } .place-sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .place-pill { display: inline-block; padding: 4px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; white-space: nowrap; background: var(--pc, var(--blue)); color: var(--pct, #fff); }
+  .place-now { display: flex; align-items: baseline; gap: 10px; margin: 8px 0 2px; flex-wrap: wrap; }
+  .place-big { font-size: 48px; font-weight: 700; line-height: 1; letter-spacing: -.02em; }
+  .place-unit { font-size: 13px; color: var(--muted); line-height: 1.2; } .place-when { font-weight: 600; color: var(--ink); }
+  .place-range { font-size: 13px; color: var(--muted); margin-left: auto; text-align: right; }
+  .place-text { margin: 6px 0 10px; font-size: 14px; color: var(--ink); }
+  .strip { display: flex; gap: 6px; overflow-x: auto; padding: 6px 2px 8px; margin: 0 -2px 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+  .sitem { flex: 0 0 auto; min-width: 54px; text-align: center; padding: 8px 4px; border-radius: 10px; border: 1px solid transparent; background: var(--card); cursor: pointer; }
+  .sitem.on { border-color: var(--blue); } .sitem .d { font-size: 11px; color: var(--muted); } .sitem .h { font-size: 11px; color: var(--muted); }
+  .sitem .dot { width: 14px; height: 14px; border-radius: 50%; margin: 5px auto; border: 1px solid rgba(0,0,0,.15); } .sitem .v { font-size: 14px; font-weight: 700; }
   .series { width: 100%; height: 150px; display: block; }
-  .cities { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .place-foot { margin: 6px 0 0; }
+  .cities { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
   .cities-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
-  .cities input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; min-width: 220px; }
+  .cities input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; min-width: 220px; background: var(--card); color: var(--ink); }
   .tablewrap { overflow-x: auto; }
   table.ct { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   table.ct th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; cursor: pointer; user-select: none; }
@@ -84,21 +114,21 @@
   .logos img { height: 40px; width: auto; display: block; }
   .logos img.logo-amc { height: 52px; }
   .logos span { font-size: 13px; color: var(--muted); max-width: 520px; }
-  .city { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; }
+  .city { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; }
   .city-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .city-lab { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
   .city-box { position: relative; flex: 1; min-width: 240px; }
-  .city-box input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 16px; }
+  .city-box input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 16px; background: var(--card); color: var(--ink); }
   .city-box input:focus { outline: 2px solid var(--blue-soft); border-color: var(--blue); }
-  .city-list { position: absolute; left: 0; right: 0; top: 100%; margin: 4px 0 0; padding: 4px 0; list-style: none; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgba(28,37,48,.12); z-index: 30; max-height: 320px; overflow-y: auto; }
+  .city-list { position: absolute; left: 0; right: 0; top: 100%; margin: 4px 0 0; padding: 4px 0; list-style: none; background: var(--card); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); z-index: 30; max-height: 320px; overflow-y: auto; }
   .city-list li { padding: 8px 12px; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; gap: 10px; }
   .city-list li span { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
   .city-list li:hover, .city-list li.sel { background: var(--bg-soft); }
-  .city-list li.more { cursor: default; font-size: 12px; } .city-list li.more:hover { background: #fff; }
+  .city-list li.more { cursor: default; font-size: 12px; } .city-list li.more:hover { background: var(--card); }
   .city-geo { padding: 9px 14px; white-space: nowrap; }
   .city-note { margin: 8px 0 0; }
   @media (max-width: 480px) { .city-geo { width: 100%; text-align: center; } .city-box { min-width: 0; width: 100%; } }
-  .install { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .install { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
   .only-phone { display: none; }
   @media (max-width: 700px) { .only-desktop { display: none; } .only-phone { display: inline; } .install-qr img, .install-qr .small { display: none; } .install { grid-template-columns: 1fr; gap: 12px; padding: 14px; } .install-qr { order: 2; } #install-btn { width: 100%; } }
   .install-qr { text-align: center; }
@@ -106,7 +136,7 @@
   .install-qr .small { margin: 0 0 10px; }
   .install-steps { display: block; }
   .ostabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-  .ostabs button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 13.5px; cursor: pointer; }
+  .ostabs button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-size: 13.5px; cursor: pointer; }
   .ostabs button.on { background: var(--blue); color: #fff; border-color: var(--blue); }
   .kbd { display: inline-block; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; font-size: 12px; background: var(--bg-soft); }
   .istep b { display: block; margin-bottom: 6px; }
@@ -142,6 +172,7 @@
       <a href="../">← Foehn</a>
       <a href="?full=1" class="full-site">Full site</a>
     </nav>
+    <button type="button" class="theme-btn" id="theme" aria-label="Switch between light and dark mode" title="Light / dark">🌙</button>
   </div>
 </header>
 
@@ -233,15 +264,13 @@
       </div>
       <p class="help" id="help">Ensemble mean of 8 members, 0.4° grid, instantaneous value at the valid time. Ocean is white: Otso forecasts over land.</p>
       <div class="point" id="point" hidden>
-        <div class="card">
-          <h4 id="pt-title">Selected place</h4>
+        <div class="place">
+          <div class="place-head"><div><div class="place-name" id="pt-title">Selected place</div><div class="place-sub" id="pt-sub"></div></div><span class="place-pill" id="pt-pill">—</span></div>
+          <div class="place-now"><span class="place-big" id="pt-big">—</span><span class="place-unit">µg m⁻³<br /><span class="place-when" id="pt-when">tomorrow 00 UTC</span></span><span class="place-range" id="pt-range"></span></div>
+          <p class="place-text" id="pt-text">Click a place on the map.</p>
+          <div class="strip" id="pt-strip" aria-label="The ten leads"></div>
           <svg class="series" id="series" viewBox="0 0 560 150" preserveAspectRatio="none" role="img" aria-label="Forecast at the selected place"></svg>
-          <p class="small">Line: ensemble mean · band: 10–90 % of the members · dashed: 25 µg m⁻³</p>
-        </div>
-        <div class="card">
-          <h4>Reading it</h4>
-          <p id="pt-text">Click a place on the map.</p>
-          <p class="small" style="margin-top:8px">Values are for a 0.4° cell (about 40 km): a city average, not a street. The 1 km detail of Foehn is in the <a href="../#viewer">paper's viewer</a>.</p>
+          <p class="small place-foot">Line: ensemble mean · band: 10–90 % of the members · dashed: 25 µg m⁻³. Values are for a 0.4° cell (about 40 km): a city average, not a street.</p>
         </div>
       </div>
     </div>
@@ -307,6 +336,9 @@
 </section>
 
 </main>
+<nav class="tabbar" id="tabbar" hidden aria-label="App navigation">
+  <a href="#city"><span>🏙️</span>City</a><a href="#map"><span>🗺️</span>Map</a><a href="#cities"><span>📋</span>Cities</a><a href="?full=1#about"><span>ℹ️</span>About</a>
+</nav>
 <footer><div class="wrap">
   <div class="logos"><a href="https://www.lumi-supercomputer.eu/" title="LUMI supercomputer"><img src="../assets/lumi_logo.png" alt="LUMI" /></a><a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" /></a><a href="https://www.amc-lahti.fi/" title="Atmospheric Modelling Centre Lahti"><img src="../assets/amc_logo.png" alt="AMC-Lahti" class="logo-amc" /></a>
     <span>Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland, by the <strong>Atmospheric Modelling Centre Lahti</strong> (AMC-Lahti, University of Helsinki and LUT University).</span></div>
@@ -323,7 +355,7 @@
   const REGIONS = { world: [-180, 180, -60, 84], europe: [-12, 42, 34, 66], sasia: [60, 98, 5, 38], easia: [95, 145, 18, 50], seasia: [92, 130, -12, 24],
     mideast: [25, 65, 12, 42], africa: [-20, 52, -36, 38], namerica: [-130, -60, 15, 60], samerica: [-85, -33, -56, 13], oceania: [112, 155, -45, -10] };
   const cv = document.getElementById("map-canvas"), ctx = cv.getContext("2d"), tip = document.getElementById("tip");
-  const state = { field: "mean", lead: 1, day: null, days: [], idx: null, layers: {}, lines: null, view: REGIONS.world.slice(), pick: null, cities: null, timer: null, sort: "d1", desc: true };
+  const state = { place: null, field: "mean", lead: 1, day: null, days: [], idx: null, layers: {}, lines: null, view: REGIONS.world.slice(), pick: null, cities: null, timer: null, sort: "d1", desc: true };
   const rgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
   const PMC = PM_COLORS.map(rgb), PRC = PROB_COLORS.map(rgb);
   const ENC = { pmOff: 1, pmSteps: 254, probOff: 0 };                                    // encoding v1; v2 (offset 8 / 247 / 10) is read from index.json
@@ -372,15 +404,15 @@
   function draw() {
     if (!cur) return;
     const [l0, l1, a0, a1] = state.view, lut = state.field === "prob" ? LUT.prob : LUT.pm, isOcean = state.field === "prob" ? isOceanProb : isOceanPm;
-    const d = img.data; const kx = (l1 - l0) / W, ky = (a1 - a0) / H;
+    const d = img.data; const kx = (l1 - l0) / W, ky = (a1 - a0) / H; const dark = isDark(); const SEA = dark ? [27, 38, 52] : [255, 255, 255], OUT = dark ? [15, 23, 32] : [246, 248, 250];
     for (let y = 0; y < H; y++) {
       const lat = a1 - (y + 0.5) * ky; const r = Math.floor((LAT0 - lat) / DLAT); const rowOk = r >= 0 && r < NLAT;
       for (let x = 0; x < W; x++) {
         let lon = l0 + (x + 0.5) * kx; lon = ((lon + 180) % 360 + 360) % 360 - 180; const c = Math.floor((lon - LON0) / DLON);
         const o = 4 * (y * W + x);
-        if (!rowOk) { d[o] = 246; d[o + 1] = 248; d[o + 2] = 250; d[o + 3] = 255; continue; }
+        if (!rowOk) { d[o] = OUT[0]; d[o + 1] = OUT[1]; d[o + 2] = OUT[2]; d[o + 3] = 255; continue; }
         const v = cur[r * NLON + c];
-        if (isOcean(v)) { d[o] = 255; d[o + 1] = 255; d[o + 2] = 255; d[o + 3] = 255; continue; }
+        if (isOcean(v)) { d[o] = SEA[0]; d[o + 1] = SEA[1]; d[o + 2] = SEA[2]; d[o + 3] = 255; continue; }
         d[o] = lut[3 * v]; d[o + 1] = lut[3 * v + 1]; d[o + 2] = lut[3 * v + 2]; d[o + 3] = 255;
       }
     }
@@ -390,24 +422,26 @@
       const strokeLines = (lines, color, w) => { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath();
         for (const ln of lines) { let pen = false; for (let i = 0; i < ln.length; i++) { const x = X(ln[i][0]), y = Y(ln[i][1]); if (i && Math.abs(ln[i][0] - ln[i - 1][0]) > 180) pen = false; if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y); } } ctx.stroke(); };
       const zoom = 360 / (l1 - l0);
-      strokeLines(state.lines.borders, "rgba(60,70,80,0.35)", Math.max(0.5, 0.4 * Math.sqrt(zoom)));
-      strokeLines(state.lines.coast, "rgba(28,37,48,0.75)", Math.max(0.7, 0.6 * Math.sqrt(zoom)));
+      strokeLines(state.lines.borders, dark ? "rgba(230,237,243,0.28)" : "rgba(60,70,80,0.35)", Math.max(0.5, 0.4 * Math.sqrt(zoom)));
+      strokeLines(state.lines.coast, dark ? "rgba(230,237,243,0.75)" : "rgba(28,37,48,0.75)", Math.max(0.7, 0.6 * Math.sqrt(zoom)));
     }
     if (state.pick) { const X = (state.pick.lon - l0) / (l1 - l0) * W, Y = (a1 - state.pick.lat) / (a1 - a0) * H;
       ctx.beginPath(); ctx.arc(X, Y, 7, 0, 2 * Math.PI); ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = "#1c2530"; ctx.stroke();
       ctx.beginPath(); ctx.arc(X, Y, 2.5, 0, 2 * Math.PI); ctx.fillStyle = "#1c2530"; ctx.fill(); }
   }
   function drawCbar() {
-    const c = document.getElementById("cbar"), x = c.getContext("2d"); x.clearRect(0, 0, c.width, c.height); x.font = "11px Helvetica, Arial, sans-serif"; x.fillStyle = "#5b6977"; x.textAlign = "center";
-    if (state.field === "prob") { const n = 10, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PROB_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = "#5b6977";
+    const c = document.getElementById("cbar"), x = c.getContext("2d"); x.clearRect(0, 0, c.width, c.height); x.font = "11px -apple-system, Helvetica, Arial, sans-serif"; x.fillStyle = isDark() ? "#9aa7b4" : "#5b6977"; x.textAlign = "center";
+    const tc = isDark() ? "#9aa7b4" : "#5b6977";
+    if (state.field === "prob") { const n = 10, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PROB_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = tc;
       for (let i = 0; i <= n; i += 2) x.fillText(i * 10 + (i === n ? " %" : ""), Math.min(c.width - 14, Math.max(10, i * w)), 26);
       document.getElementById("cbar-lab").textContent = "members above 25 µg m⁻³"; }
-    else { const n = PM_COLORS.length, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PM_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = "#5b6977";
+    else { const n = PM_COLORS.length, w = c.width / n; for (let i = 0; i < n; i++) { x.fillStyle = PM_COLORS[i]; x.fillRect(i * w, 0, w, 14); } x.fillStyle = tc;
       for (let i = 1; i < n; i++) x.fillText(String(PM_BOUNDS[i]), i * w, 26);
       document.getElementById("cbar-lab").innerHTML = "PM<sub>2.5</sub> (µg m⁻³)"; }
   }
   async function show() {
     const day = state.day, lead = state.lead; document.getElementById("leadout").textContent = "+" + 12 * (lead + 1) + " h · " + fmtTime(validTime(day, lead));
+    for (const x of document.querySelectorAll(".sitem")) x.classList.toggle("on", +x.dataset.k === lead);
     try { cur = await loadLayer(day, state.field, lead); } catch (e) { setStatus("The forecast layer could not be loaded (" + e.message + ").", false); return; }
     draw(); drawCbar();
     const names = { mean: "Ensemble mean of " + state.idx[day].members + " members", p90: "90th percentile of the " + state.idx[day].members + " members (a plausible bad case)", prob: "Share of the " + state.idx[day].members + " members above 25 µg m⁻³" };
@@ -438,26 +472,42 @@
     const day = state.day; const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k)));
     const q = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "p90", k)));
     const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
-    const i = r * NLON + c; if (isOceanPm(m[0][i])) { document.getElementById("pt-text").textContent = "No land there: Otso forecasts over land. Choose a place on land."; document.getElementById("point").hidden = false; return; }
+    const i = r * NLON + c; if (isOceanPm(m[0][i])) { document.getElementById("pt-text").textContent = "No land there: Otso forecasts over land. Choose a place on land."; document.getElementById("point").hidden = false;
+      document.getElementById("pt-title").textContent = name || coord(lat, lon); document.getElementById("pt-sub").textContent = ""; document.getElementById("pt-pill").textContent = "sea"; document.getElementById("pt-big").textContent = "—"; document.getElementById("pt-big").style.color = ""; document.getElementById("pt-range").textContent = ""; document.getElementById("pt-strip").innerHTML = ""; document.getElementById("series").innerHTML = ""; state.place = null; return; }
     const mean = m.map((a) => dec(a[i])), p90 = q.map((a) => dec(a[i])), prob = pr.map((a) => probOf(a[i]));
-    document.getElementById("point").hidden = false;
-    document.getElementById("pt-title").textContent = (name ? name + " · " : "") + coord(lat, lon) + " · issued " + day;
-    const imax = mean.indexOf(Math.max(...mean)), t1 = mean[1], c1 = PM_NAMES[pmClass(t1)];
-    document.getElementById("pt-text").innerHTML = "Tomorrow at this time (+24 h) Otso expects <strong>" + fmt(t1) + " µg m⁻³</strong> (" + c1 + "), with " + prob[1] + " % of the members above 25. " +
-      "The highest value of the five days is <strong>" + fmt(mean[imax]) + "</strong> at +" + 12 * (imax + 1) + " h (" + fmtTime(validTime(day, imax)) + "); the 90th percentile then is " + fmt(p90[imax]) + ".";
+    state.place = { lat, lon, name, day, mean, p90, prob }; renderPlace(state.place);
+  }
+  const dayLabel = (t) => t.toLocaleString("en-GB", { weekday: "short", timeZone: "UTC" }), hourLabel = (t) => t.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+  const lightText = (hex) => { const [r, g, b] = rgb(hex); return (0.299 * r + 0.587 * g + 0.114 * b) > 150; };
+  function renderPlace(P) {
+    const { lat, lon, name, day, mean, p90, prob } = P; const el = document.getElementById("point"); el.hidden = false;
+    const k1 = 1, t1 = mean[k1], c1 = pmClass(t1), imax = mean.indexOf(Math.max(...mean));
+    const pc = pmHex(t1); el.querySelector(".place").style.setProperty("--pc", pc); el.querySelector(".place").style.setProperty("--pct", lightText(pc) ? "#1c2530" : "#fff");
+    document.getElementById("pt-title").textContent = name || coord(lat, lon);
+    document.getElementById("pt-sub").textContent = (name ? coord(lat, lon) + " · " : "") + "issued " + day + " 00 UTC · " + (state.idx[day] ? state.idx[day].members : 8) + " members";
+    document.getElementById("pt-pill").textContent = PM_NAMES[c1];
+    document.getElementById("pt-big").textContent = fmt(t1); document.getElementById("pt-big").style.color = pc;
+    document.getElementById("pt-when").textContent = "tomorrow " + hourLabel(validTime(day, k1)) + " UTC (" + dayLabel(validTime(day, k1)) + ")";
+    document.getElementById("pt-range").innerHTML = "10–90 % of members<br />" + fmt(Math.max(0, 2 * mean[k1] - p90[k1])) + " – " + fmt(p90[k1]) + " · P(&gt;25) " + prob[k1] + " %";
+    const peak = imax === k1 ? "" : " The peak of the five days is <strong>" + fmt(mean[imax]) + "</strong> (" + PM_NAMES[pmClass(mean[imax])] + ") on " + dayLabel(validTime(day, imax)) + " " + hourLabel(validTime(day, imax)) + " UTC.";
+    document.getElementById("pt-text").innerHTML = (c1 <= 3 ? "Clean to fair air tomorrow." : c1 <= 5 ? "Moderate pollution tomorrow." : c1 <= 7 ? "Poor air tomorrow: sensitive people should limit long efforts outdoors." : "Very poor air tomorrow: everyone should limit efforts outdoors.") + peak +
+      " <span class='small'>Research forecast, not an alert.</span>";
+    document.getElementById("pt-strip").innerHTML = mean.map((v, k) => { const t = validTime(day, k); return `<div class="sitem${k === state.lead ? " on" : ""}" data-k="${k}"><div class="d">${dayLabel(t)}</div><div class="h">${hourLabel(t)}</div><div class="dot" style="background:${pmHex(v)}"></div><div class="v">${fmt(v)}</div></div>`; }).join("");
     series(mean, p90, prob);
   }
+  document.getElementById("pt-strip").addEventListener("click", (ev) => { const it = ev.target.closest(".sitem"); if (!it) return; state.lead = +it.dataset.k; document.getElementById("lead").value = state.lead; show(); for (const x of document.querySelectorAll(".sitem")) x.classList.toggle("on", x === it); });
   function series(mean, p90, prob) {
     const s = document.getElementById("series"); const Wd = 560, Hd = 150, L = 34, R = 8, T = 10, B = 26; const top = Math.max(30, Math.ceil(Math.max(...p90) * 1.15 / 10) * 10);
     const X = (k) => L + (Wd - L - R) * k / 9, Y = (v) => T + (Hd - T - B) * (1 - Math.min(v, top) / top);
-    let h = `<rect x="${L}" y="${T}" width="${Wd - L - R}" height="${Hd - T - B}" fill="#fff" stroke="#e3e8ee"/>`;
-    for (const g of [0, top / 2, top]) h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(g)}" y2="${Y(g)}" stroke="#eef1f4"/><text x="${L - 4}" y="${Y(g) + 4}" font-size="10" fill="#5b6977" text-anchor="end">${Math.round(g)}</text>`;
+    const dark = isDark(); const cardC = dark ? "#19232f" : "#fff", lineC = dark ? "#27323e" : "#e3e8ee", gridC = dark ? "#1f2a36" : "#eef1f4", txtC = dark ? "#9aa7b4" : "#5b6977";
+    let h = `<rect x="${L}" y="${T}" width="${Wd - L - R}" height="${Hd - T - B}" fill="${cardC}" stroke="${lineC}"/>`;
+    for (const g of [0, top / 2, top]) h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(g)}" y2="${Y(g)}" stroke="${gridC}"/><text x="${L - 4}" y="${Y(g) + 4}" font-size="10" fill="${txtC}" text-anchor="end">${Math.round(g)}</text>`;
     const band = mean.map((v, k) => `${X(k)},${Y(p90[k])}`).concat(mean.map((v, k) => `${X(9 - k)},${Y(Math.max(0, 2 * mean[9 - k] - p90[9 - k]))}`)).join(" ");
     h += `<polygon points="${band}" fill="#8FB2DD" fill-opacity="0.35"/>`;
     h += `<line x1="${L}" x2="${Wd - R}" y1="${Y(25)}" y2="${Y(25)}" stroke="#C2185B" stroke-dasharray="4 3" stroke-width="1"/>`;
-    h += `<polyline points="${mean.map((v, k) => X(k) + "," + Y(v)).join(" ")}" fill="none" stroke="#1F5AA6" stroke-width="2.2"/>`;
-    mean.forEach((v, k) => { h += `<circle cx="${X(k)}" cy="${Y(v)}" r="3.2" fill="${pmHex(v)}" stroke="#1c2530" stroke-width="0.8"/>`; });
-    [0, 1, 3, 5, 7, 9].forEach((k) => { h += `<text x="${X(k)}" y="${Hd - 8}" font-size="10" fill="#5b6977" text-anchor="middle">+${12 * (k + 1)} h</text>`; });
+    h += `<polyline points="${mean.map((v, k) => X(k) + "," + Y(v)).join(" ")}" fill="none" stroke="${dark ? "#7fb0ff" : "#1F5AA6"}" stroke-width="2.2"/>`;
+    mean.forEach((v, k) => { h += `<circle cx="${X(k)}" cy="${Y(v)}" r="3.2" fill="${pmHex(v)}" stroke="${dark ? "#e6edf3" : "#1c2530"}" stroke-width="0.8"/>`; });
+    [0, 1, 3, 5, 7, 9].forEach((k) => { h += `<text x="${X(k)}" y="${Hd - 8}" font-size="10" fill="${txtC}" text-anchor="middle">+${12 * (k + 1)} h</text>`; });
     s.innerHTML = h;
   }
   // ---- zoom and pan
@@ -616,6 +666,13 @@
     }
   })();
   window.addEventListener("resize", () => { if (cur) size(); });
+  // ---- theme: the system's preference, or the remembered choice (button in the top bar)
+  function isDark() { return document.documentElement.dataset.theme === "dark"; }
+  function applyTheme(t, save) { document.documentElement.dataset.theme = t; document.getElementById("theme").textContent = t === "dark" ? "☀️" : "🌙"; const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = t === "dark" ? "#0f1720" : "#1F5AA6";
+    if (save) { try { localStorage.setItem("otso-theme", t); } catch (e) {} } if (cur) { draw(); drawCbar(); } if (state.place) renderPlace(state.place); }
+  (() => { let t = new URLSearchParams(location.search).get("theme"); if (t !== "dark" && t !== "light") { t = null; try { t = localStorage.getItem("otso-theme"); } catch (e) {} } applyTheme(t || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"), false);
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (ev) => { let saved = null; try { saved = localStorage.getItem("otso-theme"); } catch (e) {} if (!saved) applyTheme(ev.matches ? "dark" : "light", false); }); })();
+  document.getElementById("theme").addEventListener("click", () => applyTheme(isDark() ? "light" : "dark", true));
   // ---- app mode: installed on the home screen (standalone), or opened from the manifest's start_url
   const APP = !/[?&]full=1/.test(location.search) && (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true || /[?&]source=pwa/.test(location.search) || location.hash === "#app");
   if (APP) {
