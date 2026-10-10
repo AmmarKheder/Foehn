@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Otso" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="stylesheet" href="../assets/style.css?v=20261010g" />
+<link rel="stylesheet" href="../assets/style.css?v=20261010h" />
 <style>
   :root { --card: #ffffff; --amber-bg: #FFF8E8; --amber-line: #F3D9A4; --amber-ink: #4a3b12; --amber: #D99A1E; --shadow: 0 8px 24px rgba(28,37,48,.12); color-scheme: light; }
   :root[data-theme="dark"] { --bg: #0f1720; --bg-soft: #141d28; --card: #19232f; --ink: #e6edf3; --muted: #9aa7b4; --line: #27323e; --blue: #7fb0ff; --blue-dark: #5a8fe6; --blue-soft: #35507a; --pink: #ff6ea3;
@@ -58,9 +58,9 @@
   .disclaimer { background: var(--amber-bg); border: 1px solid var(--amber-line); border-left: 4px solid var(--amber); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; margin: 18px 0 0; color: var(--amber-ink); }
   .status { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
   .status b { color: var(--ink); font-weight: 600; }
-  .stats { font-size: 13px; color: var(--muted); margin: 6px 0 0; } .stats b { color: var(--ink); font-weight: 600; } .stats span { white-space: nowrap; }
+  .usage { font-size: 13px; color: var(--muted); margin: 8px 0 0; line-height: 1.7; } .usage b { color: var(--ink); font-weight: 600; } .usage span { white-space: nowrap; }
   :root[data-theme="dark"] .logos a { background: #fff; border-radius: 8px; padding: 5px 9px; display: inline-block; }
-  body.app .stats { font-size: 12px; margin: 4px 0 0; }
+  body.app .usage { font-size: 12px; margin: 4px 0 0; }
   .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
   .mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
   .mapbar .layers button { font-size: 13px; }
@@ -116,6 +116,14 @@
   .twocol ul { padding-left: 20px; margin: 0; }
   .twocol li { margin-bottom: 8px; }
   .small { font-size: 13px; color: var(--muted); }
+  .credit { display: flex; align-items: center; gap: 18px; padding: 0 0 18px; margin: 0 0 18px; border-bottom: 1px solid var(--line); }
+  .credit-logo img { height: 72px; width: 72px; display: block; border-radius: 50%; box-shadow: 0 4px 14px rgba(28,37,48,.15); background: #fff; }
+  .credit-by { font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; } .credit-by a { color: var(--ink); }
+  .credit-by a:hover { color: var(--blue); text-decoration: none; border-bottom: 2px solid var(--blue); }
+  .credit-org { font-size: 14px; color: var(--muted); margin-top: 3px; } .credit-links { font-size: 13px; margin-top: 6px; }
+  .fine { font-size: 12px; color: var(--muted); margin: 14px 0 0; line-height: 1.6; }
+  body.app .credit { padding: 0 0 10px; margin: 0 0 10px; gap: 12px; } body.app .credit-logo img { height: 44px; width: 44px; } body.app .credit-by { font-size: 15px; } body.app .credit-org { font-size: 12px; } body.app .credit-links { display: none; } body.app .fine { font-size: 11px; }
+  @media (max-width: 480px) { .credit { gap: 12px; } .credit-logo img { height: 56px; width: 56px; } .credit-by { font-size: 17px; } }
   .logos { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
   .logos img { height: 40px; width: auto; display: block; }
   .logos img.logo-amc { height: 52px; }
@@ -195,7 +203,7 @@
         PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
         <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
-      <p class="stats" id="stats" hidden></p>
+      <p class="usage" id="stats" hidden></p>
       <div class="cta" style="margin:14px 0 0"><a class="btn btn-primary" href="#install">📲 Install Otso on your phone</a><a class="btn btn-ghost" href="#map">See the forecast</a></div>
       <div class="disclaimer"><strong>Research forecast.</strong> <span class="long">Otso 1.1 is an experiment of a university group, not an official service. It has not yet
         been evaluated in real time, it is not monitored around the clock, and it does not replace the air-quality forecasts, indices and alerts
@@ -352,9 +360,19 @@
   <a href="#city" id="tab-locate"><span>📍</span>Locate</a><a href="#city"><span>🏙️</span>City</a><a href="#map"><span>🗺️</span>Map</a><a href="#cities"><span>📋</span>Cities</a><a href="?full=1#about"><span>ℹ️</span>About</a>
 </nav>
 <footer><div class="wrap">
-  <div class="logos"><a href="https://www.lumi-supercomputer.eu/" title="LUMI supercomputer"><img src="../assets/lumi_logo.png" alt="LUMI" /></a><a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" /></a><a href="https://www.amc-lahti.fi/" title="Atmospheric Modelling Centre Lahti"><img src="../assets/amc_logo.png" alt="AMC-Lahti" class="logo-amc" /></a>
-    <span>Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland, by the <strong>Atmospheric Modelling Centre Lahti</strong> (AMC-Lahti, University of Helsinki and LUT University).</span></div>
-  Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · Atmospheric Modelling Centre Lahti. Research forecast, not an official alert.</div></footer>
+  <div class="credit">
+    <a href="https://www.amc-lahti.fi/" class="credit-logo" title="Atmospheric Modelling Centre Lahti"><img src="../assets/amc_logo.png" alt="AMC-Lahti" /></a>
+    <div class="credit-text">
+      <div class="credit-by">Developed by <a href="https://ammarkheder.com/">Ammar Kheder</a></div>
+      <div class="credit-org"><a href="https://www.amc-lahti.fi/">Atmospheric Modelling Centre Lahti</a> (AMC-Lahti) · University of Helsinki · LUT University</div>
+      <div class="credit-links"><a href="../">The Foehn paper</a> · <a href="https://github.com/AmmarKheder/Foehn">Code and data</a> · <a href="https://github.com/AmmarKheder/Foehn/issues">Report a problem</a></div>
+    </div>
+  </div>
+  <div class="logos"><a href="https://www.lumi-supercomputer.eu/" title="LUMI supercomputer"><img src="../assets/lumi_logo.png" alt="LUMI" /></a><a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" /></a>
+    <span>Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland.</span></div>
+  <p class="fine">Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. Research forecast, not an official alert.
+    Contains modified Copernicus Atmosphere Monitoring Service information 2026; ECMWF open data (CC BY 4.0); city list © GeoNames (CC BY 4.0) and © OpenStreetMap contributors. © 2026 Ammar Kheder.</p>
+</div></footer>
 
 <script>
 (() => {
@@ -724,7 +742,7 @@
     }
     window.addEventListener("appinstalled", () => { if (!ls.get("otso-installed")) { hit("installs"); ls.set("otso-installed", "1"); } });
     if (v.installs == null) v.installs = await get("installs"); if (v.appUsers == null) v.appUsers = await get("app_users"); if (v.appDay == null) v.appDay = await get("app_day_" + today);
-    const n = (x) => (x == null ? "–" : Number(x).toLocaleString("en"));
+    const n = (x) => Number(x || 0).toLocaleString("en");
     const el = document.getElementById("stats");
     el.innerHTML = `<span>👥 <b>${n(v.visitors)}</b> visitors</span> · <span><b>${n(v.visitorsDay)}</b> today</span> · <span>📲 <b>${n(v.installs)}</b> installed</span> · <span>📱 <b>${n(v.appUsers)}</b> app users</span> · <span><b>${n(v.appDay)}</b> in the app today</span> <span class="small">(unique devices, anonymous)</span>`;
     el.hidden = false;
