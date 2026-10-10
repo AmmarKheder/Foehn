@@ -39,15 +39,20 @@
   body.app .sub, body.app .city-note, body.app #help, body.app section h2, body.app .nav a:not(.full-site), body.app .pill-beta, body.app .mapbar .zoombtns,
   body.app #region-wrap-never { display: none !important; }
   body.app .hero { padding: 12px 0 6px; } body.app .hero h1 { font-size: 26px; } body.app .otso-head { gap: 10px; }
-  body.app .status { font-size: 12.5px; margin: 4px 0 0; } body.app .disclaimer { margin: 10px 0 0; padding: 7px 10px; font-size: 12px; border-radius: 8px; }
+  body.app .status { display: none; } body.app .status-short { display: block !important; font-size: 13px; margin: 4px 0 0; } .status-short { display: none; }
+  body.app .hero .usage { display: none; } body.app footer .usage { display: block; font-size: 12px; margin: 0 0 10px; } body.app .disclaimer { margin: 10px 0 0; padding: 7px 10px; font-size: 12px; border-radius: 8px; }
   body.app section.band { padding: 12px 0; } body.app .city { margin-bottom: 10px; padding: 10px; } body.app .city-lab { display: none; }
   body.app .point { margin: 0 0 12px; } body.app .point .card:last-child .small { display: none; }
   body.app .mapcard, body.app .cities { padding: 10px; } body.app footer { padding: 14px 0 40px; font-size: 12px; }
   body.app .nav { display: flex !important; } .full-site { display: none; } body.app .full-site { display: inline; font-size: 13px; }
   .disclaimer .short { display: none; } body.app .disclaimer .short { display: inline; }
   body.app .topbar-row { height: 48px; }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 30; display: flex; gap: 12px; align-items: center; background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13.5px; box-shadow: var(--shadow); }
+  .toast button { border: none; background: var(--blue); color: #fff; border-radius: 999px; padding: 6px 12px; font-weight: 600; cursor: pointer; }
+  body:not(.app) .toast { bottom: 20px; }
   .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: space-around; background: var(--card); border-top: 1px solid var(--line); padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); }
-  .tabbar a { flex: 1; text-align: center; font-size: 11px; color: var(--muted); text-decoration: none; } .tabbar a span { display: block; font-size: 20px; line-height: 1.1; }
+  .tabbar a { flex: 1; text-align: center; font-size: 11px; color: var(--muted); text-decoration: none; padding: 2px 0; } .tabbar a span { display: block; font-size: 20px; line-height: 1.1; }
+  .tabbar a.on { color: var(--blue); font-weight: 600; }
   body.app { padding-bottom: calc(64px + env(safe-area-inset-bottom)); } body.app .tabbar { display: flex !important; }
   body.app .place-foot { display: none; }
   table.scores td, table.scores th { text-align: right; } table.scores td:first-child, table.scores th:first-child { text-align: left; }
@@ -72,6 +77,9 @@
   .mapbar select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: var(--card); color: var(--ink); }
   .mapwrap { position: relative; }
   .otso-canvas { width: 100%; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--card); cursor: crosshair; touch-action: none; }
+  .overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--card) 75%, transparent); border-radius: 8px; font-size: 14px; color: var(--muted); pointer-events: none; z-index: 4; }
+  .overlay[hidden] { display: none !important; }
+  .offline { background: var(--amber-bg); color: var(--amber-ink); border: 1px solid var(--amber-line); border-radius: 8px; padding: 6px 10px; font-size: 12.5px; margin: 0 0 10px; }
   .tip { position: absolute; pointer-events: none; background: rgba(28,37,48,.92); color: #fff; font-size: 12.5px; padding: 6px 9px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -130%); display: none; z-index: 5; }
   .tip b { font-size: 14px; }
   .mapfoot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
@@ -101,7 +109,8 @@
   .place-name { font-size: 18px; font-weight: 700; letter-spacing: -.01em; } .place-sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
   .place-pill { display: inline-block; padding: 4px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; white-space: nowrap; background: var(--pc, var(--blue)); color: var(--pct, #fff); }
   .place-now { display: flex; align-items: baseline; gap: 10px; margin: 8px 0 2px; flex-wrap: wrap; }
-  .place-big { font-size: 48px; font-weight: 700; line-height: 1; letter-spacing: -.02em; }
+  .place-big { font-size: 52px; font-weight: 800; line-height: 1; letter-spacing: -.03em; }
+  @media (max-width: 480px) { .place-big { font-size: 46px; } .place-name { font-size: 17px; } }
   .place-unit { font-size: 13px; color: var(--muted); line-height: 1.2; } .place-when { font-weight: 600; color: var(--ink); }
   .place-range { font-size: 13px; color: var(--muted); margin-left: auto; text-align: right; }
   .place-text { margin: 6px 0 10px; font-size: 14px; color: var(--ink); }
@@ -111,7 +120,7 @@
   .sitem { flex: 0 0 auto; min-width: 54px; text-align: center; padding: 8px 4px; border-radius: 10px; border: 1px solid transparent; background: var(--card); cursor: pointer; }
   .sitem.on { border-color: var(--blue); } .sitem .d { font-size: 11px; color: var(--muted); } .sitem .h { font-size: 11px; color: var(--muted); }
   .sitem .dot { width: 14px; height: 14px; border-radius: 50%; margin: 5px auto; border: 1px solid rgba(0,0,0,.15); } .sitem .v { font-size: 14px; font-weight: 700; }
-  .series { width: 100%; height: 150px; display: block; }
+  .series { width: 100%; height: auto; aspect-ratio: 560 / 150; display: block; }
   .place-foot { margin: 6px 0 0; }
   .cities { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
   .cities-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
@@ -146,7 +155,7 @@
   .city-list li.more { cursor: default; font-size: 12px; } .city-list li.more:hover { background: var(--card); }
   .city-geo { padding: 9px 14px; white-space: nowrap; }
   .city-note { margin: 8px 0 0; }
-  @media (max-width: 480px) { .city-geo { width: 100%; text-align: center; } .city-box { min-width: 0; width: 100%; } }
+  @media (max-width: 600px) { .city-row { flex-wrap: nowrap; } .city-geo { flex: none; width: 46px; height: 46px; padding: 0; text-align: center; font-size: 20px; border-radius: 10px; } .city-geo .full { display: none; } .city-box { min-width: 0; flex: 1; } .city-box input { height: 46px; } }
   .install { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
   .only-phone { display: none; }
   @media (max-width: 700px) { .only-desktop { display: none; } .only-phone { display: inline; } .install-qr img, .install-qr .small { display: none; } .install { grid-template-columns: 1fr; gap: 12px; padding: 14px; } .install-qr { order: 2; } #install-btn { width: 100%; } }
@@ -165,6 +174,7 @@
   .layers .short { display: none; }
   @media (max-width: 860px) { .point, .twocol { grid-template-columns: 1fr; } .mapfoot .lead { min-width: 0; } .mapfoot .lead output { min-width: 0; } .cbar canvas { width: 200px; } }
   @media (max-width: 600px) {
+    .layers button, .play, .zoombtns button, .theme-btn, .ostabs button, .showall { min-height: 40px; } .play { width: 44px; height: 40px; font-size: 14px; } .tl { min-width: 70px; padding: 8px 8px; }
     .layers .full { display: none; } .layers .short { display: inline; } .layers { gap: 5px; } .layers button { padding: 7px 11px; }
     .mapbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .mapbar .layers { grid-column: 1 / -1; }
     .mapbar > div:last-child { display: contents; } .mapbar select { width: 100%; min-width: 0; font-size: 16px; padding: 8px 8px; }
@@ -173,6 +183,8 @@
     .mapfoot .lead output { flex-basis: 100%; min-width: 0; font-size: 13.5px; white-space: normal; padding-left: 2px; }
     .cbar { width: 100%; } .cbar canvas { flex: 1; width: auto; min-width: 0; max-width: 420px; }
   }
+  @media (max-width: 600px) { table.ct th:nth-child(3), table.ct td:nth-child(3), table.ct th:nth-child(4), table.ct td:nth-child(4), table.ct th:nth-child(6), table.ct td:nth-child(6) { display: none; }
+    table.ct td, table.ct th { padding: 8px 6px; } .cities-top { gap: 8px; } }
   @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } }
 </style>
 </head>
@@ -209,6 +221,7 @@
         PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
         <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
+      <p class="status status-short" id="status-short" hidden></p>
       <p class="usage" id="stats" hidden></p>
       <div class="cta" style="margin:14px 0 0"><a class="btn btn-primary" href="#install">📲 Install Otso on your phone</a><a class="btn btn-ghost" href="#map">See the forecast</a></div>
       <div class="disclaimer"><strong>Research forecast.</strong> <span class="long">Otso 1.1 is an experiment of a university group, not an official service. It has not yet
@@ -246,14 +259,15 @@
       <div class="city-row">
         <label for="city-q" class="city-lab">Your city</label>
         <div class="city-box">
-          <input type="search" id="city-q" placeholder="Type a city or a village: Lyon, Lahore, Lagos, Villeurbanne…" autocomplete="off" aria-label="Find your city" />
+          <input type="search" id="city-q" placeholder="Search a city or a village…" autocomplete="off" aria-label="Find your city" />
           <ul class="city-list" id="city-list" hidden></ul>
         </div>
-        <button type="button" class="btn btn-ghost city-geo" id="city-geo" title="Use the position of this device">📍 My location</button>
+        <button type="button" class="btn btn-ghost city-geo" id="city-geo" title="Use the position of this device" aria-label="Use my location">📍<span class="full"> My location</span></button>
       </div>
       <p class="small city-note">Any city, town or village: 34,000 places above 15,000 inhabitants answer instantly (<a href="https://www.geonames.org/">GeoNames</a>, CC BY 4.0), the others come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> as you type (© OpenStreetMap contributors). You can also click the map or use your position. The forecast is for the 0.4° cell (about 40 km) that contains the place.</p>
     </div>
     <div class="mapcard">
+      <div class="offline" id="offline" hidden>You are offline: this is the last forecast stored on this device.</div>
       <div class="mapbar">
         <div class="layers" id="fields">
           <button type="button" data-f="mean" class="on"><span class="full">Ensemble mean</span><span class="short">Mean</span></button>
@@ -274,6 +288,7 @@
       <div class="mapwrap">
         <canvas id="map-canvas" class="otso-canvas" width="1200" height="480" aria-label="Otso PM2.5 forecast map"></canvas>
         <div class="tip" id="tip"></div>
+        <div class="overlay" id="overlay"><span>Loading the forecast…</span></div>
       </div>
       <div class="tlwrap"><div class="timeline" id="timeline" aria-label="Forecast time"></div></div>
       <div class="mapfoot">
@@ -285,6 +300,7 @@
         <div class="cbar"><span id="cbar-lab">PM<sub>2.5</sub> (µg m⁻³)</span><canvas id="cbar" width="520" height="28"></canvas></div>
       </div>
       <p class="help" id="help">Ensemble mean of 8 members, 0.4° grid, instantaneous value at the valid time. Ocean is white: Otso forecasts over land.</p>
+      <p class="small tznote" id="tznote"></p>
       <div class="welcome" id="welcome" hidden>
         <div class="welcome-ico">📍</div>
         <div><b>Where are you?</b><p>Otso can show the forecast for the place you are, and keep it for next time. Your position stays on this device; nothing is sent to us.</p>
@@ -296,7 +312,7 @@
           <div class="place-now"><span class="place-big" id="pt-big">—</span><span class="place-unit">µg m⁻³<br /><span class="place-when" id="pt-when">tomorrow 00 UTC</span></span><span class="place-range" id="pt-range"></span></div>
           <p class="place-text" id="pt-text">Click a place on the map.</p>
           <div class="stripwrap"><div class="strip" id="pt-strip" aria-label="The ten leads"></div></div>
-          <svg class="series" id="series" viewBox="0 0 560 150" preserveAspectRatio="none" role="img" aria-label="Forecast at the selected place"></svg>
+          <svg class="series" id="series" viewBox="0 0 560 150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Forecast at the selected place"></svg>
           <p class="small place-foot">Line: ensemble mean · band: 10–90 % of the members · dashed: 25 µg m⁻³. Values are for a 0.4° cell (about 40 km): a city average, not a street.</p>
         </div>
       </div>
@@ -383,8 +399,9 @@
 </section>
 
 </main>
+<div class="toast" id="toast" hidden><span>Otso was updated.</span><button type="button" id="toast-reload">Reload</button></div>
 <nav class="tabbar" id="tabbar" hidden aria-label="App navigation">
-  <a href="#city" id="tab-locate"><span>📍</span>Locate</a><a href="#city"><span>🏙️</span>City</a><a href="#map"><span>🗺️</span>Map</a><a href="#cities"><span>📋</span>Cities</a><a href="?full=1#about"><span>ℹ️</span>About</a>
+  <a href="#city" id="tab-locate"><span>📍</span>Locate</a><a href="#city" data-sec="city"><span>🏙️</span>City</a><a href="#map" data-sec="map"><span>🗺️</span>Map</a><a href="#cities" data-sec="cities"><span>📋</span>Cities</a><a href="?full=1#about"><span>ℹ️</span>About</a>
 </nav>
 <footer><div class="wrap">
   <div class="foot">
@@ -431,7 +448,10 @@
   }
   buildLut();
   function validTime(day, lead) { const t = new Date(day + "T00:00:00Z"); t.setUTCHours(t.getUTCHours() + 12 * (lead + 1)); return t; }
-  const fmtTime = (t) => t.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC";
+  const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const fmtTime = (t) => t.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + (TZ === "UTC" ? " UTC" : "");
+  const sameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  function dayWord(t) { const now = new Date(), tm = new Date(now); tm.setDate(now.getDate() + 1); return sameDay(t, now) ? "Today" : sameDay(t, tm) ? "Tomorrow" : t.toLocaleString("en-GB", { weekday: "short", day: "numeric" }); }
   function setStatus(msg, ok) { const s = document.getElementById("status"); s.innerHTML = msg; if (ok) document.getElementById("pill-live").hidden = false; }
 
   // ---- data loading: one 8-bit PNG per field and lead, decoded through a canvas
@@ -497,7 +517,7 @@
       for (let i = 1; i < n; i++) x.fillText(String(PM_BOUNDS[i]), i * w, 26);
       document.getElementById("cbar-lab").innerHTML = "PM<sub>2.5</sub> (µg m⁻³)"; }
   }
-  const dayNum = (t) => t.toLocaleString("en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" });
+  const dayNum = (t) => dayWord(t);
   function centerChip(el) { const p = el.parentElement; p.scrollTo({ left: el.offsetLeft - p.clientWidth / 2 + el.offsetWidth / 2, behavior: "smooth" }); }
   function timeline() {
     const tl = document.getElementById("timeline"); if (tl.dataset.day === state.day) return; tl.dataset.day = state.day;
@@ -508,8 +528,8 @@
     const day = state.day, lead = state.lead; document.getElementById("leadout").textContent = "+" + 12 * (lead + 1) + " h · " + fmtTime(validTime(day, lead));
     timeline(); for (const x of document.querySelectorAll(".tl")) { const on = +x.dataset.k === lead; x.classList.toggle("on", on); if (on) centerChip(x); }
     for (const x of document.querySelectorAll(".sitem")) { const on = +x.dataset.k === lead; x.classList.toggle("on", on); if (on) centerChip(x); }
-    try { cur = await loadLayer(day, state.field, lead); } catch (e) { setStatus("The forecast layer could not be loaded (" + e.message + ").", false); return; }
-    draw(); drawCbar();
+    try { cur = await loadLayer(day, state.field, lead); } catch (e) { setStatus("The forecast layer could not be loaded (" + e.message + ").", false); document.getElementById("overlay").firstElementChild.textContent = "The forecast could not be loaded"; return; }
+    document.getElementById("overlay").hidden = true; draw(); drawCbar();
     const names = { mean: "Ensemble mean of " + state.idx[day].members + " members", p90: "90th percentile of the " + state.idx[day].members + " members (a plausible bad case)", prob: "Share of the " + state.idx[day].members + " members above 25 µg m⁻³" };
     document.getElementById("help").textContent = names[state.field] + ", 0.4° grid, instantaneous value at the valid time, issued from the 00 UTC run of " + day + ". Ocean is white: Otso forecasts over land.";
     for (let k = 0; k < 10; k++) loadLayer(day, state.field, k).catch(() => {});                                   // warm the other leads for the slider
@@ -543,7 +563,7 @@
     const mean = m.map((a) => dec(a[i])), p90 = q.map((a) => dec(a[i])), prob = pr.map((a) => probOf(a[i]));
     state.place = { lat, lon, name, day, mean, p90, prob }; renderPlace(state.place);
   }
-  const dayLabel = (t) => t.toLocaleString("en-GB", { weekday: "short", timeZone: "UTC" }), hourLabel = (t) => t.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+  const dayLabel = (t) => dayWord(t), hourLabel = (t) => t.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit" });
   const lightText = (hex) => { const [r, g, b] = rgb(hex); return (0.299 * r + 0.587 * g + 0.114 * b) > 150; };
   function cityErrNote(name) {
     if (!LIVE_SC || !LIVE_SC.summary || !name) return "";
@@ -559,9 +579,9 @@
     document.getElementById("pt-sub").textContent = (name ? coord(lat, lon) + " · " : "") + "issued " + day + " 00 UTC · " + (state.idx[day] ? state.idx[day].members : 8) + " members";
     document.getElementById("pt-pill").textContent = PM_NAMES[c1];
     document.getElementById("pt-big").textContent = fmt(t1); document.getElementById("pt-big").style.color = pc;
-    document.getElementById("pt-when").textContent = "tomorrow " + hourLabel(validTime(day, k1)) + " UTC (" + dayLabel(validTime(day, k1)) + ")";
+    document.getElementById("pt-when").textContent = dayLabel(validTime(day, k1)).toLowerCase() + " " + hourLabel(validTime(day, k1)) + (TZ === "UTC" ? " UTC" : "");
     document.getElementById("pt-range").innerHTML = "10–90 % of members<br />" + fmt(Math.max(0, 2 * mean[k1] - p90[k1])) + " – " + fmt(p90[k1]) + " · P(&gt;25) " + prob[k1] + " %";
-    const peak = imax === k1 ? "" : " The peak of the five days is <strong>" + fmt(mean[imax]) + "</strong> (" + PM_NAMES[pmClass(mean[imax])] + ") on " + dayLabel(validTime(day, imax)) + " " + hourLabel(validTime(day, imax)) + " UTC.";
+    const peak = imax === k1 ? "" : " The peak of the five days is <strong>" + fmt(mean[imax]) + "</strong> (" + PM_NAMES[pmClass(mean[imax])] + ") " + dayLabel(validTime(day, imax)).replace(/^([A-Z])/, (c) => c.toLowerCase()) + " at " + hourLabel(validTime(day, imax)) + ".";
     document.getElementById("pt-text").innerHTML = (c1 <= 3 ? "Clean to fair air tomorrow." : c1 <= 5 ? "Moderate pollution tomorrow." : c1 <= 7 ? "Poor air tomorrow: sensitive people should limit long efforts outdoors." : "Very poor air tomorrow: everyone should limit efforts outdoors.") + peak +
       " <span class='small'>Research forecast, not an alert.</span>" + cityErrNote(name);
     document.getElementById("pt-strip").innerHTML = mean.map((v, k) => { const t = validTime(day, k); return `<div class="sitem${k === state.lead ? " on" : ""}" data-k="${k}"><div class="d">${dayLabel(t)}</div><div class="h">${hourLabel(t)}</div><div class="dot" style="background:${pmHex(v)}"></div><div class="v">${fmt(v)}</div></div>`; }).join("");
@@ -735,6 +755,7 @@
       const sel = document.getElementById("day"); sel.innerHTML = state.days.map((d) => `<option value="${d}">${d === latest.latest ? "Latest: " : ""}${d}</option>`).join("");
       await loadDay(state.day); const ix = state.idx[state.day];
       const age = (Date.now() - new Date(state.day + "T00:00:00Z")) / 864e5;
+      document.getElementById("status-short").innerHTML = "<b>Forecast of " + new Date(state.day + "T00:00:00Z").toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + "</b> (00 UTC run) · published " + latest.updated.slice(11, 16) + " UTC · " + ix.members + " members";
       setStatus("<b>Forecast issued from the 00 UTC run of " + state.day + "</b>, published " + latest.updated.replace("T", " ") + " · " + ix.members + " members · leads +12 h to +120 h · inputs: CAMS analysis 00 UTC, ECMWF IFS 00 UTC (" + (ix.inputs.ifs_source || "").replace("https://", "") + "), GFAS " + (ix.inputs.gfas_version || "") + " fires of " + (ix.inputs.gfas_day || "") + " (injection height: <code>" + (ix.inputs.fire_injection_variable || "") + "</code>)." +
         (age > 1.5 ? " <span style='color:#8A5A00'>This forecast is " + Math.floor(age) + " days old: the daily run may have failed or be late.</span>" : ""), age <= 1.5);
       if (window.innerWidth < 700) {                                                 // a phone starts on the visitor's own region (time zone); the world is one tap away
@@ -746,6 +767,7 @@
           : /^America|^Canada|^US\//.test(tz) ? "namerica" : /^Australia|^Pacific\/(Auckland|Port_Moresby|Fiji)/.test(tz) ? "oceania" : /^Asia/.test(tz) ? "easia" : "world";
         if (reg !== "world") { state.view = REGIONS[reg].slice(); document.getElementById("region").value = reg; }
       }
+      document.getElementById("tznote").textContent = TZ === "UTC" ? "Times in UTC." : "Times are shown in your time zone (" + TZ.replace(/_/g, " ") + ").";
       links(); size(); await show(); await loadCities(state.day);
       const m = location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
       let remembered = null; try { remembered = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
@@ -755,10 +777,13 @@
       else document.getElementById("welcome").hidden = false;
     } catch (e) {
       setStatus("The live forecast could not be loaded (" + e.message + "). The daily run may be paused; the code and the paper's forecasts are on the <a href='../'>Foehn page</a>.", false);
+      document.getElementById("overlay").firstElementChild.textContent = navigator.onLine === false ? "You are offline and no forecast is stored yet" : "No live forecast available";
       cur = null; ctx.fillStyle = "#f6f8fa"; ctx.fillRect(0, 0, cv.width, cv.height); ctx.fillStyle = "#5b6977"; ctx.font = "16px Helvetica, Arial"; ctx.textAlign = "center"; ctx.fillText("No live forecast available", cv.width / 2, cv.height / 2);
     }
   })();
   window.addEventListener("resize", () => { if (cur) size(); });
+  const offlineNote = () => { document.getElementById("offline").hidden = navigator.onLine !== false; };
+  window.addEventListener("online", offlineNote); window.addEventListener("offline", offlineNote); offlineNote();
   // ---- theme: the system's preference, or the remembered choice (button in the top bar)
   function isDark() { return document.documentElement.dataset.theme === "dark"; }
   function applyTheme(t, save) { document.documentElement.dataset.theme = t; document.getElementById("theme").textContent = t === "dark" ? "☀️" : "🌙"; const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = t === "dark" ? "#0f1720" : "#1F5AA6";
@@ -770,6 +795,7 @@
   const APP = !/[?&]full=1/.test(location.search) && (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true || /[?&]source=pwa/.test(location.search) || location.hash === "#app");
   if (APP) {
     document.body.classList.add("app");
+    document.querySelector("footer .wrap").insertBefore(document.getElementById("stats"), document.querySelector("footer .fine"));
     const mapSec = document.querySelector("#map .wrap"), mapcard = document.querySelector(".mapcard"), point = document.getElementById("point");
     mapSec.insertBefore(document.getElementById("welcome"), mapcard); mapSec.insertBefore(point, mapcard);   // the welcome card and the selected place right under the search box
     document.title = "Otso 1.1 — PM2.5 forecast";
@@ -798,13 +824,19 @@
     el.innerHTML = `<span>👥 <b>${n(v.visitors)}</b> visitors</span> · <span><b>${n(v.visitorsDay)}</b> today</span> · <span>📲 <b>${n(v.installs)}</b> installed</span> · <span>📱 <b>${n(v.appUsers)}</b> app users</span> · <span><b>${n(v.appDay)}</b> in the app today</span> <span class="small">(unique devices, anonymous)</span>`;
     el.hidden = false;
   })();
+  if (APP && "IntersectionObserver" in window) {
+    const secOf = { city: document.getElementById("city"), map: document.querySelector(".mapcard"), cities: document.getElementById("cities") };
+    const io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { const k = Object.keys(secOf).find((k) => secOf[k] === e.target); for (const a of document.querySelectorAll(".tabbar a[data-sec]")) a.classList.toggle("on", a.dataset.sec === k); } }, { rootMargin: "-40% 0px -50% 0px" });
+    for (const el of Object.values(secOf)) if (el) io.observe(el);
+  }
   // ---- install tutorial: the tab of the visitor's system is opened first
   const ua = navigator.userAgent || ""; const os = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "desktop";
   function showOs(o) { for (const b of document.querySelectorAll(".ostabs button")) b.classList.toggle("on", b.dataset.os === o); for (const d of document.querySelectorAll(".istep[data-os]")) d.hidden = d.dataset.os !== o; }
   document.querySelector(".ostabs").addEventListener("click", (ev) => { const b = ev.target.closest("button[data-os]"); if (b) showOs(b.dataset.os); }); showOs(os);
   if (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone) { const i = document.getElementById("install"); if (i) i.querySelector(".sub").textContent = "Otso is installed on this device. A new forecast appears each day around 12:30 UTC."; }
   // ---- PWA: service worker and the install prompt (Chrome / Edge / Android)
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").then((reg) => { reg.addEventListener("updatefound", () => { const nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", () => { if (nw.state === "installed" && navigator.serviceWorker.controller) { const t = document.getElementById("toast"); t.hidden = false; } }); }); }).catch(() => {}); }
+  document.getElementById("toast-reload").addEventListener("click", () => location.reload());
   let installEvt = null; const ib = document.getElementById("install-btn");
   window.addEventListener("beforeinstallprompt", (ev) => { ev.preventDefault(); installEvt = ev; ib.hidden = false; });
   ib.addEventListener("click", async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; ib.hidden = true; });
