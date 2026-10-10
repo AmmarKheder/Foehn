@@ -58,6 +58,7 @@
   table.ct td { padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
   table.ct tr:hover td { background: var(--bg-soft); cursor: pointer; }
   .chip { display: inline-block; min-width: 46px; text-align: center; padding: 2px 7px; border-radius: 6px; font-weight: 600; font-size: 12.5px; }
+  .rm { border: none; background: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 4px; } .rm:hover { color: var(--pink); }
   .bars { display: inline-flex; gap: 2px; align-items: flex-end; height: 22px; vertical-align: middle; }
   .bars i { display: block; width: 6px; border-radius: 2px 2px 0 0; min-height: 2px; }
   .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
@@ -66,6 +67,10 @@
   .twocol ul { padding-left: 20px; margin: 0; }
   .twocol li { margin-bottom: 8px; }
   .small { font-size: 13px; color: var(--muted); }
+  .logos { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
+  .logos img { height: 40px; width: auto; display: block; }
+  .logos img.logo-amc { height: 52px; }
+  .logos span { font-size: 13px; color: var(--muted); max-width: 520px; }
   .city { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; }
   .city-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .city-lab { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
@@ -84,11 +89,15 @@
   .install-qr { text-align: center; }
   .install-qr img { width: 200px; height: 200px; display: block; margin: 0 auto 6px; }
   .install-qr .small { margin: 0 0 10px; }
-  .install-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .install-steps { display: block; }
+  .ostabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .ostabs button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 13.5px; cursor: pointer; }
+  .ostabs button.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .kbd { display: inline-block; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; font-size: 12px; background: var(--bg-soft); }
   .istep b { display: block; margin-bottom: 6px; }
   .istep ol { margin: 0; padding-left: 20px; font-size: 14px; color: var(--ink); }
   .istep li { margin-bottom: 4px; }
-  @media (max-width: 860px) { .install, .install-steps { grid-template-columns: 1fr; } .install-qr { order: 2; } }
+  @media (max-width: 860px) { .install { grid-template-columns: 1fr; } .install-qr { order: 2; } }
   @media (max-width: 860px) { .point, .twocol { grid-template-columns: 1fr; } .mapfoot .lead { min-width: 0; } .mapfoot .lead output { min-width: 0; } .cbar canvas { width: 200px; } }
   @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } .mapbar select { width: 100%; } }
 </style>
@@ -196,11 +205,11 @@
 
 <section class="band" id="cities">
   <div class="wrap">
-    <h2>Sixty cities</h2>
-    <p class="sub">Ensemble mean over the 3 × 3 cells around each city, at each lead; the bars show the ten leads from +12 h to +120 h. Click a city to centre the map on it. Sort by any column.</p>
+    <h2>Cities</h2>
+    <p class="sub">Sixty large cities are published with every forecast; type any other city, town or village in the box to add it to the table (it is computed here from the forecast layers, and kept on this device). Values are the ensemble mean over the 3 × 3 cells around the place; the bars show the ten leads from +12 h to +120 h. Click a row to centre the map on it; sort by any column.</p>
     <div class="cities">
       <div class="cities-top">
-        <input type="search" id="search" placeholder="Find a city…" aria-label="Find a city" />
+        <div class="city-box" style="min-width:260px"><input type="search" id="search" placeholder="Find or add any city…" aria-label="Find or add any city" autocomplete="off" /><ul class="city-list" id="search-list" hidden></ul></div>
         <span class="small" id="cities-note"></span>
       </div>
       <div class="tablewrap"><table class="ct" id="ct"><thead><tr>
@@ -245,9 +254,10 @@
       <div class="install-qr"><img src="qr.svg" alt="QR code of https://ammarkheder.com/Foehn/otso/" width="200" height="200" /><p class="small">ammarkheder.com/Foehn/otso</p>
         <button type="button" class="btn btn-primary" id="install-btn" hidden>Install Otso</button></div>
       <div class="install-steps">
-        <div class="istep"><b>iPhone, iPad (Safari)</b><ol><li>Open the page in Safari.</li><li>Tap <strong>Share</strong> (the square with an arrow).</li><li>Choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li></ol></div>
-        <div class="istep"><b>Android (Chrome)</b><ol><li>Open the page in Chrome.</li><li>Tap the <strong>⋮</strong> menu, or the <em>Install Otso</em> button if it appears.</li><li>Choose <strong>Add to Home screen</strong> / <strong>Install app</strong>.</li></ol></div>
-        <div class="istep"><b>Computer (Chrome, Edge)</b><ol><li>Open the page.</li><li>Click the <strong>install icon</strong> at the right of the address bar (or menu → <em>Install Otso</em>).</li><li>Otso opens in its own window.</li></ol></div>
+        <div class="ostabs" role="tablist"><button type="button" class="on" data-os="ios">iPhone / iPad</button><button type="button" data-os="android">Android</button><button type="button" data-os="desktop">Computer</button></div>
+        <div class="istep" data-os="ios"><b>iPhone, iPad — Safari</b><ol><li>Scan the code, or open <strong>ammarkheder.com/Foehn/otso</strong> in Safari (not in another app's browser).</li><li>Tap <strong>Share</strong> <span class="kbd">⎙</span> (the square with an arrow, at the bottom).</li><li>Scroll and choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li><li>Otso is on your home screen and opens full screen; it keeps the last forecast when offline.</li></ol></div>
+        <div class="istep" data-os="android" hidden><b>Android — Chrome</b><ol><li>Scan the code, or open <strong>ammarkheder.com/Foehn/otso</strong> in Chrome.</li><li>Tap the <strong>Install Otso</strong> button below the code when it appears, or the <strong>⋮</strong> menu → <strong>Add to Home screen</strong> / <strong>Install app</strong>.</li><li>Confirm. Otso appears with the other apps.</li></ol></div>
+        <div class="istep" data-os="desktop" hidden><b>Computer — Chrome, Edge</b><ol><li>Open <strong>ammarkheder.com/Foehn/otso</strong>.</li><li>Click the <strong>install icon</strong> at the right of the address bar, or menu → <strong>Install Otso</strong> (Firefox and Safari on Mac: keep it as a bookmark).</li><li>Otso opens in its own window.</li></ol></div>
       </div>
     </div>
     <p class="small" style="margin-top:12px">Your city is remembered on this device only (nothing is sent anywhere). A new forecast appears each day around 12:30 UTC. Research forecast, not an alert: the app sends no notifications.</p>
@@ -271,7 +281,10 @@
 </section>
 
 </main>
-<footer><div class="wrap">Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · Atmospheric Modelling Centre Lahti. Computations on the LUMI supercomputer (CSC, EuroHPC). Research forecast, not an official alert.</div></footer>
+<footer><div class="wrap">
+  <div class="logos"><a href="https://www.lumi-supercomputer.eu/" title="LUMI supercomputer"><img src="../assets/lumi_logo.png" alt="LUMI" /></a><a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" /></a><a href="https://www.amc-lahti.fi/" title="Atmospheric Modelling Centre Lahti"><img src="../assets/amc_logo.png" alt="AMC-Lahti" class="logo-amc" /></a>
+    <span>Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland, by the <strong>Atmospheric Modelling Centre Lahti</strong> (AMC-Lahti, University of Helsinki and LUT University).</span></div>
+  Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · Atmospheric Modelling Centre Lahti. Research forecast, not an official alert.</div></footer>
 
 <script>
 (() => {
@@ -460,20 +473,40 @@
     document.getElementById("dl-nc").href = BASE + d + "/" + (f.netcdf || ""); document.getElementById("dl-nc").textContent = f.netcdf || "(no NetCDF for this day)";
     document.getElementById("dl-cities").href = BASE + d + "/cities.json"; document.getElementById("dl-index").href = BASE + d + "/index.json"; document.getElementById("dl-map").href = BASE + d + "/" + f.map[1]; }
   // ---- cities
-  async function loadCities(day) { state.cities = await (await fetch(BASE + day + "/cities.json", { cache: "no-cache" })).json(); table(); }
+  let MY = []; try { MY = JSON.parse(localStorage.getItem("otso-mycities") || "[]"); } catch (e) {}
+  async function cityRow(c) {                                                              // 3 x 3 cells around the place, from the layers of the shown day
+    const day = state.day; const r = Math.floor((LAT0 - c.lat) / DLAT), cc = Math.floor(((((c.lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON);
+    const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k))); const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
+    const mean = [], p = [];
+    for (let k = 0; k < 10; k++) { let s1 = 0, s2 = 0, n = 0; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const rr = r + dr, c2 = (cc + dc + NLON) % NLON; if (rr < 0 || rr >= NLAT) continue; const v = m[k][rr * NLON + c2]; if (v === 0) continue; s1 += dec(v); s2 += pr[k][rr * NLON + c2] / 100; n++; }
+      if (!n) return null; mean.push(+(s1 / n).toFixed(1)); p.push(+(s2 / n).toFixed(2)); }
+    return { lat: c.lat, lon: c.lon, mean, p_above_25: p, added: true };
+  }
+  async function addCity(c) {
+    const name = c.name + (c.country ? ", " + c.country : ""); const row = await cityRow(c);
+    if (!row) { document.getElementById("cities-note").textContent = name + ": no land cell there; Otso forecasts over land."; return; }
+    state.cities.cities[name] = row; if (!MY.some((x) => x.name === name)) { MY.unshift({ name, lat: c.lat, lon: c.lon }); MY = MY.slice(0, 30); try { localStorage.setItem("otso-mycities", JSON.stringify(MY)); } catch (e) {} }
+    document.getElementById("search").value = ""; table(); choose(c);
+  }
+  async function loadCities(day) { state.cities = await (await fetch(BASE + day + "/cities.json", { cache: "no-cache" })).json();
+    for (const x of MY) { const row = await cityRow(x).catch(() => null); if (row) state.cities.cities[x.name] = row; }
+    table(); }
+  suggestBox(document.getElementById("search"), document.getElementById("search-list"), addCity);
   const chip = (v) => `<span class="chip" style="background:${pmHex(v)};color:${pmClass(v) >= 3 && pmClass(v) <= 6 ? "#1c2530" : "#fff"}">${fmt(v)}</span>`;
   function table() {
     if (!state.cities) return; const q = (document.getElementById("search").value || "").toLowerCase();
-    const rows = Object.entries(state.cities.cities).map(([name, c]) => ({ name, c, d1: c.mean[1], d3: c.mean[5], d5: c.mean[9], max: Math.max(...c.mean), pmax: Math.max(...c.p_above_25) }))
-      .filter((r) => r.name.toLowerCase().includes(q));
+    const rows = Object.entries(state.cities.cities).map(([name, c]) => ({ name, c, d1: c.mean[1], d3: c.mean[5], d5: c.mean[9], max: Math.max(...c.mean), pmax: Math.max(...c.p_above_25), added: !!c.added }))
+      .filter((r) => norm(r.name).includes(norm(q)));
     rows.sort((a, b) => state.sort === "name" ? (state.desc ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)) : (state.desc ? b[state.sort] - a[state.sort] : a[state.sort] - b[state.sort]));
     const top = Math.max(50, ...rows.map((r) => r.max));
-    document.querySelector("#ct tbody").innerHTML = rows.map((r) => `<tr data-n="${r.name}"><td><strong>${r.name}</strong></td><td>${chip(r.d1)}</td><td>${chip(r.d3)}</td><td>${chip(r.d5)}</td><td>${chip(r.max)}</td><td>${Math.round(100 * r.pmax)} %</td>` +
+    rows.sort((a, b) => (b.added ? 1 : 0) - (a.added ? 1 : 0));                           // the cities added here first (stable sort keeps the chosen order inside)
+    document.querySelector("#ct tbody").innerHTML = rows.map((r) => `<tr data-n="${esc(r.name)}"><td><strong>${esc(r.name)}</strong>${r.added ? ` <button type="button" class="rm" data-rm="${esc(r.name)}" title="Remove from my cities">×</button>` : ""}</td><td>${chip(r.d1)}</td><td>${chip(r.d3)}</td><td>${chip(r.d5)}</td><td>${chip(r.max)}</td><td>${Math.round(100 * r.pmax)} %</td>` +
       `<td><span class="bars">${r.c.mean.map((v) => `<i style="height:${Math.max(2, 22 * Math.min(v, top) / top)}px;background:${pmHex(v)}" title="${fmt(v)}"></i>`).join("")}</span></td></tr>`).join("");
     for (const th of document.querySelectorAll("#ct th[data-k]")) th.classList.toggle("on", th.dataset.k === state.sort);
     document.getElementById("cities-note").textContent = rows.length + " cities · issued " + state.cities.date + " · mean of 3 × 3 cells of 0.4°";
   }
   document.getElementById("search").addEventListener("input", table);
+  document.querySelector("#ct tbody").addEventListener("click", (ev) => { const b = ev.target.closest("button.rm"); if (!b) return; ev.stopPropagation(); const n = b.dataset.rm; delete state.cities.cities[n]; MY = MY.filter((x) => x.name !== n); try { localStorage.setItem("otso-mycities", JSON.stringify(MY)); } catch (e) {} table(); }, true);
   document.querySelector("#ct thead").addEventListener("click", (ev) => { const th = ev.target.closest("th[data-k]"); if (!th) return; if (state.sort === th.dataset.k) state.desc = !state.desc; else { state.sort = th.dataset.k; state.desc = th.dataset.k !== "name"; } table(); });
   document.querySelector("#ct tbody").addEventListener("click", (ev) => { const tr = ev.target.closest("tr"); if (!tr) return; const c = state.cities.cities[tr.dataset.n];
     state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, tr.dataset.n); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); });
@@ -489,26 +522,31 @@
   }
   const list = document.getElementById("city-list"), cq = document.getElementById("city-q");
   let onlineTimer = null, onlineSeq = 0;
-  async function searchOnline(q) {                                                       // any place on Earth: OpenStreetMap data
-    const seq = ++onlineSeq; let out = [];
+  async function searchOnline(q, box) {                                                  // any place on Earth: OpenStreetMap data
+    box = box || BOX; const seq = ++onlineSeq; let out = [];
     try { const r = await fetch("https://photon.komoot.io/api/?q=" + encodeURIComponent(q) + "&limit=6&lang=en"); const j = await r.json();
       out = j.features.map((f) => ({ name: f.properties.name || q, country: [f.properties.state, f.properties.country].filter(Boolean).join(", "), lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0], pop: 0, online: true })); }
     catch (e) { try { const r = await fetch("https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(q) + "&format=jsonv2&limit=6"); const j = await r.json();
       out = j.map((x) => ({ name: x.name || x.display_name.split(",")[0], country: x.display_name.split(",").slice(1, 3).join(",").trim(), lat: +x.lat, lon: +x.lon, pop: 0, online: true })); } catch (e2) {} }
     if (seq !== onlineSeq) return;                                                         // a newer query is running
-    const seen = new Set(hits.map((c) => c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon)));
-    for (const c of out) { const k = c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon); if (!seen.has(k) && c.lat > -60 && c.lat < 84) { hits.push(c); seen.add(k); } }
-    if (sel < 0 && hits.length) sel = 0; renderList();
+    const seen = new Set(box.hits.map((c) => c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon)));
+    for (const c of out) { const k = c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon); if (!seen.has(k) && c.lat > -60 && c.lat < 84) { box.hits.push(c); seen.add(k); } }
+    if (box.sel < 0 && box.hits.length) box.sel = 0; renderList(box);
   }
   const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
-  function renderList() { list.innerHTML = hits.map((c, i) => `<li data-i="${i}" class="${i === sel ? "sel" : ""}">${esc(c.name)}<span>${esc(c.country)}${c.pop ? " · " + (c.pop >= 1000 ? (c.pop / 1000).toFixed(1) + " M" : c.pop + " k") : (c.online ? " · OpenStreetMap" : "")}</span></li>`).join("") + (cq.value.trim().length >= 2 ? `<li class="more"><span>${hits.some((c) => c.online) ? "Places from OpenStreetMap included" : "Searching all places…"}</span></li>` : ""); list.hidden = !hits.length && cq.value.trim().length < 2; }
-  function choose(c) { list.hidden = true; cq.value = c.name + (c.country ? ", " + c.country : ""); try { localStorage.setItem("otso-city", JSON.stringify({ name: cq.value, lat: c.lat, lon: c.lon })); } catch (e) {} state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, c.name + ", " + c.country); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); }
-  cq.addEventListener("focus", loadGaz);
-  cq.addEventListener("input", async () => { await loadGaz(); hits = search(cq.value); sel = hits.length ? 0 : -1; renderList();
-    clearTimeout(onlineTimer); const q = cq.value.trim(); if (q.length >= 3) onlineTimer = setTimeout(() => searchOnline(q), 500); });
-  cq.addEventListener("keydown", (ev) => { if (list.hidden) return; if (ev.key === "ArrowDown") { sel = Math.min(hits.length - 1, sel + 1); renderList(); ev.preventDefault(); } else if (ev.key === "ArrowUp") { sel = Math.max(0, sel - 1); renderList(); ev.preventDefault(); } else if (ev.key === "Enter") { if (sel >= 0) choose(hits[sel]); ev.preventDefault(); } else if (ev.key === "Escape") list.hidden = true; });
-  list.addEventListener("mousedown", (ev) => { const li = ev.target.closest("li[data-i]"); if (li) { ev.preventDefault(); choose(hits[+li.dataset.i]); } });
-  cq.addEventListener("blur", () => setTimeout(() => { list.hidden = true; }, 150));
+  function renderList(box) { const b = box || BOX; b.list.innerHTML = b.hits.map((c, i) => `<li data-i="${i}" class="${i === b.sel ? "sel" : ""}">${esc(c.name)}<span>${esc(c.country)}${c.pop ? " · " + (c.pop >= 1000 ? (c.pop / 1000).toFixed(1) + " M" : c.pop + " k") : (c.online ? " · OpenStreetMap" : "")}</span></li>`).join("") + (b.input.value.trim().length >= 2 ? `<li class="more"><span>${b.hits.some((c) => c.online) ? "Places from OpenStreetMap included" : "Searching all places…"}</span></li>` : ""); b.list.hidden = !b.hits.length && b.input.value.trim().length < 2; }
+  function choose(c) { list.hidden = true; cq.value = c.name + (c.country ? ", " + c.country : ""); try { localStorage.setItem("otso-city", JSON.stringify({ name: cq.value, lat: c.lat, lon: c.lon })); } catch (e) {} state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, c.name + (c.country ? ", " + c.country : "")); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); }
+  function suggestBox(input, listEl, onChoose) {                                          // a search box with suggestions from the gazetteer and OpenStreetMap
+    const b = { input, list: listEl, hits: [], sel: -1, timer: null };
+    input.addEventListener("focus", loadGaz);
+    input.addEventListener("input", async () => { await loadGaz(); b.hits = search(input.value); b.sel = b.hits.length ? 0 : -1; renderList(b);
+      clearTimeout(b.timer); const q = input.value.trim(); if (q.length >= 3) b.timer = setTimeout(() => searchOnline(q, b), 500); });
+    input.addEventListener("keydown", (ev) => { if (listEl.hidden) return; if (ev.key === "ArrowDown") { b.sel = Math.min(b.hits.length - 1, b.sel + 1); renderList(b); ev.preventDefault(); } else if (ev.key === "ArrowUp") { b.sel = Math.max(0, b.sel - 1); renderList(b); ev.preventDefault(); } else if (ev.key === "Enter") { if (b.sel >= 0) { listEl.hidden = true; onChoose(b.hits[b.sel]); } ev.preventDefault(); } else if (ev.key === "Escape") listEl.hidden = true; });
+    listEl.addEventListener("mousedown", (ev) => { const li = ev.target.closest("li[data-i]"); if (li) { ev.preventDefault(); listEl.hidden = true; onChoose(b.hits[+li.dataset.i]); } });
+    input.addEventListener("blur", () => setTimeout(() => { listEl.hidden = true; }, 150));
+    return b;
+  }
+  const BOX = suggestBox(cq, list, choose);
   document.getElementById("city-geo").addEventListener("click", () => {
     if (!navigator.geolocation) { cq.value = "Geolocation is not available in this browser."; return; }
     navigator.geolocation.getCurrentPosition((p) => { const lat = p.coords.latitude, lon = p.coords.longitude; cq.value = "My location (" + coord(lat, lon) + ")";
@@ -536,6 +574,11 @@
     }
   })();
   window.addEventListener("resize", () => { if (cur) size(); });
+  // ---- install tutorial: the tab of the visitor's system is opened first
+  const ua = navigator.userAgent || ""; const os = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "desktop";
+  function showOs(o) { for (const b of document.querySelectorAll(".ostabs button")) b.classList.toggle("on", b.dataset.os === o); for (const d of document.querySelectorAll(".istep[data-os]")) d.hidden = d.dataset.os !== o; }
+  document.querySelector(".ostabs").addEventListener("click", (ev) => { const b = ev.target.closest("button[data-os]"); if (b) showOs(b.dataset.os); }); showOs(os);
+  if (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone) { const i = document.getElementById("install"); if (i) i.querySelector(".sub").textContent = "Otso is installed on this device. A new forecast appears each day around 12:30 UTC."; }
   // ---- PWA: service worker and the install prompt (Chrome / Edge / Android)
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
   let installEvt = null; const ib = document.getElementById("install-btn");

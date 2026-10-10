@@ -135,3 +135,9 @@ ul.limits li { margin-bottom: 8px; }
 .dot-blue { background: #1F5AA6; } .dot-pink { background: #E0457F; }
 .air-stats { font-size: 14px; margin: 12px 0 0; color: var(--ink); min-height: 22px; }
 @media (max-width: 480px) { .air { padding: 10px; } .air-controls .lead { min-width: 0; } }
+
+/* computing-centre logos */
+.logos { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
+.logos img { height: 40px; width: auto; display: block; }
+.logos img.logo-amc { height: 52px; }
+.logos span { font-size: 13px; color: var(--muted); max-width: 520px; }
