@@ -120,3 +120,18 @@ footer { padding: 30px 0 50px; color: var(--muted); font-size: 13px; border-top:
 ul.limits { margin: 0; padding-left: 20px; color: var(--ink); }
 ul.limits li { margin-bottom: 8px; }
 @media (max-width: 480px) { .viewer-head { flex-direction: column; align-items: flex-start; } .loc { width: 56px; height: 56px; } .dl { margin-left: 0; } }
+
+/* where was the air */
+.air { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.air-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.air-presets button { padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 13px; cursor: pointer; }
+.air-presets button:hover { border-color: var(--blue); color: var(--blue); }
+.air-canvas { width: 100%; display: block; border: 1px solid var(--line); border-radius: 8px; cursor: crosshair; touch-action: manipulation; background: #fff; }
+.air-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
+.air-controls .lead { flex: 1; min-width: 260px; }
+.air-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+.air-legend { font-size: 13px; color: var(--muted); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 4px 0 8px; vertical-align: middle; }
+.dot-blue { background: #1F5AA6; } .dot-pink { background: #E0457F; }
+.air-stats { font-size: 14px; margin: 12px 0 0; color: var(--ink); min-height: 22px; }
+@media (max-width: 480px) { .air { padding: 10px; } .air-controls .lead { min-width: 0; } }

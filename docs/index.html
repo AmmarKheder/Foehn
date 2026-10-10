@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261010d" />
+<link rel="stylesheet" href="assets/style.css?v=20261010e" />
 </head>
 <body>
 
@@ -17,6 +17,7 @@
   <div class="wrap topbar-row">
     <a class="brand" href="#top"><img src="assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span></a>
     <nav class="nav">
+      <a href="#air">Where was the air?</a>
       <a href="#abstract">Paper</a>
       <a href="#how">How it works</a>
       <a href="#viewer">Viewer</a>
@@ -41,7 +42,8 @@
         in one pass by flow matching, and <strong>computes rather than learns the transport of the air</strong> with FLEXGREEN,
         a GPU re-implementation of the backward mode of the FLEXPART particle model.</p>
       <div class="cta">
-        <a class="btn btn-primary" href="#viewer">Explore the forecasts</a>
+        <a class="btn btn-primary" href="#air">Where was the air you breathe?</a>
+        <a class="btn btn-ghost" href="#viewer">Explore the forecasts</a>
         <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn">Code on GitHub</a>
       </div>
       <div class="stats">
@@ -57,6 +59,25 @@
            aria-label="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, and FLEXGREEN: where the air arriving in thirty cities that day was, one to seven days before"></video>
     <noscript><img src="assets/foehn_globes.gif" alt="Foehn forecast and FLEXGREEN origins on two rotating globes" /></noscript>
     <p class="cap">Foehn's forecast of daily PM<sub>2.5</sub> at 1&nbsp;km for 21 January 2022, issued the evening before (ensemble mean), and FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</p>
+  </div>
+</section>
+
+<section class="band" id="air">
+  <div class="wrap">
+    <h2>Where was the air you breathe?</h2>
+    <p class="sub">Click or tap anywhere on land. FLEXGREEN followed the air that arrived there on 21 January 2022 backwards through
+      the forecast wind for seven days: each dot is a particle of that air, where it was one to seven days before. Blue, it
+      was near the ground, in the mixed layer, on that day; pink, it was higher up. The numbers are computed for the place you
+      choose, from the same Green's functions that Foehn's forecasts use.</p>
+    <div class="air">
+      <div class="air-presets" id="air-presets"></div>
+      <canvas id="air-canvas" class="air-canvas" aria-label="world map; click a place to see where its air came from"></canvas>
+      <div class="air-controls">
+        <div class="lead"><label for="air-lead" class="air-label">Days before arrival</label><input type="range" id="air-lead" min="1" max="7" step="1" value="3" /><output id="air-leadout" for="air-lead">3 days</output><button type="button" id="air-play" class="play" aria-label="play">▶</button></div>
+        <div class="air-legend"><span class="dot dot-blue"></span> near the ground on that day <span class="dot dot-pink"></span> higher up</div>
+      </div>
+      <p class="air-stats" id="air-stats">Choose a place on the map.</p>
+    </div>
   </div>
 </section>
 
@@ -258,6 +279,88 @@
   sel.target.addEventListener("change", render);
   sel.lead.addEventListener("input", render);
   document.querySelectorAll("#layers button").forEach((b) => b.addEventListener("click", () => { setLayer(b.dataset.layer); render(); }));
+})();
+</script>
+<script>
+(function () {
+  // "Where was the air you breathe?": FLEXGREEN origins for every land cell, read with HTTP range requests
+  const cv = document.getElementById("air-canvas"); if (!cv) return;
+  const ctx = cv.getContext("2d");
+  const LAT0 = 84, LAT1 = -60, LON0 = -180, LON1 = 180;
+  const bg = new Image(); bg.src = "air/bg_2022-01-21.png";
+  let META = null, INDEX = null, cells = null, state = { lat: null, lon: null, recs: [], lead: 3 }, timer = null, full = null;
+  const colBlue = "rgba(31,90,166,", colPink = "rgba(224,69,127,";
+  const PRESETS = [["Beijing", 39.9, 116.4], ["Delhi", 28.6, 77.2], ["Paris", 48.9, 2.3], ["Lagos", 6.5, 3.4], ["Cairo", 30.0, 31.2],
+                   ["Los Angeles", 34.1, -118.2], ["São Paulo", -23.5, -46.6], ["Jakarta", -6.2, 106.8], ["Sydney", -33.9, 151.2], ["Nairobi", -1.3, 36.8]];
+  function size() { const w = cv.clientWidth; const h = Math.round(w * (LAT0 - LAT1) / (LON1 - LON0)); cv.width = w * devicePixelRatio; cv.height = h * devicePixelRatio; cv.style.height = h + "px"; ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); draw(); }
+  const X = (lon) => (lon - LON0) / (LON1 - LON0) * cv.clientWidth, Y = (lat) => (LAT0 - lat) / (LAT0 - LAT1) * cv.clientHeight;
+  function draw() {
+    const w = cv.clientWidth, h = cv.clientHeight; ctx.clearRect(0, 0, w, h);
+    if (bg.complete) ctx.drawImage(bg, 0, 0, w, h);
+    if (state.lat === null) return;
+    const r = Math.max(1.6, w / 600);
+    for (let hh = 7; hh >= 1; hh--) {                                       // older leads as a faint trail
+      const a = hh === state.lead ? 0.9 : (hh > state.lead ? 0.10 : 0.0);
+      if (a <= 0) continue;
+      for (const rec of state.recs) for (const pt of rec.leads[hh - 1]) {
+        ctx.fillStyle = (pt.aloft ? colPink : colBlue) + (a * (0.35 + 0.65 * pt.sv)) + ")";
+        ctx.beginPath(); ctx.arc(X(pt.lon), Y(pt.lat), hh === state.lead ? r : r * 0.7, 0, 6.283); ctx.fill();
+      }
+    }
+    ctx.strokeStyle = "#111"; ctx.lineWidth = 1.6; ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(X(state.lon), Y(state.lat), r * 2.4, 0, 6.283); ctx.fill(); ctx.stroke();
+  }
+  function parse(buf) {
+    const dv = new DataView(buf), P = META.particles, leads = [];
+    for (let h = 0; h < META.leads; h++) {
+      const pts = [];
+      for (let p = 0; p < P; p++) { const o = (h * P + p) * 5; const lon = dv.getInt16(o, true) / META.lon_scale, lat = dv.getInt16(o + 2, true) / META.lat_scale, f = dv.getUint8(o + 4); pts.push({ lon, lat, aloft: f & 1, sv: (f >> 1) / 127 }); }
+      leads.push(pts);
+    }
+    const summary = []; for (let h = 0; h < META.leads; h++) summary.push({ aloft: dv.getUint8(420 + 2 * h), dist: dv.getUint8(421 + 2 * h) * META.dist_unit_km });
+    return { leads, summary };
+  }
+  async function fetchRecord(idx) {
+    const a = idx * META.record, b = a + META.record - 1;
+    if (full) return full.slice(a, b + 1);
+    const r = await fetch("air/origins_" + META.day + ".bin", { headers: { Range: "bytes=" + a + "-" + b } });
+    if (r.status === 206) return await r.arrayBuffer();
+    full = await r.arrayBuffer(); return full.slice(a, b + 1);          // the server ignored the range: keep the whole file
+  }
+  async function pick(lat, lon) {
+    if (!META) return;
+    const r0 = Math.floor((META.lat0 - lat) / META.dlat), c0 = Math.floor((lon - META.lon0) / META.dlon);
+    const idxs = [];
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const r = r0 + dr, c = (c0 + dc + META.nlon) % META.nlon; if (r < 0 || r >= META.nlat) continue; const k = INDEX[r * META.nlon + c]; if (k >= 0) idxs.push(k); }
+    if (!idxs.length) { document.getElementById("air-stats").textContent = "No land there: choose a place on land."; return; }
+    document.getElementById("air-stats").textContent = "Reading the Green's functions…";
+    state.lat = lat; state.lon = lon; state.recs = (await Promise.all(idxs.map(fetchRecord))).map(parse);
+    history.replaceState(null, "", "#air?lat=" + lat.toFixed(2) + "&lon=" + lon.toFixed(2));
+    stats(); draw();
+  }
+  function stats() {
+    const n = state.recs.length; if (!n) return;
+    const s = []; for (let h = 0; h < META.leads; h++) { let a = 0, d = 0; for (const r of state.recs) { a += r.summary[h].aloft; d += r.summary[h].dist; } s.push({ aloft: a / n, dist: d / n }); }
+    const h = state.lead, cur = s[h - 1];
+    document.getElementById("air-stats").innerHTML = "At " + Math.abs(state.lat).toFixed(1) + "°" + (state.lat >= 0 ? "N" : "S") + ", " + Math.abs(state.lon).toFixed(1) + "°" + (state.lon >= 0 ? "E" : "W") +
+      ", of the air arriving on 21 January 2022: <strong>" + h + (h > 1 ? " days" : " day") + " before</strong>, " + Math.round(100 - cur.aloft) + " % was near the ground and its median origin lay " + Math.round(cur.dist).toLocaleString("en") + " km away" +
+      " (one day before: " + Math.round(100 - s[0].aloft) + " %, " + Math.round(s[0].dist).toLocaleString("en") + " km; seven days: " + Math.round(100 - s[6].aloft) + " %, " + Math.round(s[6].dist).toLocaleString("en") + " km).";
+  }
+  function setLead(h) { state.lead = h; document.getElementById("air-lead").value = h; document.getElementById("air-leadout").textContent = h + (h > 1 ? " days" : " day"); stats(); draw(); }
+  cv.addEventListener("click", (ev) => { const b = cv.getBoundingClientRect(); const lon = LON0 + (ev.clientX - b.left) / b.width * (LON1 - LON0), lat = LAT0 - (ev.clientY - b.top) / b.height * (LAT0 - LAT1); pick(lat, lon); });
+  document.getElementById("air-lead").addEventListener("input", (ev) => setLead(+ev.target.value));
+  document.getElementById("air-play").addEventListener("click", () => {
+    const b = document.getElementById("air-play");
+    if (timer) { clearInterval(timer); timer = null; b.textContent = "▶"; return; }
+    b.textContent = "❚❚"; setLead(7); timer = setInterval(() => setLead(state.lead > 1 ? state.lead - 1 : 7), 750);
+  });
+  const pr = document.getElementById("air-presets");
+  for (const [name, lat, lon] of PRESETS) { const b = document.createElement("button"); b.type = "button"; b.textContent = name; b.addEventListener("click", () => pick(lat, lon)); pr.appendChild(b); }
+  Promise.all([fetch("air/origins.json").then((r) => r.json()), fetch("air/cells.bin").then((r) => r.arrayBuffer())]).then(([meta, cb]) => {
+    META = meta; cells = new Int32Array(cb); INDEX = new Int32Array(meta.nlat * meta.nlon).fill(-1); cells.forEach((c, i) => { INDEX[c] = i; });
+    const m = location.hash.match(/air\?lat=(-?[\d.]+)&lon=(-?[\d.]+)/); if (m) pick(+m[1], +m[2]);
+  }).catch(() => { document.getElementById("air-stats").textContent = "The transport data could not be loaded."; });
+  bg.onload = draw; window.addEventListener("resize", size); size();
 })();
 </script>
 </body>
