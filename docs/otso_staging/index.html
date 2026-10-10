@@ -897,7 +897,8 @@
       }
       document.getElementById("tznote").textContent = TZ === "UTC" ? "Times in UTC." : "Times are shown in your time zone (" + TZ.replace(/_/g, " ") + ").";
       links(); size(); await show(); await loadCities(state.day);
-      const m = location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
+      const qs = new URLSearchParams(location.search);                                   // a shared place: ?lat=..&lon=..&name=.. or the same in the hash
+      const m = qs.get("lat") && qs.get("lon") ? [null, qs.get("lat"), qs.get("lon"), qs.get("name") ? encodeURIComponent(qs.get("name")) : undefined] : location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
       let remembered = null; try { remembered = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
       if (m) { const nm = m[3] ? decodeURIComponent(m[3]) : null; if (nm) cq.value = nm; state.view = [+m[2] - 22, +m[2] + 22, +m[1] - 9, +m[1] + 9]; zoomAt(1, 0.5, 0.5); pick(+m[1], +m[2], nm); }
       else if (remembered && isFinite(remembered.lat)) { cq.value = remembered.name; state.view = [remembered.lon - 22, remembered.lon + 22, remembered.lat - 9, remembered.lat + 9]; zoomAt(1, 0.5, 0.5); pick(remembered.lat, remembered.lon, remembered.name);
