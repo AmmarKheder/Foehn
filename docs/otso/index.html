@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Otso" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="stylesheet" href="../assets/style.css?v=20261010h" />
+<link rel="stylesheet" href="../assets/style.css?v=20261010i" />
 <style>
   :root { --card: #ffffff; --amber-bg: #FFF8E8; --amber-line: #F3D9A4; --amber-ink: #4a3b12; --amber: #D99A1E; --shadow: 0 8px 24px rgba(28,37,48,.12); color-scheme: light; }
   :root[data-theme="dark"] { --bg: #0f1720; --bg-soft: #141d28; --card: #19232f; --ink: #e6edf3; --muted: #9aa7b4; --line: #27323e; --blue: #7fb0ff; --blue-dark: #5a8fe6; --blue-soft: #35507a; --pink: #ff6ea3;
@@ -36,7 +36,7 @@
   [hidden] { display: none !important; }
   /* app mode (installed on the home screen, or ?source=pwa): no paperwork */
   body.app .hero .kicker, body.app .hero .lede, body.app .hero .cta, body.app .hero .tag, body.app .hero .disclaimer .long, body.app #install, body.app #about, body.app #data,
-  body.app .sub, body.app .city-note, body.app #help, body.app section h2, body.app footer .logos, body.app .nav a:not(.full-site), body.app .pill-beta, body.app .mapbar .zoombtns,
+  body.app .sub, body.app .city-note, body.app #help, body.app section h2, body.app .nav a:not(.full-site), body.app .pill-beta, body.app .mapbar .zoombtns,
   body.app #region-wrap-never { display: none !important; }
   body.app .hero { padding: 12px 0 6px; } body.app .hero h1 { font-size: 26px; } body.app .otso-head { gap: 10px; }
   body.app .status { font-size: 12.5px; margin: 4px 0 0; } body.app .disclaimer { margin: 10px 0 0; padding: 7px 10px; font-size: 12px; border-radius: 8px; }
@@ -64,7 +64,7 @@
   .status { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
   .status b { color: var(--ink); font-weight: 600; }
   .usage { font-size: 13px; color: var(--muted); margin: 8px 0 0; line-height: 1.7; } .usage b { color: var(--ink); font-weight: 600; } .usage span { white-space: nowrap; }
-  :root[data-theme="dark"] .logos a { background: #fff; border-radius: 8px; padding: 5px 9px; display: inline-block; }
+  :root[data-theme="dark"] .foot-logos a { background: #fff; }
   body.app .usage { font-size: 12px; margin: 4px 0 0; }
   .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
   .mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
@@ -132,18 +132,7 @@
   .twocol ul { padding-left: 20px; margin: 0; }
   .twocol li { margin-bottom: 8px; }
   .small { font-size: 13px; color: var(--muted); }
-  .credit { display: flex; align-items: center; gap: 18px; padding: 0 0 18px; margin: 0 0 18px; border-bottom: 1px solid var(--line); }
-  .credit-logo { flex: none; display: block; } .credit-logo img { height: 64px; width: 64px; display: block; object-fit: contain; }
-  .credit-by { font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; } .credit-by a { color: var(--ink); }
-  .credit-by a:hover { color: var(--blue); text-decoration: none; border-bottom: 2px solid var(--blue); }
-  .credit-org { font-size: 14px; color: var(--muted); margin-top: 3px; } .credit-links { font-size: 13px; margin-top: 6px; }
-  .fine { font-size: 12px; color: var(--muted); margin: 14px 0 0; line-height: 1.6; }
-  body.app .credit { padding: 0 0 10px; margin: 0 0 10px; gap: 12px; } body.app .credit-logo img { height: 40px; width: 40px; } body.app .credit-by { font-size: 15px; } body.app .credit-org { font-size: 12px; } body.app .credit-links { display: none; } body.app .fine { font-size: 11px; }
-  @media (max-width: 480px) { .credit { gap: 12px; align-items: flex-start; } .credit-logo img { height: 52px; width: 52px; } .credit-by { font-size: 17px; } .credit-org, .credit-links { font-size: 13px; } }
-  .logos { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
-  .logos img { height: 40px; width: auto; display: block; }
-  .logos img.logo-amc { height: 52px; }
-  .logos span { font-size: 13px; color: var(--muted); max-width: 520px; }
+  body.app .foot { gap: 10px; } body.app .foot-logos img { height: 30px; } body.app .foot-logos img.lg-amc { height: 36px; } body.app .credit-by { font-size: 15px; } body.app .credit-org { font-size: 12px; } body.app .credit-links { display: none; } body.app .fine { font-size: 11px; }
   .city { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; }
   .city-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .city-lab { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
@@ -395,18 +384,19 @@
   <a href="#city" id="tab-locate"><span>📍</span>Locate</a><a href="#city"><span>🏙️</span>City</a><a href="#map"><span>🗺️</span>Map</a><a href="#cities"><span>📋</span>Cities</a><a href="?full=1#about"><span>ℹ️</span>About</a>
 </nav>
 <footer><div class="wrap">
-  <div class="credit">
-    <a href="https://www.amc-lahti.fi/" class="credit-logo" title="Atmospheric Modelling Centre Lahti"><img src="../assets/amc_logo.png" alt="AMC-Lahti" /></a>
-    <div class="credit-text">
+  <div class="foot">
+    <div class="foot-text">
       <div class="credit-by">Developed by <a href="https://ammarkheder.com/">Ammar Kheder</a></div>
       <div class="credit-org"><a href="https://www.amc-lahti.fi/">Atmospheric Modelling Centre Lahti</a> (AMC-Lahti) · University of Helsinki · LUT University</div>
       <div class="credit-links"><a href="../">The Foehn paper</a> · <a href="https://github.com/AmmarKheder/Foehn">Code and data</a> · <a href="https://github.com/AmmarKheder/Foehn/issues">Report a problem</a></div>
     </div>
+    <div class="foot-logos">
+      <a href="https://www.amc-lahti.fi/" title="Atmospheric Modelling Centre Lahti"><img src="../assets/amc_logo.png" alt="AMC-Lahti" class="lg-amc" /></a>
+      <a href="https://www.lumi-supercomputer.eu/" title="LUMI supercomputer"><img src="../assets/lumi_logo.png" alt="LUMI" class="lg-lumi" /></a>
+      <a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" class="lg-csc" /></a>
+    </div>
   </div>
-  <div class="logos"><a href="https://www.lumi-supercomputer.eu/" title="LUMI supercomputer"><img src="../assets/lumi_logo.png" alt="LUMI" /></a><a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" /></a>
-    <span>Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland.</span></div>
-  <p class="fine">Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. Research forecast, not an official alert.
-    Contains modified Copernicus Atmosphere Monitoring Service information 2026; ECMWF open data (CC BY 4.0); city list © GeoNames (CC BY 4.0) and © OpenStreetMap contributors. © 2026 Ammar Kheder.</p>
+  <p class="fine">Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland. Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. Research forecast, not an official alert. Contains modified Copernicus Atmosphere Monitoring Service information 2026; ECMWF open data (CC BY 4.0); city list © GeoNames (CC BY 4.0) and © OpenStreetMap contributors. © 2026 Ammar Kheder.</p>
 </div></footer>
 
 <script>
