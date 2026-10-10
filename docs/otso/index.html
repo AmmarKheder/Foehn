@@ -58,6 +58,9 @@
   .disclaimer { background: var(--amber-bg); border: 1px solid var(--amber-line); border-left: 4px solid var(--amber); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; margin: 18px 0 0; color: var(--amber-ink); }
   .status { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
   .status b { color: var(--ink); font-weight: 600; }
+  .stats { font-size: 13px; color: var(--muted); margin: 6px 0 0; } .stats b { color: var(--ink); font-weight: 600; } .stats span { white-space: nowrap; }
+  :root[data-theme="dark"] .logos a { background: #fff; border-radius: 8px; padding: 5px 9px; display: inline-block; }
+  body.app .stats { font-size: 12px; margin: 4px 0 0; }
   .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
   .mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
   .mapbar .layers button { font-size: 13px; }
@@ -189,6 +192,7 @@
         PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
         <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
+      <p class="stats" id="stats" hidden></p>
       <div class="cta" style="margin:14px 0 0"><a class="btn btn-primary" href="#install">📲 Install Otso on your phone</a><a class="btn btn-ghost" href="#map">See the forecast</a></div>
       <div class="disclaimer"><strong>Research forecast.</strong> <span class="long">Otso 1.1 is an experiment of a university group, not an official service. It has not yet
         been evaluated in real time, it is not monitored around the clock, and it does not replace the air-quality forecasts, indices and alerts
@@ -683,6 +687,28 @@
     const cq0 = document.getElementById("city-q"); let rem = null; try { rem = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
     if (!rem) setTimeout(() => { cq0.placeholder = "Your city: type it, or use your position"; }, 0);
   }
+  // ---- usage counters (abacus.jasoncameron.dev, a public hit counter: no cookies, no personal data; "unique" = per device,
+  //      remembered in this browser; a count by IP address needs a server, which a static site has not)
+  (async () => {
+    const CNT = "https://abacus.jasoncameron.dev", NS = "foehn-otso", today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const ls = { get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+    const hit = (k) => fetch(`${CNT}/hit/${NS}/${k}`).then((r) => r.json()).then((j) => j.value).catch(() => null);
+    const get = (k) => fetch(`${CNT}/get/${NS}/${k}`).then((r) => r.json()).then((j) => j.value).catch(() => null);
+    const v = {};
+    hit("visits");
+    v.visitors = ls.get("otso-seen") ? await get("visitors") : await hit("visitors"); ls.set("otso-seen", "1");
+    v.visitorsDay = ls.get("otso-seen-day") === today ? await get("visitors_day_" + today) : await hit("visitors_day_" + today); ls.set("otso-seen-day", today);
+    if (APP) {
+      if (!ls.get("otso-app-user")) { v.appUsers = await hit("app_users"); ls.set("otso-app-user", "1"); if (!ls.get("otso-installed")) { v.installs = await hit("installs"); ls.set("otso-installed", "1"); } }
+      v.appDay = ls.get("otso-app-day") === today ? await get("app_day_" + today) : await hit("app_day_" + today); ls.set("otso-app-day", today);
+    }
+    window.addEventListener("appinstalled", () => { if (!ls.get("otso-installed")) { hit("installs"); ls.set("otso-installed", "1"); } });
+    if (v.installs == null) v.installs = await get("installs"); if (v.appUsers == null) v.appUsers = await get("app_users"); if (v.appDay == null) v.appDay = await get("app_day_" + today);
+    const n = (x) => (x == null ? "–" : Number(x).toLocaleString("en"));
+    const el = document.getElementById("stats");
+    el.innerHTML = `<span>👥 <b>${n(v.visitors)}</b> visitors</span> · <span><b>${n(v.visitorsDay)}</b> today</span> · <span>📲 <b>${n(v.installs)}</b> installed</span> · <span>📱 <b>${n(v.appUsers)}</b> app users</span> · <span><b>${n(v.appDay)}</b> in the app today</span> <span class="small">(unique devices, anonymous)</span>`;
+    el.hidden = false;
+  })();
   // ---- install tutorial: the tab of the visitor's system is opened first
   const ua = navigator.userAgent || ""; const os = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "desktop";
   function showOs(o) { for (const b of document.querySelectorAll(".ostabs button")) b.classList.toggle("on", b.dataset.os === o); for (const d of document.querySelectorAll(".istep[data-os]")) d.hidden = d.dataset.os !== o; }
