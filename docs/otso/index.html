@@ -3,13 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Otso — live PM2.5 forecast of the Foehn project (beta)</title>
-<meta name="description" content="Otso runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles will be up to five days ahead. Research forecast, not an official alert." />
-<meta property="og:title" content="Otso — live PM2.5 forecast (beta)" />
+<title>Otso 1.1 — live PM2.5 forecast of the Foehn project (beta)</title>
+<meta name="description" content="Otso 1.1 runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles will be up to five days ahead. Research forecast, not an official alert." />
+<meta property="og:title" content="Otso 1.1 — live PM2.5 forecast (beta)" />
 <meta property="og:description" content="Where will the fine particles be tomorrow? The coarse Foehn model, run daily on live inputs. Research forecast." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="../assets/favicon.png" />
-<link rel="stylesheet" href="../assets/style.css?v=20261010f" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#1F5AA6" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Otso" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="stylesheet" href="../assets/style.css?v=20261010g" />
 <style>
   .otso-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
@@ -59,6 +66,29 @@
   .twocol ul { padding-left: 20px; margin: 0; }
   .twocol li { margin-bottom: 8px; }
   .small { font-size: 13px; color: var(--muted); }
+  .city { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; }
+  .city-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .city-lab { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+  .city-box { position: relative; flex: 1; min-width: 240px; }
+  .city-box input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 16px; }
+  .city-box input:focus { outline: 2px solid var(--blue-soft); border-color: var(--blue); }
+  .city-list { position: absolute; left: 0; right: 0; top: 100%; margin: 4px 0 0; padding: 4px 0; list-style: none; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgba(28,37,48,.12); z-index: 30; max-height: 320px; overflow-y: auto; }
+  .city-list li { padding: 8px 12px; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; gap: 10px; }
+  .city-list li span { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .city-list li:hover, .city-list li.sel { background: var(--bg-soft); }
+  .city-list li.more { cursor: default; font-size: 12px; } .city-list li.more:hover { background: #fff; }
+  .city-geo { padding: 9px 14px; white-space: nowrap; }
+  .city-note { margin: 8px 0 0; }
+  @media (max-width: 480px) { .city-geo { width: 100%; text-align: center; } .city-box { min-width: 0; width: 100%; } }
+  .install { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .install-qr { text-align: center; }
+  .install-qr img { width: 200px; height: 200px; display: block; margin: 0 auto 6px; }
+  .install-qr .small { margin: 0 0 10px; }
+  .install-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .istep b { display: block; margin-bottom: 6px; }
+  .istep ol { margin: 0; padding-left: 20px; font-size: 14px; color: var(--ink); }
+  .istep li { margin-bottom: 4px; }
+  @media (max-width: 860px) { .install, .install-steps { grid-template-columns: 1fr; } .install-qr { order: 2; } }
   @media (max-width: 860px) { .point, .twocol { grid-template-columns: 1fr; } .mapfoot .lead { min-width: 0; } .mapfoot .lead output { min-width: 0; } .cbar canvas { width: 200px; } }
   @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } .mapbar select { width: 100%; } }
 </style>
@@ -67,11 +97,13 @@
 
 <header class="topbar">
   <div class="wrap topbar-row">
-    <a class="brand" href="../"><img src="../assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span><span style="color:var(--muted);font-weight:400">/ Otso</span></a>
+    <a class="brand" href="../"><img src="../assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span><span style="color:var(--muted);font-weight:400">/ Otso 1.1</span></a>
     <nav class="nav">
       <a href="#map">Map</a>
       <a href="#cities">Cities</a>
+      <a href="#city">Your city</a>
       <a href="#about">What Otso is</a>
+      <a href="#install">Install</a>
       <a href="#data">Data</a>
       <a href="../">← Foehn</a>
     </nav>
@@ -84,14 +116,14 @@
   <div class="wrap">
     <div class="hero-text">
       <p class="kicker">Foehn project · live research forecast</p>
-      <div class="otso-head"><h1 style="margin:0">Otso</h1><span class="pill pill-beta">beta</span><span class="pill pill-live" id="pill-live" hidden>updated today</span></div>
+      <div class="otso-head"><h1 style="margin:0">Otso <span style="font-weight:500;color:var(--blue)">1.1</span></h1><span class="pill pill-beta">beta</span><span class="pill pill-live" id="pill-live" hidden>updated today</span></div>
       <p class="tag" style="margin-top:10px">Where will the fine particles be tomorrow, and the days after?</p>
-      <p class="lede">Every morning Otso takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather
+      <p class="lede">Every morning Otso 1.1 takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather
         forecast of the same hour and the fires seen by satellite, computes the transport of the air with FLEXGREEN and forecasts
         PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
         <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
-      <div class="disclaimer"><strong>Research forecast.</strong> Otso is an experiment of a university group, not an official service. It has not yet
+      <div class="disclaimer"><strong>Research forecast.</strong> Otso 1.1 is an experiment of a university group, not an official service. It has not yet
         been evaluated in real time, it is not monitored around the clock, and it does not replace the air-quality forecasts, indices and alerts
         of your national or local authorities. If you must decide something about your health, use those.</div>
     </div>
@@ -104,6 +136,17 @@
     <p class="sub">Hover or tap a place for its value; click to keep it and see how it evolves over the five days. Scroll or pinch to zoom, drag to pan.
       Fields: the mean of the 8 members, their 90<sup>th</sup> percentile (a plausible bad case), and the share of members above 25&nbsp;µg&nbsp;m<sup>−3</sup>,
       the limit of the "moderate" class of the European Air Quality Index for PM<sub>2.5</sub>.</p>
+    <div class="city" id="city">
+      <div class="city-row">
+        <label for="city-q" class="city-lab">Your city</label>
+        <div class="city-box">
+          <input type="search" id="city-q" placeholder="Type a city or a village: Lyon, Lahore, Lagos, Villeurbanne…" autocomplete="off" aria-label="Find your city" />
+          <ul class="city-list" id="city-list" hidden></ul>
+        </div>
+        <button type="button" class="btn btn-ghost city-geo" id="city-geo" title="Use the position of this device">📍 My location</button>
+      </div>
+      <p class="small city-note">Any city, town or village: 34,000 places above 15,000 inhabitants answer instantly (<a href="https://www.geonames.org/">GeoNames</a>, CC BY 4.0), the others come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> as you type (© OpenStreetMap contributors). You can also click the map or use your position. The forecast is for the 0.4° cell (about 40 km) that contains the place.</p>
+    </div>
     <div class="mapcard">
       <div class="mapbar">
         <div class="layers" id="fields">
@@ -169,12 +212,12 @@
 
 <section class="band band-soft" id="about">
   <div class="wrap">
-    <h2>What Otso is, and is not</h2>
+    <h2>What Otso 1.1 is, and is not</h2>
     <div class="twocol">
       <div>
         <h3>What it is</h3>
         <ul>
-          <li><strong>The coarse Foehn model of the paper, unchanged.</strong> Otso is Foehn-CAMS, the 0.4° version trained on the CAMS analyses of 2017–2022 in the protocol of Microsoft's Aurora, with the weights used for the paper's results. Nothing is retrained or tuned for the live run.</li>
+          <li><strong>The coarse Foehn model of the paper, unchanged.</strong> Otso 1.1 is Foehn-CAMS, the 0.4° version trained on the CAMS analyses of 2017–2022 in the protocol of Microsoft's Aurora, with the weights used for the paper's results. Nothing is retrained or tuned for the live run.</li>
           <li><strong>Live inputs, every morning.</strong> The 00 UTC CAMS analysis (13 species and columns), the 00 UTC ECMWF IFS forecast from the open-data service (winds, temperature, humidity, pressure, rain, to +192 h), and the fires of the previous day from GFAS. FLEXGREEN recomputes, for every land cell and every lead, where its air was.</li>
           <li><strong>A probabilistic forecast.</strong> Eight members per day. The map shows their mean, their 90<sup>th</sup> percentile and the share of members above 25 µg m⁻³; the city table and the NetCDF file also give the 10 % and 90 % quantiles.</li>
           <li><strong>Reproducible.</strong> Each day's inputs, their sources and the exact variables used are logged with the forecast (see the <code>inputs</code> field of <code>index.json</code>). The code is on the <code>main</code> branch of the <a href="https://github.com/AmmarKheder/Foehn">Foehn repository</a>, folder <code>experiments/global1km/realtime</code>.</li>
@@ -186,10 +229,28 @@
           <li><strong>Not the 1 km Foehn.</strong> The paper's kilometre-scale forecasts need the 1 km record that exists only for the past; Otso works at 0.4°, about 40 km.</li>
           <li><strong>Not evaluated in real time.</strong> The scores of the paper were measured on 2022 in a hindcast. The live chain differs in two ways we know of: the fire injection height comes from the GFAS variable <code>injh</code>, because the variable the model was trained with (<code>mami</code>) is no longer produced since GFAS v1.4.2 (January 2026); and the weather comes from the open-data IFS at 0.25° instead of the archived HRES. A hindcast over September 2026 is being run to measure the effect of both; its scores will be published here.</li>
           <li><strong>Not an operational service.</strong> It runs on a shared supercomputer (LUMI) when a GPU is free; a day can be late or missing. The last seven days are kept.</li>
-          <li><strong>Not an alert.</strong> See the notice at the top. Otso is named after the bear of Finnish folklore: a thing of the forest, best observed from a distance.</li>
+          <li><strong>Not an alert.</strong> See the notice at the top. Otso is named after the bear of Finnish folklore; the version number counts the releases of the live chain (1.1: city search and the hindcast of the 2026 inputs), not the model, which is the paper's: a thing of the forest, best observed from a distance.</li>
         </ul>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="band band-soft" id="install">
+  <div class="wrap">
+    <h2>Otso on your phone</h2>
+    <p class="sub">Otso is a web app: nothing to download from a store. Open the page on your phone (scan the code), then add it to your home screen;
+      it opens full screen like an app, keeps the last forecast when you are offline, and updates itself.</p>
+    <div class="install">
+      <div class="install-qr"><img src="qr.svg" alt="QR code of https://ammarkheder.com/Foehn/otso/" width="200" height="200" /><p class="small">ammarkheder.com/Foehn/otso</p>
+        <button type="button" class="btn btn-primary" id="install-btn" hidden>Install Otso</button></div>
+      <div class="install-steps">
+        <div class="istep"><b>iPhone, iPad (Safari)</b><ol><li>Open the page in Safari.</li><li>Tap <strong>Share</strong> (the square with an arrow).</li><li>Choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li></ol></div>
+        <div class="istep"><b>Android (Chrome)</b><ol><li>Open the page in Chrome.</li><li>Tap the <strong>⋮</strong> menu, or the <em>Install Otso</em> button if it appears.</li><li>Choose <strong>Add to Home screen</strong> / <strong>Install app</strong>.</li></ol></div>
+        <div class="istep"><b>Computer (Chrome, Edge)</b><ol><li>Open the page.</li><li>Click the <strong>install icon</strong> at the right of the address bar (or menu → <em>Install Otso</em>).</li><li>Otso opens in its own window.</li></ol></div>
+      </div>
+    </div>
+    <p class="small" style="margin-top:12px">Your city is remembered on this device only (nothing is sent anywhere). A new forecast appears each day around 12:30 UTC. Research forecast, not an alert: the app sends no notifications.</p>
   </div>
 </section>
 
@@ -210,7 +271,7 @@
 </section>
 
 </main>
-<footer><div class="wrap">Otso · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · Atmospheric Modelling Centre Lahti. Computations on the LUMI supercomputer (CSC, EuroHPC). Research forecast, not an official alert.</div></footer>
+<footer><div class="wrap">Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · Atmospheric Modelling Centre Lahti. Computations on the LUMI supercomputer (CSC, EuroHPC). Research forecast, not an official alert.</div></footer>
 
 <script>
 (() => {
@@ -325,6 +386,7 @@
   }
   async function pick(lat, lon, name) {
     state.pick = { lat, lon, name }; draw();
+    history.replaceState(null, "", "#lat=" + lat.toFixed(2) + "&lon=" + lon.toFixed(2) + (name ? "&name=" + encodeURIComponent(name) : ""));
     const r = Math.floor((LAT0 - lat) / DLAT), c = Math.floor(((((lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON);
     if (r < 0 || r >= NLAT) return;
     const day = state.day; const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k)));
@@ -415,6 +477,44 @@
   document.querySelector("#ct thead").addEventListener("click", (ev) => { const th = ev.target.closest("th[data-k]"); if (!th) return; if (state.sort === th.dataset.k) state.desc = !state.desc; else { state.sort = th.dataset.k; state.desc = th.dataset.k !== "name"; } table(); });
   document.querySelector("#ct tbody").addEventListener("click", (ev) => { const tr = ev.target.closest("tr"); if (!tr) return; const c = state.cities.cities[tr.dataset.n];
     state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, tr.dataset.n); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); });
+  // ---- your city: local gazetteer (GeoNames cities >= 15,000), searched by normalised prefix of words
+  let GAZ = null, gazLoading = null, sel = -1, hits = [];
+  const norm = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  function loadGaz() { if (!gazLoading) gazLoading = fetch("gazetteer.json").then((r) => r.json()).then((g) => { GAZ = g.map((r) => ({ name: r[0], country: r[1], lat: r[2], lon: r[3], pop: r[4], key: norm(r[0]) + (r[5] ? " " + norm(r[5]) : "") })); return GAZ; }); return gazLoading; }
+  function search(q) {
+    q = norm(q.trim()); if (!GAZ || q.length < 2) return [];
+    const words = q.split(/\s+/); const out = [];
+    for (const c of GAZ) { const k = c.key; let ok = true; for (const w of words) { if (!(k.startsWith(w) || k.includes(" " + w) || k.includes("-" + w))) { ok = false; break; } } if (ok) { out.push(c); if (out.length >= 8) break; } }
+    return out;
+  }
+  const list = document.getElementById("city-list"), cq = document.getElementById("city-q");
+  let onlineTimer = null, onlineSeq = 0;
+  async function searchOnline(q) {                                                       // any place on Earth: OpenStreetMap data
+    const seq = ++onlineSeq; let out = [];
+    try { const r = await fetch("https://photon.komoot.io/api/?q=" + encodeURIComponent(q) + "&limit=6&lang=en"); const j = await r.json();
+      out = j.features.map((f) => ({ name: f.properties.name || q, country: [f.properties.state, f.properties.country].filter(Boolean).join(", "), lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0], pop: 0, online: true })); }
+    catch (e) { try { const r = await fetch("https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(q) + "&format=jsonv2&limit=6"); const j = await r.json();
+      out = j.map((x) => ({ name: x.name || x.display_name.split(",")[0], country: x.display_name.split(",").slice(1, 3).join(",").trim(), lat: +x.lat, lon: +x.lon, pop: 0, online: true })); } catch (e2) {} }
+    if (seq !== onlineSeq) return;                                                         // a newer query is running
+    const seen = new Set(hits.map((c) => c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon)));
+    for (const c of out) { const k = c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon); if (!seen.has(k) && c.lat > -60 && c.lat < 84) { hits.push(c); seen.add(k); } }
+    if (sel < 0 && hits.length) sel = 0; renderList();
+  }
+  const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  function renderList() { list.innerHTML = hits.map((c, i) => `<li data-i="${i}" class="${i === sel ? "sel" : ""}">${esc(c.name)}<span>${esc(c.country)}${c.pop ? " · " + (c.pop >= 1000 ? (c.pop / 1000).toFixed(1) + " M" : c.pop + " k") : (c.online ? " · OpenStreetMap" : "")}</span></li>`).join("") + (cq.value.trim().length >= 2 ? `<li class="more"><span>${hits.some((c) => c.online) ? "Places from OpenStreetMap included" : "Searching all places…"}</span></li>` : ""); list.hidden = !hits.length && cq.value.trim().length < 2; }
+  function choose(c) { list.hidden = true; cq.value = c.name + (c.country ? ", " + c.country : ""); try { localStorage.setItem("otso-city", JSON.stringify({ name: cq.value, lat: c.lat, lon: c.lon })); } catch (e) {} state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, c.name + ", " + c.country); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); }
+  cq.addEventListener("focus", loadGaz);
+  cq.addEventListener("input", async () => { await loadGaz(); hits = search(cq.value); sel = hits.length ? 0 : -1; renderList();
+    clearTimeout(onlineTimer); const q = cq.value.trim(); if (q.length >= 3) onlineTimer = setTimeout(() => searchOnline(q), 500); });
+  cq.addEventListener("keydown", (ev) => { if (list.hidden) return; if (ev.key === "ArrowDown") { sel = Math.min(hits.length - 1, sel + 1); renderList(); ev.preventDefault(); } else if (ev.key === "ArrowUp") { sel = Math.max(0, sel - 1); renderList(); ev.preventDefault(); } else if (ev.key === "Enter") { if (sel >= 0) choose(hits[sel]); ev.preventDefault(); } else if (ev.key === "Escape") list.hidden = true; });
+  list.addEventListener("mousedown", (ev) => { const li = ev.target.closest("li[data-i]"); if (li) { ev.preventDefault(); choose(hits[+li.dataset.i]); } });
+  cq.addEventListener("blur", () => setTimeout(() => { list.hidden = true; }, 150));
+  document.getElementById("city-geo").addEventListener("click", () => {
+    if (!navigator.geolocation) { cq.value = "Geolocation is not available in this browser."; return; }
+    navigator.geolocation.getCurrentPosition((p) => { const lat = p.coords.latitude, lon = p.coords.longitude; cq.value = "My location (" + coord(lat, lon) + ")";
+      state.view = [lon - 22, lon + 22, lat - 9, lat + 9]; zoomAt(1, 0.5, 0.5); pick(lat, lon, "My location"); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); },
+      () => { cq.value = "Position not available: type your city instead."; }, { timeout: 8000, maximumAge: 600000 });
+  });
   // ---- start
   (async () => {
     try {
@@ -426,13 +526,22 @@
       setStatus("<b>Forecast issued from the 00 UTC run of " + state.day + "</b>, published " + latest.updated.replace("T", " ") + " · " + ix.members + " members · leads +12 h to +120 h · inputs: CAMS analysis 00 UTC, ECMWF IFS 00 UTC (" + (ix.inputs.ifs_source || "").replace("https://", "") + "), GFAS " + (ix.inputs.gfas_version || "") + " fires of " + (ix.inputs.gfas_day || "") + " (injection height: <code>" + (ix.inputs.fire_injection_variable || "") + "</code>)." +
         (age > 1.5 ? " <span style='color:#8A5A00'>This forecast is " + Math.floor(age) + " days old: the daily run may have failed or be late.</span>" : ""), age <= 1.5);
       links(); size(); await show(); await loadCities(state.day);
-      const m = location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)/); if (m) pick(+m[1], +m[2]);
+      const m = location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
+      let remembered = null; try { remembered = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
+      if (m) { const nm = m[3] ? decodeURIComponent(m[3]) : null; if (nm) cq.value = nm; state.view = [+m[2] - 22, +m[2] + 22, +m[1] - 9, +m[1] + 9]; zoomAt(1, 0.5, 0.5); pick(+m[1], +m[2], nm); }
+      else if (remembered && isFinite(remembered.lat)) { cq.value = remembered.name; state.view = [remembered.lon - 22, remembered.lon + 22, remembered.lat - 9, remembered.lat + 9]; zoomAt(1, 0.5, 0.5); pick(remembered.lat, remembered.lon, remembered.name); }
     } catch (e) {
       setStatus("The live forecast could not be loaded (" + e.message + "). The daily run may be paused; the code and the paper's forecasts are on the <a href='../'>Foehn page</a>.", false);
       cur = null; ctx.fillStyle = "#f6f8fa"; ctx.fillRect(0, 0, cv.width, cv.height); ctx.fillStyle = "#5b6977"; ctx.font = "16px Helvetica, Arial"; ctx.textAlign = "center"; ctx.fillText("No live forecast available", cv.width / 2, cv.height / 2);
     }
   })();
   window.addEventListener("resize", () => { if (cur) size(); });
+  // ---- PWA: service worker and the install prompt (Chrome / Edge / Android)
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  let installEvt = null; const ib = document.getElementById("install-btn");
+  window.addEventListener("beforeinstallprompt", (ev) => { ev.preventDefault(); installEvt = ev; ib.hidden = false; });
+  ib.addEventListener("click", async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; ib.hidden = true; });
+  window.addEventListener("appinstalled", () => { ib.hidden = true; });
 })();
 </script>
 </body>
