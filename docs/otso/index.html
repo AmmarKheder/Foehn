@@ -87,6 +87,8 @@
   .city-note { margin: 8px 0 0; }
   @media (max-width: 480px) { .city-geo { width: 100%; text-align: center; } .city-box { min-width: 0; width: 100%; } }
   .install { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .only-phone { display: none; }
+  @media (max-width: 700px) { .only-desktop { display: none; } .only-phone { display: inline; } .install-qr img, .install-qr .small { display: none; } .install { grid-template-columns: 1fr; gap: 12px; padding: 14px; } .install-qr { order: 2; } #install-btn { width: 100%; } }
   .install-qr { text-align: center; }
   .install-qr img { width: 200px; height: 200px; display: block; margin: 0 auto 6px; }
   .install-qr .small { margin: 0 0 10px; }
@@ -98,9 +100,19 @@
   .istep b { display: block; margin-bottom: 6px; }
   .istep ol { margin: 0; padding-left: 20px; font-size: 14px; color: var(--ink); }
   .istep li { margin-bottom: 4px; }
-  @media (max-width: 860px) { .install { grid-template-columns: 1fr; } .install-qr { order: 2; } }
+  @media (max-width: 860px) { .install { grid-template-columns: 1fr; } .install-qr { order: 2; text-align: left; } .install-qr img { margin: 0 0 6px; } }
+  .layers .short { display: none; }
   @media (max-width: 860px) { .point, .twocol { grid-template-columns: 1fr; } .mapfoot .lead { min-width: 0; } .mapfoot .lead output { min-width: 0; } .cbar canvas { width: 200px; } }
-  @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } .mapbar select { width: 100%; } }
+  @media (max-width: 600px) {
+    .layers .full { display: none; } .layers .short { display: inline; } .layers { gap: 5px; } .layers button { padding: 7px 11px; }
+    .mapbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .mapbar .layers { grid-column: 1 / -1; }
+    .mapbar > div:last-child { display: contents; } .mapbar select { width: 100%; min-width: 0; font-size: 15px; padding: 8px 8px; }
+    .zoombtns { grid-column: 1 / -1; justify-content: flex-end; } .zoombtns #zin, .zoombtns #zout { display: none; }
+    .mapfoot { flex-direction: column; align-items: stretch; gap: 8px; } .mapfoot .lead { flex-wrap: wrap; row-gap: 4px; }
+    .mapfoot .lead output { flex-basis: 100%; min-width: 0; font-size: 13.5px; white-space: normal; padding-left: 2px; }
+    .cbar { width: 100%; } .cbar canvas { flex: 1; width: auto; min-width: 0; max-width: 420px; }
+  }
+  @media (max-width: 480px) { .mapcard, .cities { padding: 10px; } .cities input { min-width: 0; width: 100%; } }
 </style>
 </head>
 <body>
@@ -109,11 +121,11 @@
   <div class="wrap topbar-row">
     <a class="brand" href="../"><img src="../assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span><span style="color:var(--muted);font-weight:400">/ Otso 1.1</span></a>
     <nav class="nav">
+      <a href="#install">Install</a>
       <a href="#map">Map</a>
       <a href="#cities">Cities</a>
       <a href="#city">Your city</a>
       <a href="#about">What Otso is</a>
-      <a href="#install">Install</a>
       <a href="#data">Data</a>
       <a href="../">← Foehn</a>
     </nav>
@@ -133,6 +145,7 @@
         PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
         <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
+      <div class="cta" style="margin:14px 0 0"><a class="btn btn-primary" href="#install">📲 Install Otso on your phone</a><a class="btn btn-ghost" href="#map">See the forecast</a></div>
       <div class="disclaimer"><strong>Research forecast.</strong> Otso 1.1 is an experiment of a university group, not an official service. It has not yet
         been evaluated in real time, it is not monitored around the clock, and it does not replace the air-quality forecasts, indices and alerts
         of your national or local authorities. If you must decide something about your health, use those.</div>
@@ -140,7 +153,25 @@
   </div>
 </section>
 
-<section class="band band-soft" id="map">
+<section class="band band-soft" id="install">
+  <div class="wrap">
+    <h2>Put Otso on your phone</h2>
+    <p class="sub"><span class="only-desktop">Scan the code with your phone to open Otso there, then add it to your home screen: </span><span class="only-phone">Add Otso to your home screen: </span>nothing to download from a store, it opens full screen like an app, keeps the last forecast when you are offline and updates itself every morning.</p>
+    <div class="install">
+      <div class="install-qr"><img src="qr.svg" alt="QR code of https://ammarkheder.com/Foehn/otso/" width="200" height="200" /><p class="small">ammarkheder.com/Foehn/otso</p>
+        <button type="button" class="btn btn-primary" id="install-btn" hidden>Install Otso</button></div>
+      <div class="install-steps">
+        <div class="ostabs" role="tablist"><button type="button" class="on" data-os="ios">iPhone / iPad</button><button type="button" data-os="android">Android</button><button type="button" data-os="desktop">Computer</button></div>
+        <div class="istep" data-os="ios"><b>iPhone, iPad — Safari</b><ol><li>Scan the code, or open <strong>ammarkheder.com/Foehn/otso</strong> in Safari (not in another app's browser).</li><li>Tap <strong>Share</strong> <span class="kbd">⎙</span> (the square with an arrow, at the bottom).</li><li>Scroll and choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li><li>Otso is on your home screen and opens full screen; it keeps the last forecast when offline.</li></ol></div>
+        <div class="istep" data-os="android" hidden><b>Android — Chrome</b><ol><li>Scan the code, or open <strong>ammarkheder.com/Foehn/otso</strong> in Chrome.</li><li>Tap the <strong>Install Otso</strong> button below the code when it appears, or the <strong>⋮</strong> menu → <strong>Add to Home screen</strong> / <strong>Install app</strong>.</li><li>Confirm. Otso appears with the other apps.</li></ol></div>
+        <div class="istep" data-os="desktop" hidden><b>Computer — Chrome, Edge</b><ol><li>Open <strong>ammarkheder.com/Foehn/otso</strong>.</li><li>Click the <strong>install icon</strong> at the right of the address bar, or menu → <strong>Install Otso</strong> (Firefox and Safari on Mac: keep it as a bookmark).</li><li>Otso opens in its own window.</li></ol></div>
+      </div>
+    </div>
+    <p class="small" style="margin-top:12px">Your city is remembered on this device only (nothing is sent anywhere). A new forecast appears each day around 12:30 UTC. Research forecast, not an alert: the app sends no notifications.</p>
+  </div>
+</section>
+
+<section class="band" id="map">
   <div class="wrap">
     <h2>The forecast</h2>
     <p class="sub">Hover or tap a place for its value; click to keep it and see how it evolves over the five days. Scroll or pinch to zoom, drag to pan.
@@ -160,9 +191,9 @@
     <div class="mapcard">
       <div class="mapbar">
         <div class="layers" id="fields">
-          <button type="button" data-f="mean" class="on">Ensemble mean</button>
-          <button type="button" data-f="p90">90th percentile</button>
-          <button type="button" data-f="prob">Probability &gt; 25 µg m⁻³</button>
+          <button type="button" data-f="mean" class="on"><span class="full">Ensemble mean</span><span class="short">Mean</span></button>
+          <button type="button" data-f="p90"><span class="full">90th percentile</span><span class="short">90th pct.</span></button>
+          <button type="button" data-f="prob"><span class="full">Probability &gt; 25 µg m⁻³</span><span class="short">P &gt; 25</span></button>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <select id="region" aria-label="Region">
@@ -204,7 +235,7 @@
   </div>
 </section>
 
-<section class="band" id="cities">
+<section class="band band-soft" id="cities">
   <div class="wrap">
     <h2>Cities</h2>
     <p class="sub">Sixty large cities are published with every forecast; type any other city, town or village in the box to add it to the table (it is computed here from the forecast layers, and kept on this device). Values are the ensemble mean over the 3 × 3 cells around the place; the bars show the ten leads from +12 h to +120 h. Click a row to centre the map on it; sort by any column.</p>
@@ -220,7 +251,7 @@
   </div>
 </section>
 
-<section class="band band-soft" id="about">
+<section class="band" id="about">
   <div class="wrap">
     <h2>What Otso 1.1 is, and is not</h2>
     <div class="twocol">
@@ -246,26 +277,7 @@
   </div>
 </section>
 
-<section class="band band-soft" id="install">
-  <div class="wrap">
-    <h2>Otso on your phone</h2>
-    <p class="sub">Otso is a web app: nothing to download from a store. Open the page on your phone (scan the code), then add it to your home screen;
-      it opens full screen like an app, keeps the last forecast when you are offline, and updates itself.</p>
-    <div class="install">
-      <div class="install-qr"><img src="qr.svg" alt="QR code of https://ammarkheder.com/Foehn/otso/" width="200" height="200" /><p class="small">ammarkheder.com/Foehn/otso</p>
-        <button type="button" class="btn btn-primary" id="install-btn" hidden>Install Otso</button></div>
-      <div class="install-steps">
-        <div class="ostabs" role="tablist"><button type="button" class="on" data-os="ios">iPhone / iPad</button><button type="button" data-os="android">Android</button><button type="button" data-os="desktop">Computer</button></div>
-        <div class="istep" data-os="ios"><b>iPhone, iPad — Safari</b><ol><li>Scan the code, or open <strong>ammarkheder.com/Foehn/otso</strong> in Safari (not in another app's browser).</li><li>Tap <strong>Share</strong> <span class="kbd">⎙</span> (the square with an arrow, at the bottom).</li><li>Scroll and choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li><li>Otso is on your home screen and opens full screen; it keeps the last forecast when offline.</li></ol></div>
-        <div class="istep" data-os="android" hidden><b>Android — Chrome</b><ol><li>Scan the code, or open <strong>ammarkheder.com/Foehn/otso</strong> in Chrome.</li><li>Tap the <strong>Install Otso</strong> button below the code when it appears, or the <strong>⋮</strong> menu → <strong>Add to Home screen</strong> / <strong>Install app</strong>.</li><li>Confirm. Otso appears with the other apps.</li></ol></div>
-        <div class="istep" data-os="desktop" hidden><b>Computer — Chrome, Edge</b><ol><li>Open <strong>ammarkheder.com/Foehn/otso</strong>.</li><li>Click the <strong>install icon</strong> at the right of the address bar, or menu → <strong>Install Otso</strong> (Firefox and Safari on Mac: keep it as a bookmark).</li><li>Otso opens in its own window.</li></ol></div>
-      </div>
-    </div>
-    <p class="small" style="margin-top:12px">Your city is remembered on this device only (nothing is sent anywhere). A new forecast appears each day around 12:30 UTC. Research forecast, not an alert: the app sends no notifications.</p>
-  </div>
-</section>
-
-<section class="band" id="data">
+<section class="band band-soft" id="data">
   <div class="wrap">
     <h2>Data</h2>
     <p class="sub">Everything the page shows is in the <code>live</code> branch of the repository, rewritten every day with the last seven forecasts.</p>
@@ -301,14 +313,20 @@
   const state = { field: "mean", lead: 1, day: null, days: [], idx: null, layers: {}, lines: null, view: REGIONS.world.slice(), pick: null, cities: null, timer: null, sort: "d1", desc: true };
   const rgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
   const PMC = PM_COLORS.map(rgb), PRC = PROB_COLORS.map(rgb);
-  const dec = (v) => Math.pow(10, -1 + 4 * (v - 1) / 254);                              // 8-bit value -> ug m-3
+  const ENC = { pmOff: 1, pmSteps: 254, probOff: 0 };                                    // encoding v1; v2 (offset 8 / 247 / 10) is read from index.json
+  const dec = (v) => Math.pow(10, -1 + 4 * (v - ENC.pmOff) / ENC.pmSteps);               // 8-bit value -> ug m-3
+  const isOceanPm = (v) => v < (ENC.pmOff > 1 ? 4 : 1), isOceanProb = (v) => v > 250, probOf = (v) => Math.max(0, Math.min(100, v - ENC.probOff));
+  function setEnc(ix) { const g = (ix && ix.png) || {}; ENC.pmOff = g.pm_offset || 1; ENC.pmSteps = g.pm_steps || 254; ENC.probOff = g.prob_offset || 0; }
   const pmClass = (x) => { let c = 0; for (let i = 0; i < PM_BOUNDS.length; i++) if (x >= PM_BOUNDS[i]) c = i; return c; };
   const pmHex = (x) => PM_COLORS[pmClass(x)];
   const fmt = (x) => x >= 100 ? x.toFixed(0) : x >= 10 ? x.toFixed(0) : x.toFixed(1);
   const LUT = {}; (() => {                                                                 // value byte -> colour, for both kinds
-    LUT.pm = new Uint8Array(256 * 3); for (let v = 1; v < 256; v++) { const c = PMC[pmClass(dec(v))]; LUT.pm.set(c, 3 * v); }
-    LUT.prob = new Uint8Array(256 * 3); for (let v = 0; v <= 100; v++) { const c = PRC[Math.min(9, Math.floor(v / 10))]; LUT.prob.set(c, 3 * v); }
   })();
+  function buildLut() {
+    LUT.pm = new Uint8Array(256 * 3); for (let v = 1; v < 256; v++) { const c = PMC[pmClass(dec(v))]; LUT.pm.set(c, 3 * v); }
+    LUT.prob = new Uint8Array(256 * 3); for (let v = 0; v < 251; v++) { const c = PRC[Math.min(9, Math.floor(probOf(v) / 10))]; LUT.prob.set(c, 3 * v); }
+  }
+  buildLut();
   function validTime(day, lead) { const t = new Date(day + "T00:00:00Z"); t.setUTCHours(t.getUTCHours() + 12 * (lead + 1)); return t; }
   const fmtTime = (t) => t.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC";
   function setStatus(msg, ok) { const s = document.getElementById("status"); s.innerHTML = msg; if (ok) document.getElementById("pill-live").hidden = false; }
@@ -317,17 +335,18 @@
   function loadLayer(day, field, lead) {
     const key = day + "/" + field + "/" + lead; if (state.layers[key]) return state.layers[key];
     const fn = state.idx[day].files[field][lead];
-    state.layers[key] = new Promise((res, rej) => {
-      const im = new Image(); im.crossOrigin = "anonymous";
-      im.onload = () => { const c = document.createElement("canvas"); c.width = NLON; c.height = NLAT; const x = c.getContext("2d"); x.drawImage(im, 0, 0);
-        const d = x.getImageData(0, 0, NLON, NLAT).data, a = new Uint8Array(NLON * NLAT); for (let i = 0; i < a.length; i++) a[i] = d[4 * i]; res(a); };
-      im.onerror = () => rej(new Error("layer " + fn)); im.src = BASE + day + "/" + fn;
-    });
+    const read = (src) => { const c = document.createElement("canvas"); c.width = NLON; c.height = NLAT; const x = c.getContext("2d", { willReadFrequently: true, colorSpace: "srgb" }); x.drawImage(src, 0, 0);
+      const d = x.getImageData(0, 0, NLON, NLAT).data, a = new Uint8Array(NLON * NLAT); for (let i = 0; i < a.length; i++) a[i] = d[4 * i]; return a; };
+    const viaImage = () => new Promise((res, rej) => { const im = new Image(); im.crossOrigin = "anonymous"; im.onload = () => res(read(im)); im.onerror = () => rej(new Error("layer " + fn)); im.src = BASE + day + "/" + fn; });
+    state.layers[key] = (async () => {                                                   // bitmap without colour-space conversion (exact values), image element as fallback
+      try { if (!("createImageBitmap" in window)) throw 0; const r = await fetch(BASE + day + "/" + fn); if (!r.ok) throw 0; const bm = await createImageBitmap(await r.blob(), { colorSpaceConversion: "none", premultiplyAlpha: "none" }); const a = read(bm); bm.close && bm.close(); return a; }
+      catch (e) { return viaImage(); }
+    })();
     return state.layers[key];
   }
   async function loadDay(day) {
     if (!state.idx[day]) state.idx[day] = await (await fetch(BASE + day + "/index.json", { cache: "no-cache" })).json();
-    return state.idx[day];
+    setEnc(state.idx[day]); buildLut(); return state.idx[day];
   }
   // ---- drawing
   let W = 1200, H = 480, img = null, cur = null;
@@ -339,7 +358,7 @@
   }
   function draw() {
     if (!cur) return;
-    const [l0, l1, a0, a1] = state.view, lut = state.field === "prob" ? LUT.prob : LUT.pm, ocean = state.field === "prob" ? 255 : 0;
+    const [l0, l1, a0, a1] = state.view, lut = state.field === "prob" ? LUT.prob : LUT.pm, isOcean = state.field === "prob" ? isOceanProb : isOceanPm;
     const d = img.data; const kx = (l1 - l0) / W, ky = (a1 - a0) / H;
     for (let y = 0; y < H; y++) {
       const lat = a1 - (y + 0.5) * ky; const r = Math.floor((LAT0 - lat) / DLAT); const rowOk = r >= 0 && r < NLAT;
@@ -348,7 +367,7 @@
         const o = 4 * (y * W + x);
         if (!rowOk) { d[o] = 246; d[o + 1] = 248; d[o + 2] = 250; d[o + 3] = 255; continue; }
         const v = cur[r * NLON + c];
-        if (v === ocean) { d[o] = 255; d[o + 1] = 255; d[o + 2] = 255; d[o + 3] = 255; continue; }
+        if (isOcean(v)) { d[o] = 255; d[o + 1] = 255; d[o + 2] = 255; d[o + 3] = 255; continue; }
         d[o] = lut[3 * v]; d[o + 1] = lut[3 * v + 1]; d[o + 2] = lut[3 * v + 2]; d[o + 3] = 255;
       }
     }
@@ -393,10 +412,10 @@
   function hover(ev) {
     if (!cur) return; const p = cellAt(ev); const b = cv.getBoundingClientRect();
     if (!p.ok) { tip.style.display = "none"; return; }
-    const v = cur[p.r * NLON + p.c], ocean = state.field === "prob" ? 255 : 0;
-    if (v === ocean) { tip.style.display = "none"; return; }
+    const v = cur[p.r * NLON + p.c];
+    if (state.field === "prob" ? isOceanProb(v) : isOceanPm(v)) { tip.style.display = "none"; return; }
     tip.style.display = "block"; tip.style.left = (ev.clientX - b.left) + "px"; tip.style.top = (ev.clientY - b.top) + "px";
-    tip.innerHTML = state.field === "prob" ? "<b>" + v + " %</b> of members above 25<br>" + coord(p.lat, p.lon) : "<b>" + fmt(dec(v)) + "</b> µg m⁻³ · " + PM_NAMES[pmClass(dec(v))] + "<br>" + coord(p.lat, p.lon);
+    tip.innerHTML = state.field === "prob" ? "<b>" + probOf(v) + " %</b> of members above 25<br>" + coord(p.lat, p.lon) : "<b>" + fmt(dec(v)) + "</b> µg m⁻³ · " + PM_NAMES[pmClass(dec(v))] + "<br>" + coord(p.lat, p.lon);
   }
   async function pick(lat, lon, name) {
     state.pick = { lat, lon, name }; draw();
@@ -406,8 +425,8 @@
     const day = state.day; const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k)));
     const q = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "p90", k)));
     const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
-    const i = r * NLON + c; if (m[0][i] === 0) { document.getElementById("pt-text").textContent = "No land there: Otso forecasts over land. Choose a place on land."; document.getElementById("point").hidden = false; return; }
-    const mean = m.map((a) => dec(a[i])), p90 = q.map((a) => dec(a[i])), prob = pr.map((a) => a[i]);
+    const i = r * NLON + c; if (isOceanPm(m[0][i])) { document.getElementById("pt-text").textContent = "No land there: Otso forecasts over land. Choose a place on land."; document.getElementById("point").hidden = false; return; }
+    const mean = m.map((a) => dec(a[i])), p90 = q.map((a) => dec(a[i])), prob = pr.map((a) => probOf(a[i]));
     document.getElementById("point").hidden = false;
     document.getElementById("pt-title").textContent = (name ? name + " · " : "") + coord(lat, lon) + " · issued " + day;
     const imax = mean.indexOf(Math.max(...mean)), t1 = mean[1], c1 = PM_NAMES[pmClass(t1)];
@@ -479,7 +498,7 @@
     const day = state.day; const r = Math.floor((LAT0 - c.lat) / DLAT), cc = Math.floor(((((c.lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON);
     const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k))); const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
     const mean = [], p = [];
-    for (let k = 0; k < 10; k++) { let s1 = 0, s2 = 0, n = 0; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const rr = r + dr, c2 = (cc + dc + NLON) % NLON; if (rr < 0 || rr >= NLAT) continue; const v = m[k][rr * NLON + c2]; if (v === 0) continue; s1 += dec(v); s2 += pr[k][rr * NLON + c2] / 100; n++; }
+    for (let k = 0; k < 10; k++) { let s1 = 0, s2 = 0, n = 0; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const rr = r + dr, c2 = (cc + dc + NLON) % NLON; if (rr < 0 || rr >= NLAT) continue; const v = m[k][rr * NLON + c2]; if (isOceanPm(v)) continue; s1 += dec(v); s2 += probOf(pr[k][rr * NLON + c2]) / 100; n++; }
       if (!n) return null; mean.push(+(s1 / n).toFixed(1)); p.push(+(s2 / n).toFixed(2)); }
     return { lat: c.lat, lon: c.lon, mean, p_above_25: p, added: true };
   }
@@ -564,6 +583,15 @@
       const age = (Date.now() - new Date(state.day + "T00:00:00Z")) / 864e5;
       setStatus("<b>Forecast issued from the 00 UTC run of " + state.day + "</b>, published " + latest.updated.replace("T", " ") + " · " + ix.members + " members · leads +12 h to +120 h · inputs: CAMS analysis 00 UTC, ECMWF IFS 00 UTC (" + (ix.inputs.ifs_source || "").replace("https://", "") + "), GFAS " + (ix.inputs.gfas_version || "") + " fires of " + (ix.inputs.gfas_day || "") + " (injection height: <code>" + (ix.inputs.fire_injection_variable || "") + "</code>)." +
         (age > 1.5 ? " <span style='color:#8A5A00'>This forecast is " + Math.floor(age) + " days old: the daily run may have failed or be late.</span>" : ""), age <= 1.5);
+      if (window.innerWidth < 700) {                                                 // a phone starts on the visitor's own region (time zone); the world is one tap away
+        const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "");
+        const reg = /^Europe|^Atlantic\/(Canary|Madeira|Azores|Faroe|Reykjavik)/.test(tz) ? "europe" : /^Asia\/(Kolkata|Calcutta|Karachi|Dhaka|Kathmandu|Colombo|Thimphu|Kabul)/.test(tz) ? "sasia"
+          : /^Asia\/(Shanghai|Chongqing|Harbin|Urumqi|Hong_Kong|Macau|Taipei|Seoul|Pyongyang|Tokyo|Ulaanbaatar|Hovd|Choibalsan)/.test(tz) ? "easia" : /^Asia\/(Bangkok|Jakarta|Ho_Chi_Minh|Saigon|Manila|Singapore|Kuala_Lumpur|Kuching|Phnom_Penh|Vientiane|Yangon|Rangoon|Makassar|Jayapura|Pontianak|Brunei|Dili)/.test(tz) ? "seasia"
+          : /^Asia\/(Riyadh|Dubai|Tehran|Baghdad|Kuwait|Qatar|Bahrain|Muscat|Jerusalem|Tel_Aviv|Amman|Beirut|Damascus|Aden|Baku|Yerevan|Tbilisi)|^Europe\/Istanbul/.test(tz) ? "mideast" : /^Africa/.test(tz) ? "africa"
+          : /^America\/(Sao_Paulo|Buenos_Aires|Argentina|Santiago|Lima|Bogota|Caracas|La_Paz|Montevideo|Asuncion|Guayaquil|Quito|Recife|Fortaleza|Manaus|Belem|Bahia|Cuiaba|Campo_Grande|Paramaribo|Cayenne|Guyana|Punta_Arenas)/.test(tz) ? "samerica"
+          : /^America|^Canada|^US\//.test(tz) ? "namerica" : /^Australia|^Pacific\/(Auckland|Port_Moresby|Fiji)/.test(tz) ? "oceania" : /^Asia/.test(tz) ? "easia" : "world";
+        if (reg !== "world") { state.view = REGIONS[reg].slice(); document.getElementById("region").value = reg; }
+      }
       links(); size(); await show(); await loadCities(state.day);
       const m = location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
       let remembered = null; try { remembered = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
