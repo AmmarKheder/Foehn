@@ -252,7 +252,9 @@
   body.app .topbar { background: color-mix(in srgb, var(--bg) 78%, transparent); border-bottom-color: transparent; }
   .app-meta { display: none; } body.app .app-meta { display: block; text-align: center; font-size: 12px; color: var(--muted); margin: 6px 0 2px; }
 
-  /* ===== phone layout fixes (tested at 390 px) ===== */
+  /* ===== phone layout fixes (tested at 360-414 px) ===== */
+  @media (max-width: 860px), (pointer: coarse) { input, select, textarea, .cities input, .mapbar select, .city-box input { font-size: 16px !important; } }
+  html, body { max-width: 100%; overflow-x: hidden; }
   .acards { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } .acards > * { min-width: 0; }
   .ah-value { display: flex; } .ah-class { display: flex; justify-content: center; width: 100%; margin-top: 2px; }
   #ct .short { display: none; }
@@ -941,6 +943,14 @@
     }
   })();
   window.addEventListener("resize", () => { if (cur) size(); if (state.place) series(state.place.mean, state.place.p90, state.place.prob); });
+  if (/[?&]debug=1/.test(location.search)) setTimeout(() => {                                // layout test: elements wider than the screen, outside a scroller
+    const iw = document.documentElement.clientWidth, bad = [];
+    const clipped = (el) => { for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) { const o = getComputedStyle(a).overflowX; if (o === "auto" || o === "scroll" || o === "hidden") return true; } return false; };
+    for (const el of document.querySelectorAll("body *")) { const r = el.getBoundingClientRect(); if (!r.width || r.right <= iw + 0.5 || getComputedStyle(el).position === "fixed" || clipped(el)) continue;
+      bad.push(el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (typeof el.className === "string" && el.className ? "." + el.className.split(" ")[0] : "") + "(" + Math.round(r.left) + "→" + Math.round(r.right) + ")"); }
+    const box = document.createElement("div"); box.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:999;background:" + (bad.length ? "#b00020" : "#1e7d32") + ";color:#fff;font:13px/1.35 monospace;padding:8px;word-break:break-all";
+    box.textContent = "viewport " + iw + " px, page " + document.documentElement.scrollWidth + " px · overflow: " + (bad.slice(0, 30).join(" ; ") || "none"); document.body.appendChild(box);
+  }, 12000);
   const offlineNote = () => { document.getElementById("offline").hidden = navigator.onLine !== false; };
   window.addEventListener("online", offlineNote); window.addEventListener("offline", offlineNote); offlineNote();
   // ---- theme: the system's preference, or the remembered choice (button in the top bar)
