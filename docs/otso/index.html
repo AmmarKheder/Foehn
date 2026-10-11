@@ -729,7 +729,7 @@
   const adviceOf = (x) => ADVICE.find((a) => x < a[0])[1];
   function whenPhrase(t) { const w = dayLabel(t); return (w === "Today" || w === "Tomorrow" ? w.toLowerCase() : "on " + w) + " at " + hourLabel(t); }
   function renderPlace(P) {
-    const { lat, lon, name, day, mean, p90, prob } = P; const el = document.getElementById("point"); el.hidden = false; document.getElementById("welcome").hidden = true;
+    const { lat, lon, day, mean, p90, prob } = P; const name = P.name ? pol(P.name) : P.name; const el = document.getElementById("point"); el.hidden = false; document.getElementById("welcome").hidden = true;
     const now = Date.now(); let kNow = 9; for (let k = 9; k >= 0; k--) if (validTime(day, k) >= now - 3 * 3600e3) kNow = k;   // the current or next valid time
     const v0 = mean[kNow], c0 = pmClass(v0), pc = pmHex(v0), t0 = validTime(day, kNow), isNow = Math.abs(t0 - now) < 1.5 * 3600e3;
     el.style.setProperty("--pc", pc); document.body.style.setProperty("--pc", pc);
@@ -825,7 +825,7 @@
     if (state.place) renderPlace(state.place);
   }).catch(() => { document.querySelector("#live-table tbody").innerHTML = `<tr><td colspan="7" class="small">The verification file could not be loaded.</td></tr>`; });
   // ---- cities
-  let MY = []; try { MY = JSON.parse(localStorage.getItem("otso-mycities") || "[]"); } catch (e) {}
+  let MY = []; try { MY = JSON.parse(localStorage.getItem("otso-mycities") || "[]").map((x) => ({ ...x, name: pol(x.name) })); } catch (e) {}
   async function cityRow(c) {                                                              // 3 x 3 cells around the place, from the layers of the shown day
     const day = state.day; const r = Math.round((LAT0 - c.lat) / DLAT), cc = Math.round(((((c.lon + 180) % 360 + 360) % 360 - 180) - LON0) / DLON) % NLON;
     const m = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "mean", k))); const pr = await Promise.all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => loadLayer(day, "prob", k)));
@@ -866,7 +866,7 @@
   // ---- your city: local gazetteer (GeoNames cities >= 15,000), searched by normalised prefix of words
   let GAZ = null, gazLoading = null, sel = -1, hits = [];
   const norm = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  function loadGaz() { if (!gazLoading) gazLoading = fetch("gazetteer.json").then((r) => r.json()).then((g) => { GAZ = g.map((r) => ({ name: r[0], country: r[1], lat: r[2], lon: r[3], pop: r[4], key: norm(r[0]) + (r[5] ? " " + norm(r[5]) : "") })); return GAZ; }); return gazLoading; }
+  function loadGaz() { if (!gazLoading) gazLoading = fetch("gazetteer.json").then((r) => r.json()).then((g) => { GAZ = g.map((r) => ({ name: r[0], country: pol(r[1]), lat: r[2], lon: r[3], pop: r[4], key: norm(r[0]) + (r[5] ? " " + norm(r[5]) : "") })); return GAZ; }); return gazLoading; }
   function search(q) {
     q = norm(q.trim()); if (!GAZ || q.length < 2) return [];
     const words = q.split(/\s+/); const out = [];
@@ -878,15 +878,16 @@
   async function searchOnline(q, box) {                                                  // any place on Earth: OpenStreetMap data
     box = box || BOX; const seq = ++onlineSeq; let out = [];
     try { const r = await fetch("https://photon.komoot.io/api/?q=" + encodeURIComponent(q) + "&limit=6&lang=en"); const j = await r.json();
-      out = j.features.map((f) => ({ name: f.properties.name || q, country: [f.properties.state, f.properties.country].filter(Boolean).join(", "), lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0], pop: 0, online: true })); }
+      out = j.features.map((f) => ({ name: pol(f.properties.name || q), country: pol([f.properties.state, f.properties.country].filter(Boolean).join(", ")), lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0], pop: 0, online: true })); }
     catch (e) { try { const r = await fetch("https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(q) + "&format=jsonv2&limit=6"); const j = await r.json();
-      out = j.map((x) => ({ name: x.name || x.display_name.split(",")[0], country: x.display_name.split(",").slice(1, 3).join(",").trim(), lat: +x.lat, lon: +x.lon, pop: 0, online: true })); } catch (e2) {} }
+      out = j.map((x) => ({ name: pol(x.name || x.display_name.split(",")[0]), country: pol(x.display_name.split(",").slice(1, 3).join(",").trim()), lat: +x.lat, lon: +x.lon, pop: 0, online: true })); } catch (e2) {} }
     if (seq !== onlineSeq) return;                                                         // a newer query is running
     const seen = new Set(box.hits.map((c) => c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon)));
     for (const c of out) { const k = c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon); if (!seen.has(k) && c.lat > -60 && c.lat < 84) { box.hits.push(c); seen.add(k); } }
     if (box.sel < 0 && box.hits.length) box.sel = 0; renderList(box);
   }
   const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  const pol = (t) => String(t || "").replace(/\b(State of Israel|Israel|Occupied Palestinian Territor(?:y|ies)|Palestinian Territor(?:y|ies)|State of Palestine)\b/gi, "Palestine").replace(/ישראל|إسرائيل/g, "Palestine");
   function renderList(box) { const b = box || BOX; b.list.innerHTML = b.hits.map((c, i) => `<li data-i="${i}" class="${i === b.sel ? "sel" : ""}">${esc(c.name)}<span>${esc(c.country)}${c.pop ? " · " + (c.pop >= 1000 ? (c.pop / 1000).toFixed(1) + " M" : c.pop + " k") : (c.online ? " · OpenStreetMap" : "")}</span></li>`).join("") + (b.input.value.trim().length >= 2 ? `<li class="more"><span>${b.hits.some((c) => c.online) ? "Places from OpenStreetMap included" : "Searching all places…"}</span></li>` : ""); b.list.hidden = !b.hits.length && b.input.value.trim().length < 2; }
   function choose(c) { list.hidden = true; cq.value = c.name + (c.country ? ", " + c.country : ""); try { localStorage.setItem("otso-city", JSON.stringify({ name: cq.value, lat: c.lat, lon: c.lon })); } catch (e) {} state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, c.name + (c.country ? ", " + c.country : "")); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); }
   function suggestBox(input, listEl, onChoose) {                                          // a search box with suggestions from the gazetteer and OpenStreetMap
@@ -902,7 +903,7 @@
   const BOX = suggestBox(cq, list, choose);
   async function placeName(lat, lon) {                                                  // a name for a position (OpenStreetMap data), or the coordinates
     try { const r = await fetch("https://photon.komoot.io/reverse?lon=" + lon + "&lat=" + lat + "&lang=en"); const j = await r.json(); const f = j.features && j.features[0]; if (!f) throw 0;
-      const q = f.properties; return [q.city || q.town || q.village || q.name || q.county, q.country].filter(Boolean).join(", ") || coord(lat, lon); } catch (e) { return coord(lat, lon); }
+      const q = f.properties; return pol([q.city || q.town || q.village || q.name || q.county, q.country].filter(Boolean).join(", ")) || coord(lat, lon); } catch (e) { return coord(lat, lon); }
   }
   function locate(scroll) {
     if (!navigator.geolocation) { cq.value = "Geolocation is not available in this browser."; return; }
@@ -943,8 +944,8 @@
       const qs = new URLSearchParams(location.search);                                   // a shared place: ?lat=..&lon=..&name=.. or the same in the hash
       const m = qs.get("lat") && qs.get("lon") ? [null, qs.get("lat"), qs.get("lon"), qs.get("name") ? encodeURIComponent(qs.get("name")) : undefined] : location.hash.match(/lat=(-?[\d.]+)&lon=(-?[\d.]+)(?:&name=([^&]+))?/);
       let remembered = null; try { remembered = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
-      if (m) { const nm = m[3] ? decodeURIComponent(m[3]) : null; if (nm) cq.value = nm; state.view = [+m[2] - 22, +m[2] + 22, +m[1] - 9, +m[1] + 9]; zoomAt(1, 0.5, 0.5); pick(+m[1], +m[2], nm); }
-      else if (remembered && isFinite(remembered.lat)) { cq.value = remembered.name; state.view = [remembered.lon - 22, remembered.lon + 22, remembered.lat - 9, remembered.lat + 9]; zoomAt(1, 0.5, 0.5); pick(remembered.lat, remembered.lon, remembered.name);
+      if (m) { const nm = m[3] ? pol(decodeURIComponent(m[3])) : null; if (nm) cq.value = nm; state.view = [+m[2] - 22, +m[2] + 22, +m[1] - 9, +m[1] + 9]; zoomAt(1, 0.5, 0.5); pick(+m[1], +m[2], nm); }
+      else if (remembered && isFinite(remembered.lat)) { remembered.name = pol(remembered.name); cq.value = remembered.name; state.view = [remembered.lon - 22, remembered.lon + 22, remembered.lat - 9, remembered.lat + 9]; zoomAt(1, 0.5, 0.5); pick(remembered.lat, remembered.lon, remembered.name);
         let geo = null; try { geo = localStorage.getItem("otso-geo"); } catch (e) {} if (geo === "1") locate(false); }         // the position is refreshed silently (permission already given)
       else document.getElementById("welcome").hidden = false;
     } catch (e) {
