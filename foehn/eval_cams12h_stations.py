@@ -22,7 +22,9 @@ W3 = (0.25, 0.5, 0.25)
 
 
 def main(a):
-    st = np.load(G / "stations_2022.npz")
+    import os
+    STATIONS = os.environ.get("STATIONS", "stations_2022.npz")              # UTC-day means: stations_2022_utc.npz
+    st = np.load(G / STATIONS)
     keep = np.isin(st["source"], list(NETS)) & (st["lat"] < 84.0) & (st["lat"] > -60.0)
     slat, slon, src, obs = st["lat"][keep], st["lon"][keep], st["source"][keep], st["daily"][keep].astype(np.float32)
     fi = (84.0 - slat) / 0.4; fj = ((slon + 180.0) % 360.0) / 0.4                      # domain grid: 84 - 0.4 i, -180 + 0.4 j
@@ -74,7 +76,7 @@ def main(a):
         if c_ % 40 == 0:
             print(f"{c_}/{len(doys)}", flush=True)
     names = [NETS[k] for k in nets] + ["All six networks"]
-    np.savez(HERE.parent / "figures" / "data" / "cams12h_stations.npz", acc=acc, per=per, systems=np.array(SYS), networks=np.array(names),
+    np.savez(HERE.parent / "figures" / "data" / f"cams12h_stations{__import__('os').environ.get('TAG', '')}.npz", acc=acc, per=per, systems=np.array(SYS), networks=np.array(names),
              doys=np.array(doys))
     for g, nm in reversed(list(enumerate(names))):
         print(f"\n=== {nm}: RMSE / bias / CRPS (ug m-3), daily means, identical station-days")

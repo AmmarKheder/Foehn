@@ -23,7 +23,9 @@ AURD = HERE.parent / "benchmark" / "aurora"
 NETS = {0: "EEA", 1: "CNEMC", 3: "EPA", 4: "AirKorea", 5: "NIES", 6: "CPCB"}
 PCTS, WINDOW = (90, 95, 99), 15
 
-st = np.load(G / "stations_2022.npz")
+import os  # noqa: E402
+STATIONS = os.environ.get("STATIONS", "stations_2022.npz"); TAG = os.environ.get("TAG", "")   # UTC-day means: stations_2022_utc.npz
+st = np.load(G / STATIONS)
 lat, lon, src, obs = st["lat"], st["lon"], st["source"], st["daily"].astype(np.float32)
 NS = len(lat)
 official = np.isin(src, list(NETS))
@@ -138,7 +140,7 @@ def scores(cnt):
     return o, bs, bss, auc, pod, far
 
 
-np.savez(HERE / "data" / f"extremes_stations_{runs[0][0]}.npz", C=C, systems=np.array(SYS), tiers=np.array(["P90", "P95", "P99"]))
+np.savez(HERE / "data" / f"extremes_stations_{runs[0][0]}{TAG}.npz", C=C, systems=np.array(SYS), tiers=np.array(["P90", "P95", "P99"]))
 for kind, kn in enumerate(("GHAP 2017-2020 local climatology (TailWeather labelling)", "station's own 2022 record")):
     for tier, tn in enumerate(("moderate > P90", "severe > P95", "extreme > P99")):
         print(f"\n=== thresholds: {kn} | {tn}: Brier skill score / ROC area / hit rate / false-alarm ratio (p >= 0.5)")

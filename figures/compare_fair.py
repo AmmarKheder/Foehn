@@ -25,7 +25,11 @@ G = Path("/scratch/project_462001140/ammar/eccv/data/world/global1km")
 AURD = HERE.parent / "benchmark" / "aurora"
 NETS = {0: "Europe (EEA)", 1: "China (CNEMC)", 3: "USA (EPA)", 4: "Korea (AirKorea)", 5: "Japan (NIES)", 6: "India (CPCB)"}
 
-st = np.load(G / "stations_2022.npz")
+import os  # noqa: E402
+STATIONS = os.environ.get("STATIONS", "stations_2022.npz")             # stations_2022_utc.npz: UTC-day means (build_stations_utc.py)
+TAG = os.environ.get("TAG", "")
+st = np.load(G / STATIONS)
+print("station file:", STATIONS, flush=True)
 lat, lon, src, obs = st["lat"], st["lon"], st["source"], st["daily"].astype(np.float32)
 NS = len(lat)
 official = np.isin(src, list(NETS))
@@ -151,7 +155,7 @@ for c, (d, h) in enumerate(common):
         SST[k, h - 1, ok, 0] += e * e; SST[k, h - 1, ok, 1] += 1
     if c % 200 == 0:
         print(c, "/", len(common), flush=True)
-np.savez(HERE / "data" / f"compare_fair_{runs[0][0]}.npz", S=S, PD=PD, PDN=PDN, days=np.array(days), SST=SST, lat=lat, lon=lon, src=src, systems=np.array(SYS),
+np.savez(HERE / "data" / f"compare_fair_{runs[0][0]}{TAG}.npz", S=S, PD=PD, PDN=PDN, days=np.array(days), SST=SST, lat=lat, lon=lon, src=src, systems=np.array(SYS),
          nets=np.array(list(NETS.values()) + ["all"]))
 for g, nm in reversed(list(enumerate(list(NETS.values()) + ["All official networks"]))):
     print(f"\n=== {nm}: RMSE / bias (ug m-3), identical station-days")

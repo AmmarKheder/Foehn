@@ -28,7 +28,9 @@ def bil(m, lat0, dlat, lon0, dlon):
     return ((1 - wi) * ((1 - wj) * m[i0, j0] + wj * m[i0, j1]) + wi * ((1 - wj) * m[i0 + 1, j0] + wj * m[i0 + 1, j1]))
 
 
-st = np.load(G / "stations_2022.npz")
+import os  # noqa: E402
+STATIONS = os.environ.get("STATIONS", "stations_2022.npz"); TAG = os.environ.get("TAG", "")   # UTC-day means: stations_2022_utc.npz
+st = np.load(G / STATIONS)
 LAT, LON = st["lat"], st["lon"]
 official = st["source"] != 2
 obs = st["daily"].astype(np.float32)
@@ -96,7 +98,7 @@ def main():
             nfc += 1
     with np.errstate(all="ignore"):
         mean = acc[:, :, 0] / acc[:, :, 1]
-    np.savez(HERE / "data" / f"station_crps_{FM.LABEL}.npz", mean=mean, n=acc[:, :, 1], systems=np.array(SYS), leads=np.arange(1, 8))
+    np.savez(HERE / "data" / f"station_crps_{FM.LABEL}{TAG}.npz", mean=mean, n=acc[:, :, 1], systems=np.array(SYS), leads=np.arange(1, 8))
     print(f"{nfc} forecasts pooled; station-days per lead:", acc[:, 0, 1].astype(int))
     for k in range(7):
         print(f"J+{k + 1}: " + " | ".join(f"{s.split(' (')[0]} {mean[k, j]:.2f}" for j, s in enumerate(SYS) if np.isfinite(mean[k, j])))
