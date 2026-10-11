@@ -277,16 +277,21 @@
     .drow { grid-template-columns: minmax(70px, 1fr) 14px 30px minmax(0, 2.4fr) 30px; gap: 8px; font-size: 15px; }
   }
   /* languages */
-  .lang-wrap { display: inline-flex; align-items: center; gap: 4px; margin-left: 10px; font-size: 15px; }
-  .lang-sel { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 8px; padding: 4px 6px; font-size: 13px; max-width: 128px; }
+  .lang-wrap { position: relative; display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .lang-wrap:hover { border-color: var(--blue); } .lang-chev { color: var(--muted); font-size: 11px; }
+  .lang-sel { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+  .lang-code { display: none; }
+  .lang-foot-wrap { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 12px; font-size: 14px; color: var(--ink); }
+  .lang-foot-wrap select { border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); padding: 6px 10px; font-size: 16px; }
   .i18n-note { color: var(--muted); }
-  [dir="rtl"] .ah-value, [dir="rtl"] .dbar, [dir="rtl"] .otso-canvas, [dir="rtl"] .series, [dir="rtl"] .cbar canvas, [dir="rtl"] .timeline, [dir="rtl"] .strip { direction: ltr; }
+  [dir="rtl"] .ah-value, [dir="rtl"] .otso-canvas, [dir="rtl"] .series, [dir="rtl"] .cbar canvas { direction: ltr; }
+  [dir="rtl"] .dbar { transform: scaleX(-1); }                                  /* low values next to the minimum, as the text reads */
+  .drow { grid-template-columns: minmax(96px, 1.3fr) 16px 34px minmax(0, 3fr) 34px; } .dname { overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 600px) { .drow { grid-template-columns: minmax(92px, 1.2fr) 14px 30px minmax(0, 2.2fr) 30px; } }
   [dir="rtl"] .ah-unit { margin: 14px 0 0 8px; } [dir="rtl"] .lang-wrap { margin-left: 0; margin-right: 10px; } [dir="rtl"] .theme-btn { margin-left: 0; margin-right: 12px; }
   [dir="rtl"] .disclaimer { border-left: 1px solid var(--amber-line); border-right: 4px solid var(--amber); }
   [dir="rtl"] .tip { direction: rtl; }
-  .lang-code { display: none; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .04em; }
-  @media (max-width: 600px) { .lang-wrap { position: relative; margin-left: 6px; padding: 6px 4px; } .lang-code { display: inline; }
-    .lang-sel { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; max-width: none; } }
+  @media (max-width: 600px) { .lang-wrap { margin-left: 6px; padding: 6px 10px; } .lang-name { display: none; } .lang-code { display: inline; font-size: 13px; font-weight: 700; letter-spacing: .04em; } }
 </style>
 </head>
 <body>
@@ -305,7 +310,7 @@
       <a href="../">← Foehn</a>
       <a href="?full=1" class="full-site" data-i18n="nav.full">Full site</a>
     </nav>
-    <label class="lang-wrap" title="Language"><span aria-hidden="true">🌐</span><span class="lang-code" id="lang-code" aria-hidden="true">EN</span><select id="lang" class="lang-sel" data-i18n-aria="lang.aria" aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option><option value="es">Español</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="nl">Nederlands</option><option value="pl">Polski</option><option value="ro">Română</option><option value="el">Ελληνικά</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="tr">Türkçe</option><option value="fa">فارسی</option><option value="ur">اردو</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="pa">ਪੰਜਾਬੀ</option><option value="gu">ગુજરાતી</option><option value="mr">मराठी</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="ne">नेपाली</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="vi">Tiếng Việt</option><option value="th">ไทย</option><option value="id">Bahasa Indonesia</option><option value="ms">Bahasa Melayu</option><option value="sw">Kiswahili</option><option value="ha">Hausa</option><option value="yo">Yorùbá</option><option value="am">አማርኛ</option><option value="fi">Suomi</option><option value="sv">Svenska</option></select></label>
+    <label class="lang-wrap" title="Language"><span aria-hidden="true">🌐</span><span class="lang-name" id="lang-name" aria-hidden="true">English</span><span class="lang-code" id="lang-code" aria-hidden="true">EN</span><span class="lang-chev" aria-hidden="true">▾</span><select id="lang" class="lang-sel" data-i18n-aria="lang.aria" aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option><option value="es">Español</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="nl">Nederlands</option><option value="pl">Polski</option><option value="ro">Română</option><option value="el">Ελληνικά</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="tr">Türkçe</option><option value="fa">فارسی</option><option value="ur">اردو</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="pa">ਪੰਜਾਬੀ</option><option value="gu">ગુજરાતી</option><option value="mr">मराठी</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="ne">नेपाली</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="vi">Tiếng Việt</option><option value="th">ไทย</option><option value="id">Bahasa Indonesia</option><option value="ms">Bahasa Melayu</option><option value="sw">Kiswahili</option><option value="ha">Hausa</option><option value="yo">Yorùbá</option><option value="am">አማርኛ</option><option value="fi">Suomi</option><option value="sv">Svenska</option></select></label>
     <button type="button" class="theme-btn" id="theme" data-i18n-aria="theme.aria" aria-label="Switch between light and dark mode" title="Light / dark">🌙</button>
   </div>
 </header>
@@ -535,6 +540,7 @@
       <div class="credit-links"><a href="../" data-i18n="foot.paper">The Foehn paper</a> · <a href="https://github.com/AmmarKheder/Foehn" data-i18n="foot.code">Code and data</a> · <a href="https://github.com/AmmarKheder/Foehn/issues" data-i18n="foot.report">Report a problem</a> · <span class="i18n-note" data-i18n="i18n.note"></span></div>
     </div>
   </div>
+  <label class="lang-foot-wrap"><span aria-hidden="true">🌐</span><span data-i18n="lang.aria">Language</span><select id="lang-foot" aria-label="Language"></select></label>
   <p class="fine">Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland. Otso 1.2 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. Research forecast, not an official alert. Contains modified Copernicus Atmosphere Monitoring Service information 2026; ECMWF open data (CC BY 4.0); city list © GeoNames (CC BY 4.0) and © OpenStreetMap contributors. © 2026 Ammar Kheder.</p>
 </div></footer>
 
@@ -569,7 +575,8 @@
     LANG = LANG_CODES.includes(code) ? code : "en";
     try { if (!Object.keys(EN).length) EN = await (await fetch("i18n/en.json")).json(); } catch (e) {}
     try { DICT = LANG === "en" ? {} : await (await fetch("i18n/" + LANG + ".json")).json(); } catch (e) { DICT = {}; }
-    document.documentElement.lang = LANG; document.documentElement.dir = RTL.has(LANG) ? "rtl" : "ltr"; document.getElementById("lang").value = LANG; document.getElementById("lang-code").textContent = LANG.toUpperCase();
+    document.documentElement.lang = LANG; document.documentElement.dir = RTL.has(LANG) ? "rtl" : "ltr"; document.getElementById("lang").value = LANG; document.getElementById("lang-code").textContent = LANG.toUpperCase(); const ln = document.querySelector(`#lang option[value="${LANG}"]`); document.getElementById("lang-name").textContent = ln ? ln.textContent : "English";
+    const lf = document.getElementById("lang-foot"); if (lf) lf.value = LANG;
     if (save) { try { localStorage.setItem("otso-lang", LANG); } catch (e) {} }
     applyI18n(); rerender();
   }
@@ -1071,6 +1078,7 @@
     el.hidden = false;
   }
   document.getElementById("lang").addEventListener("change", (ev) => setLang(ev.target.value, true));
+  (() => { const lf = document.getElementById("lang-foot"); lf.innerHTML = document.getElementById("lang").innerHTML; lf.value = LANG; lf.addEventListener("change", (ev) => { setLang(ev.target.value, true); window.scrollTo({ top: 0, behavior: "smooth" }); }); })();
   // ---- install tutorial: the tab of the visitor's system is opened first
   const ua = navigator.userAgent || ""; const os = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "desktop";
   function showOs(o) { for (const b of document.querySelectorAll(".ostabs button")) b.classList.toggle("on", b.dataset.os === o); for (const d of document.querySelectorAll(".istep[data-os]")) d.hidden = d.dataset.os !== o; }
