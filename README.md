@@ -6,7 +6,7 @@
   <br><sub>Left: Foehn's forecast of daily PM<sub>2.5</sub> at 1 km for 21 January 2022, issued the evening before (ensemble mean). Right: FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</sub>
 </p>
 
-# Foehn: global high-resolution forecasts of fine particulate matter
+# Foehn: global kilometre-scale forecasts of fine particulate matter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/website-ammarkheder.com%2FFoehn-1F5AA6)](https://ammarkheder.com/Foehn/)
@@ -191,7 +191,7 @@ and referees, and will be released here upon publication.
 
 ```bibtex
 @article{kheder2026foehn,
-  title   = {Global high-resolution forecasts of fine particulate matter},
+  title   = {Global kilometre-scale forecasts of fine particulate matter},
   author  = {Kheder, Ammar and Boy, Michael and Liu, Zhi-Song},
   year    = {2026},
   note    = {Manuscript submitted}
