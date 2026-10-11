@@ -19,7 +19,7 @@ import numpy as np
 
 import final_model as FM
 from fig_exposure_zoom import ghap_box
-from gc_style import clean, label
+from gc_style import clean, geo_ticks, label
 from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, pm_cmap, save
 
 REGC = {"East Asia": "#D55E00", "South Asia": "#E69F00", "Europe": "#0072B2", "North America": "#CC79A7", "Africa": "#009E73"}
@@ -34,16 +34,18 @@ CASE = CASES["kano"]
 N_, S_, W_, E_ = CASE["box"]
 R0, R1, C0, C1 = int(round((84 - N_) * 100)), int(round((84 - S_) * 100)), int(round((W_ + 180) * 100)), int(round((E_ + 180) * 100))
 ASPECT = 1 / np.cos(np.deg2rad(0.5 * (N_ + S_)))
+X0, DX = 9.5, 43.5                                                    # maps: left edge and step (mm); latitudes left of a and e
 
 
-def kmap(fig, rect, field, cmap, norm, title, bold=False, positive=True):
+def kmap(fig, rect, field, cmap, norm, title, bold=False, positive=True, left=False, bottom=False):
     ax = fig.add_axes(rect)
     f = field[::2, ::2]                                       # 2 km display (the 1 km structure stays visible at print size)
     ax.imshow(np.where(np.nan_to_num(f) > 0, f, np.nan) if positive else f, extent=(W_, E_, S_, N_), origin="upper", cmap=cmap, norm=norm, interpolation="nearest")
-    ax.set_xlim(W_, E_); ax.set_ylim(S_, N_); ax.set_aspect(ASPECT); ax.set_xticks([]); ax.set_yticks([])
+    ax.set_xlim(W_, E_); ax.set_ylim(S_, N_); ax.set_aspect(ASPECT)
+    geo_ticks(ax, (5, 10, 15, 20), (10, 15, 20, 25), left=left, bottom=bottom)   # one extent: labels on the outer maps
     ax.set_facecolor("white")
     for s_ in ax.spines.values():
-        s_.set_linewidth(0.4)
+        s_.set_visible(True); s_.set_linewidth(0.4)
     ax.set_title(title, fontsize=6.2, pad=2, fontweight="bold" if bold else "normal")
     return ax
 
@@ -56,7 +58,7 @@ def main():
     from fig1_teaser_v6 import tiles
     land1 = tiles("static1km_tiles.npy", 1)[R0:R1, C0:C1]
     day = lambda d: (np.datetime64("2022-01-01") + np.timedelta64(int(d), "D")).astype("datetime64[D]").item()
-    mw = 43.0; mh = mw * (N_ - S_) * ASPECT / (E_ - W_)
+    mw = 41.5; mh = mw * (N_ - S_) * ASPECT / (E_ - W_)
     ym, yt = 45.0, 45.0 + mh + 9.0                                     # bottoms of the Foehn row and of the GHAP row (mm)
     W, H = DOUBLE, (yt + mh + 6.5) * MM
     fig = plt.figure(figsize=(W, H))
@@ -64,15 +66,15 @@ def main():
     # a-d: GHAP and where the air of the arrival day was
     for k, h in enumerate((3, 2, 1, 0)):
         d = T - h
-        ax = kmap(fig, [fx(4 + 45 * k), fy(yt), fx(mw), fy(mh)], ghap_box(1826 + d, R0, R1, C0, C1).astype(np.float32),
-                  cmap, norm, f"{day(d):%-d %B}" + (", arrival" if h == 0 else ""), bold=h == 0)
+        ax = kmap(fig, [fx(X0 + DX * k), fy(yt), fx(mw), fy(mh)], ghap_box(1826 + d, R0, R1, C0, C1).astype(np.float32),
+                  cmap, norm, f"{day(d):%-d %B}" + (", arrival" if h == 0 else ""), bold=h == 0, left=k == 0, bottom=k == 0)
         if h > 0:
             o = zs[f"org_{h}"]; keep = np.nan_to_num(o[:, 3]) > 0.05
             ax.scatter(o[keep, 0], o[keep, 1], s=0.4, color="#111111", alpha=0.45, linewidths=0, zorder=4, rasterized=True)
         ax.plot(slo, sla, marker="*", ms=7, color="white", mec="#111111", mew=0.6, zorder=6)
         if k == 3:
             ax.text(slo + CASE["txt"][1], sla + CASE["txt"][0], CASE["city"], fontsize=5.8, fontweight="bold", zorder=6, path_effects=HALO)
-        label(fig, fx(4 + 45 * k), fy(yt + mh + 3.6), "abcd"[k])
+        label(fig, fx(X0 + DX * k), fy(yt + mh + 3.6), "abcd"[k])
     fig.text(fx(1.5), fy(yt + mh / 2), "GHAP (1 km)", rotation=90, ha="left", va="center", fontsize=6.2)
     # e-g: Foehn's chance of exceeding the threshold on the arrival day, issued 3, 2 and 1 days before
     from matplotlib.colors import BoundaryNorm, LinearSegmentedColormap
@@ -84,20 +86,20 @@ def main():
         assert int(z_["rows"][0]) == R0 and int(z_["cols"][0]) == C0, (z_["rows"], z_["cols"])
         m = z_["members"].astype(np.float32)
         pr = np.where(land1 > 0, (m > thr).mean(0), np.nan)
-        ax = kmap(fig, [fx(4 + 45 * (k + 1)), fy(ym), fx(mw), fy(mh)], pr, pcm, pn,
-                  f"{day(T):%-d %B}, issued {h} day{'s' if h > 1 else ''} before", bold=True, positive=False)
+        ax = kmap(fig, [fx(X0 + DX * (k + 1)), fy(ym), fx(mw), fy(mh)], pr, pcm, pn,
+                  f"{day(T):%-d %B}, issued {h} day{'s' if h > 1 else ''} before", bold=True, positive=False, left=k == 0, bottom=True)
         ax.plot(slo, sla, marker="*", ms=7, color="white", mec="#111111", mew=0.6, zorder=6)
-        label(fig, fx(4 + 45 * (k + 1)), fy(ym + mh + 3.6), "efg"[k])
+        label(fig, fx(X0 + DX * (k + 1)), fy(ym + mh + 3.6), "efg"[k])
         iy, ix = int((N_ - sla) * 100), int((slo - W_) * 100)
         v = m[:, iy - 15:iy + 15, ix - 15:ix + 15].mean((1, 2))
         print(f"issued {h} d before: members at {CASE['city']} {np.round(np.sort(v)).astype(int)} | P>{thr} {np.mean(v > thr):.2f}")
-    fig.text(fx(5), fy(ym + mh - 0.5), f"Foehn: chance of PM$_{{2.5}}$\n> {thr:g} µg m$^{{-3}}$ on {day(T):%-d %B}", fontsize=6.0,
+    fig.text(fx(X0 + 0.5), fy(ym + mh - 0.5), f"Foehn: chance of PM$_{{2.5}}$\n> {thr:g} µg m$^{{-3}}$ on {day(T):%-d %B}", fontsize=6.0,
              fontweight="bold", va="top", color="#1F5AA6")
-    cax = fig.add_axes([fx(5), fy(ym + mh - 10.5), fx(37), fy(1.6)])
+    cax = fig.add_axes([fx(X0 + 0.5), fy(ym + mh - 10.5), fx(35.5), fy(1.6)])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=pn, cmap=pcm), cax=cax, orientation="horizontal", ticks=[0, 0.5, 1])
     cb.ax.tick_params(labelsize=4.8, length=1.5, pad=1); cb.outline.set_linewidth(0.4)
     cb.set_label("Probability (16 members)", fontsize=5.0, labelpad=1)
-    cax = fig.add_axes([fx(5), fy(ym + mh - 19.5), fx(37), fy(1.6)])
+    cax = fig.add_axes([fx(X0 + 0.5), fy(ym + mh - 19.5), fx(35.5), fy(1.6)])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax, orientation="horizontal", extend="max", spacing="uniform",
                       ticks=PM_BOUNDS[::2])
     cb.ax.set_xticklabels([f"{t:g}" for t in PM_BOUNDS[::2]]); cb.ax.tick_params(labelsize=4.8, length=1.5, pad=1); cb.outline.set_linewidth(0.4)
@@ -110,7 +112,7 @@ def main():
     dist = z["dist"][:, :, g0]; dmed = np.nanmean(dist, 0); d25, d75 = np.nanpercentile(dist, [25, 75], axis=0)
     ah = fig.add_axes([fx(13), fy(8), fx(46), fy(27)])
     ai = fig.add_axes([fx(72), fy(8), fx(46), fy(27)])
-    aj = fig.add_axes([fx(131), fy(8), fx(46), fy(27)])
+    aj = fig.add_axes([fx(133), fy(8), fx(45), fy(27)])
     ah.fill_between(L, 0, near, color="#1F5AA6", alpha=0.85, lw=0, zorder=2)
     ah.fill_between(L, near, 100, color="#F5BFD3", lw=0, zorder=1)
     ah.plot(L, near, color="#111111", lw=1.2, marker="o", ms=2.4, zorder=4)
@@ -125,13 +127,14 @@ def main():
               loc="lower left", bbox_to_anchor=(0.0, 1.0), ncol=1, fontsize=5.2, frameon=False, handlelength=1.4,
               borderaxespad=0.2, labelspacing=0.25)
     import cartopy.crs as ccrs
-    from gc_style import map_axes
+    from gc_style import map_axes, world_coords
     land05 = np.load("/scratch/project_462001140/ammar/eccv/data/world/global1km/meta.npz")["land"].astype(bool).reshape(288, 2, 720, 2).any((1, 3))
     near_map = np.where(land05, 100 - 100 * z["aloft_map"][2], np.nan)             # three days ahead
     lat_e = 84.125 - 0.5 * np.arange(289); lon_e = -180.125 + 0.5 * np.arange(721)
     ai.remove()
-    ai = map_axes(fig, [fx(63), fy(10.5), fx(56), fy(26)])
+    ai = map_axes(fig, [fx(65), fy(12), fx(52), fy(26)])                         # room for its coordinates
     pm_ = ai.pcolormesh(lon_e, lat_e, near_map, cmap="Blues", vmin=20, vmax=70, transform=ccrs.PlateCarree(), rasterized=True, zorder=2)
+    world_coords(ai, size=4.6)
     cax_ = fig.add_axes([fx(74), fy(8.2), fx(34), fy(1.4)])
     cb_ = fig.colorbar(pm_, cax=cax_, orientation="horizontal", ticks=[20, 30, 40, 50, 60, 70], extend="both"); cb_.outline.set_linewidth(0.4)
     cb_.ax.tick_params(labelsize=4.8, length=1.5, pad=1)
@@ -155,7 +158,7 @@ def main():
     for a_ in (ah, aj):
         clean(a_); a_.tick_params(labelsize=5.5)
     for k in range(3):
-        label(fig, fx((2, 61, 120)[k]), fy(37), "hij"[k])
+        label(fig, fx((2, 61, 122)[k]), fy(37), "hij"[k])
     print("near-ground share, all land:", np.round(near, 1), "| distance km:", np.round(dmed), "| gain:", np.round(gain, 1))
     save(fig, "fig_transport")
 

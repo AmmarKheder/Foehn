@@ -42,10 +42,10 @@ def main():
             A = z["pred"][list(z["days"]).index(T)].astype(np.float32); alat, alon = z["lat"], z["lon"]
     an = np.load(AURD / "raw" / f"{T:03d}.npz")["surf"][0, 5, :A.shape[1]].astype(np.float32) * 1e9
     aur = np.maximum(0.25 * an + 0.5 * A[0] + 0.25 * A[1], 0)
-    MW = 30.2                                                                 # map width (mm); height from the extent, rows packed
+    MW = 29.3                                                                 # map width (mm); height from the extent, rows packed
     MH = [min(MW * (N - S) / (E - W_), 31.0) for (N, S, W_, E) in REGIONS.values()]
-    W, H = DOUBLE, (9 + sum(MH) + 8.5 * (len(MH) - 1) + 2) * MM
-    XC = [0.06, 0.235, 0.41, 0.585, 0.795]                                  # gaps after Foehn and the error map for the colour bars
+    W, H = DOUBLE, (9 + sum(MH) + 8.5 * (len(MH) - 1) + 4) * MM
+    XC = [0.085, 0.255, 0.425, 0.595, 0.80]                                 # gaps after Foehn and the error map for the colour bars
     DCM = LinearSegmentedColormap.from_list("div", GC.DIV, N=256)
     fig = plt.figure(figsize=(W, H))
     cols = ["GHAP, 1 km (reference)", "CAMS, 0.4°", "Aurora, 0.4°", "Foehn, 1 km", "Foehn − GHAP"]
@@ -60,17 +60,18 @@ def main():
         err = f - g; em = np.nanpercentile(np.abs(err), 98); en = TwoSlopeNorm(0, -em, em)
         ytop = H / MM - 9 - sum(MH[:i]) - 8.5 * i; y0 = (ytop - MH[i]) / (H / MM); bb = {}
         for j, (fld, title) in enumerate(zip((g, c, a, f, err), cols)):
-            ax = fig.add_axes([XC[j], y0, 0.165, MH[i] / (H / MM)], projection=ccrs.PlateCarree())
+            ax = fig.add_axes([XC[j], y0, 0.16, MH[i] / (H / MM)], projection=ccrs.PlateCarree())
             ax.set_extent([Wl, E, S, N], crs=ccrs.PlateCarree())
             ax.imshow(fld, extent=(Wl, E, S, N), origin="upper", transform=ccrs.PlateCarree(), interpolation="nearest",
                       cmap=DCM if j == 4 else CM, norm=en if j == 4 else nm, zorder=1)
             ax.add_feature(cfeature.COASTLINE.with_scale("10m"), lw=0.3, edgecolor="#333333", zorder=3)
             ax.add_feature(cfeature.BORDERS.with_scale("10m"), lw=0.2, edgecolor="#777777", zorder=3)
             ax.spines["geo"].set_linewidth(0.4)
+            GC.geo_ticks(ax, left=j == 0, bottom=True)          # each row its own region: longitudes under every map
             if i == 0:
                 ax.set_title(title, fontsize=6.2, fontweight="bold" if j == 3 else "normal", pad=3)
             if j == 0:
-                ax.text(-0.05, 0.5, rn.replace(" and the ", ",\n"), transform=ax.transAxes, rotation=90, ha="right", va="center", fontsize=6.2, fontweight="bold")
+                ax.text(-0.22, 0.5, rn.replace(" and the ", ",\n"), transform=ax.transAxes, rotation=90, ha="right", va="center", fontsize=6.2, fontweight="bold")
             if j in (1, 2, 3):
                 m = ok & np.isfinite(fld)
                 mae = np.mean(np.abs(fld[m] - g[m])); rr = np.corrcoef(fld[m], g[m])[0, 1]

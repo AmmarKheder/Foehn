@@ -18,7 +18,7 @@ import zarr
 from matplotlib.colors import BoundaryNorm, LinearSegmentedColormap
 
 from fig_exposure_zoom import ghap_box
-from gc_style import AURORA, CAMS, FOEHN, GHAP, clean, label
+from gc_style import AURORA, CAMS, FOEHN, GHAP, clean, geo_ticks, label
 import final_model as FM
 from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, pm_cmap, save
 
@@ -29,6 +29,8 @@ AURD = HERE.parent / "benchmark" / "aurora"
 SUB = (41.5, 35.5, 113.5, 121.5)                                              # North China Plain: N, S, W, E
 TH = 75.0
 PC = ccrs.PlateCarree()
+XT, YT = (115, 120), (36, 38, 40)                                            # coordinates of every map (2 mm clear of the edges)
+X0 = 7.5                                                                       # left edge of the maps (mm): latitudes beside it
 
 
 def aurora_all():
@@ -71,13 +73,14 @@ def spectrum(x, dx_km):
     return 1.0 / kc, band / np.diff(np.log10(bins))                                  # variance per decade of wavelength
 
 
-def mapax(fig, rect, title=None):
+def mapax(fig, rect, title=None, left=False, bottom=False):
     ax = fig.add_axes(rect, projection=PC)
     n, s, w, e = SUB
     ax.set_extent([w, e, s, n], crs=PC)
     ax.add_feature(cfeature.OCEAN.with_scale("50m"), facecolor="white", edgecolor="none", zorder=2)   # white sea on every panel, 40 km too
     ax.add_feature(cfeature.COASTLINE.with_scale("50m"), lw=0.3, edgecolor="#6E6E6E", zorder=4)
     ax.spines["geo"].set_linewidth(0.4)
+    geo_ticks(ax, XT, YT, left=left, bottom=bottom)
     if title:
         ax.set_title(title, fontsize=5.5, pad=1.5)
     return ax
@@ -96,7 +99,7 @@ def main():
     W, H = DOUBLE, 127 * MM
     fig = plt.figure(figsize=(W, H))
     fx = lambda mm: mm / (W / MM); fy = lambda mm: mm / (H / MM)
-    pw, ph = 21.0, 21.0 * 6.0 / (8.0 * np.cos(np.deg2rad(38.5)))
+    pw = 20.4; ph = pw * 6.0 / (8.0 * np.cos(np.deg2rad(38.5)))
     ext = (w, e, s, n)
     for row, h in enumerate((1, 5)):
         y0 = 127 - 7 - (row + 1) * ph - row * 9
@@ -107,7 +110,7 @@ def main():
         panels = [("GHAP (1 km)", gh, ext), ("Foehn, member 1", m[0], ext), ("member 2", m[1], ext), ("member 3", m[2], ext),
                   ("Foehn, ensemble mean", np.nanmean(m, 0), ext), ("CAMS (40 km)", cf, cext), ("Aurora (40 km)", af, aext)]
         for j, (title, f, ex_) in enumerate(panels):
-            ax = mapax(fig, [fx(3 + j * (pw + 1.2)), fy(y0), fx(pw), fy(ph)], title)
+            ax = mapax(fig, [fx(X0 + j * (pw + 1.2)), fy(y0), fx(pw), fy(ph)], title, left=j == 0, bottom=row == 1)
             ax.imshow(np.ma.masked_invalid(f), extent=ex_, origin="upper", transform=PC, cmap=cmap, norm=norm, interpolation="nearest", zorder=1)
         fig.text(fx(3), fy(y0 + ph + 3.5), f"$\\bf{{{'ai'[row]}}}$–$\\bf{{{'go'[row]}}}$  Forecasts for {day.day} {day:%B} issued "
                  f"{h} day{'s' if h > 1 else ''} ahead", fontsize=6.5, va="bottom")
@@ -137,11 +140,11 @@ def main():
     for j, h in enumerate((7, 5, 3, 1)):
         m = np.load(D / f"crop0_d{peak - h}_h{h}.npz")["members"].astype(np.float32)[:, sr0:sr1, sc0:sc1]
         p = np.where(land, (m > TH).mean(0), np.nan)
-        ax = mapax(fig, [fx(3 + j * (pw2 + 1.5)), fy(y0), fx(pw2), fy(ph2)], f"{h} day{'s' if h > 1 else ''} ahead")
+        ax = mapax(fig, [fx(X0 + j * (pw2 + 1.5)), fy(y0), fx(pw2), fy(ph2)], f"{h} day{'s' if h > 1 else ''} ahead", left=j == 0, bottom=True)
         ax.imshow(np.ma.masked_invalid(p), extent=ext, origin="upper", transform=PC, cmap=pcm, norm=pn, interpolation="nearest", zorder=1)
         ax.contour(np.linspace(w, e, gh.shape[1]), np.linspace(n, s, gh.shape[0]), np.nan_to_num(gh), levels=[TH], colors="#111111",
                    linewidths=0.5, transform=PC, zorder=5)
-    cax = fig.add_axes([fx(3 + 4 * (pw2 + 1.5) + 1.5), fy(y0 + 2), fx(2), fy(ph2 - 4)])
+    cax = fig.add_axes([fx(X0 + 4 * (pw2 + 1.5) + 1.5), fy(y0 + 2), fx(2), fy(ph2 - 4)])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=pn, cmap=pcm), cax=cax, ticks=[0, 0.5, 1]); cb.outline.set_linewidth(0.4)
     cb.ax.tick_params(labelsize=5, length=1.5); cb.set_label("probability", fontsize=5.5, labelpad=1)
     cax = fig.add_axes([fx(134), fy(y0 + 17), fx(46), fy(1.8)])

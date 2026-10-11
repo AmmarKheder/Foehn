@@ -21,6 +21,7 @@ def gaussian_filter(a, sigma):
     return a
 
 from fig_exposure_zoom import ghap_box, pop_box
+from gc_style import fmt_lat, fmt_lon
 from nature_style import COLOR, DOUBLE, HERE, MM, PM_COLORS, letter, plt, save
 
 THR = 75.0
@@ -77,8 +78,8 @@ def row1(fig, gs, letters="abc", row=0, case=None):
             ax.axhline(ext[3] - 0.4 * rr, color="white" if k < 2 else "#9E9E9E", lw=0.35, alpha=0.8)
         ax.set_xlim(ext[0], ext[1]); ax.set_ylim(ext[2], ext[3]); ax.set_aspect(1 / np.cos(np.deg2rad(0.5 * (N_ + S_))))
         xt = [v for v in range(int(np.ceil(W_)), int(np.floor(E_)) + 1)]; yt = [v for v in range(int(np.ceil(S_)), int(np.floor(N_)) + 1)]
-        ax.set_xticks(xt); ax.set_xticklabels([f"{abs(v)}° {'E' if v >= 0 else 'W'}" for v in xt]); ax.set_yticks(yt)
-        ax.set_yticklabels([f"{abs(v)}° {'N' if v >= 0 else 'S'}" for v in yt] if k == 0 else []); ax.tick_params(length=2, labelsize=5.5)
+        ax.set_xticks(xt); ax.set_xticklabels([fmt_lon(v) for v in xt]); ax.set_yticks(yt)
+        ax.set_yticklabels([fmt_lat(v) for v in yt] if k == 0 else []); ax.tick_params(length=2, labelsize=5.5)
         for s_ in ax.spines.values():
             s_.set_visible(True); s_.set_linewidth(0.5)
         letter(ax, letters[k], x=-0.02, y=1.02)

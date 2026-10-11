@@ -17,7 +17,7 @@ from matplotlib.colors import BoundaryNorm, LinearSegmentedColormap
 import final_model as FM
 from fig1_teaser_v6 import tiles
 from fig_exposure_zoom import ghap_box
-from gc_style import clean, label
+from gc_style import clean, geo_ticks, label
 from nature_style import DOUBLE, MM, PM_BOUNDS, plt, pm_cmap, save
 
 G = "/scratch/project_462001140/ammar/eccv/data/world/global1km"
@@ -41,16 +41,17 @@ def members(t, h):
     return np.load((SHORT if h <= 3 else LONG) / f"crop0_d{t - h}_h{h}.npz")["members"].astype(np.float32)
 
 
-def kmap(fig, rect, field, cmap, norm, title, bold=False, coast=None):
+def kmap(fig, rect, field, cmap, norm, title, bold=False, coast=None, left=False):
     ax = fig.add_axes(rect)
     if coast is not None:
         yy_ = np.linspace(N_, S_, coast.shape[0]); xx_ = np.linspace(W_, E_, coast.shape[1])
         ax.contour(xx_, yy_, coast.astype(float), levels=[0.5], colors="#9AA5AE", linewidths=0.35, zorder=3)
     ax.imshow(field, extent=(W_, E_, S_, N_), origin="upper", cmap=cmap, norm=norm, interpolation="nearest")
-    ax.set_xlim(W_, E_); ax.set_ylim(S_, N_); ax.set_aspect(ASPECT); ax.set_xticks([]); ax.set_yticks([])
+    ax.set_xlim(W_, E_); ax.set_ylim(S_, N_); ax.set_aspect(ASPECT)
+    geo_ticks(ax, (-2, -1, 0), (44, 45), left=left, bottom=True)          # one extent: latitudes on a, longitudes on all
     ax.set_facecolor("white")
     for s_ in ax.spines.values():
-        s_.set_linewidth(0.4)
+        s_.set_visible(True); s_.set_linewidth(0.4)
     ax.set_title(title, fontsize=6.2, pad=2.5, fontweight="bold" if bold else "normal")
     return ax
 
@@ -89,12 +90,12 @@ def main():
     W, H = DOUBLE, (ym + mh + 8.0) * MM
     fig = plt.figure(figsize=(W, H))
     fx = lambda mm: mm / (W / MM); fy = lambda mm: mm / (H / MM)
-    xs = [3.5 + 35.5 * k for k in range(5)]
+    xs = [7.0 + 35.0 * k for k in range(5)]                    # room for the latitudes left of a
 
     # a: the smoke on 18 July in the 1 km estimates
     g = ghap_box(1826 + T, R0, R1, C0, C1).astype(np.float32)
     ax = kmap(fig, [fx(xs[0]), fy(ym), fx(mw), fy(mh)], np.where(lnd & (g > 0), g, np.nan), cmap, norm,
-              f"{day(T):%-d %B}, GHAP (1 km)", bold=True, coast=lnd)
+              f"{day(T):%-d %B}, GHAP (1 km)", bold=True, coast=lnd, left=True)
     ax.scatter(st["lon"][sel], st["lat"][sel], c=st["daily"][sel, T].astype(np.float32), cmap=cmap, norm=norm, s=9,
                linewidths=0.5, edgecolors="#111111", zorder=6)
     places(ax, fire_pts(T), labels=True)

@@ -17,7 +17,8 @@ from eval_cams12h import LAT, NX, REGIONS  # noqa: E402
 from fig_gc3_scorecards import boot_inits  # noqa: E402
 from fig_gc5_aurora_setup import fields  # noqa: E402
 import fig_gc5_aurora_setup as F5  # noqa: E402
-from gc_style import AURORA, CAMS, FOEHN, land_mask_04, map_axes  # noqa: E402
+from gc_style import AURORA, CAMS, FOEHN, geo_ticks, land_mask_04, map_axes  # noqa: E402
+from matplotlib.transforms import offset_copy  # noqa: E402
 from nature_style import DOUBLE, HERE, MM, plt, pm_cmap, save  # noqa: E402
 
 REG = ["Europe", "North America", "South America", "Africa", "South Asia", "East Asia"]
@@ -37,16 +38,17 @@ def main():
     fig = plt.figure(figsize=(W, H))
     fx = lambda mm: mm / (W / MM); fy = lambda mm: mm / (H / MM)
     cols = ["CAMS analysis", "Foehn-CAMS", "Aurora", "CAMS forecast"]
-    mw, mh, top = 29.5, 22.0, 168 - 8
+    mw, mh, top = 29.5, 21.0, 168 - 8
     for i, r in enumerate(REG):
         N, S, Wl, E = REGIONS[r]
-        y0 = top - (i + 1) * mh - i * 3.4
+        y0 = top - (i + 1) * mh - i * 4.6                                      # room for the longitudes under each row
         box = (LAT[:, None] <= N) & (LAT[:, None] > S) & (LO2[None, :] >= Wl) & (LO2[None, :] < E)
         T = Fm["CAMS analysis"]
         for j, nm in enumerate(cols):
             ax = map_axes(fig, [fx(16 + j * (mw + 1.5)), fy(y0), fx(mw), fy(mh)], proj="plate", extent=(Wl, E, S, N), land=False)
             ax.imshow(np.where(land, np.maximum(Fm[nm], 0), np.nan), origin="upper", extent=(-180, 180, -60.2, 84.2),
                       transform=ccrs.PlateCarree(), cmap=cmap, norm=norm, interpolation="nearest", zorder=1)
+            geo_ticks(ax, left=j == 0, bottom=True, size=4.6)                     # each row its own region
             if nm != "CAMS analysis":
                 e = np.sqrt((w * box * (Fm[nm] - T) ** 2).sum() / (w * box).sum())
                 ax.text(0.03, 0.05, f"RMSE {e:.1f}", transform=ax.transAxes, fontsize=4.8, zorder=6,
@@ -54,7 +56,8 @@ def main():
             if i == 0:
                 ax.set_title(nm, fontsize=6.2, pad=2, fontweight="bold" if nm == "Foehn-CAMS" else "normal")
             if j == 0:
-                ax.text(-0.06, 0.5, r, transform=ax.transAxes, rotation=90, ha="right", va="center", fontsize=6, fontweight="bold")
+                ax.text(0, 0.5, r, transform=offset_copy(ax.transAxes, fig=fig, x=-18.5, y=0, units="points"), rotation=90,
+                        ha="right", va="center", fontsize=6, fontweight="bold")      # 6.5 mm left of the map, clear of its latitudes
         g = CR.index(r)
         SY = (("CAMS forecast", "CAMS forecast", CAMS, 0.9, "s"), ("Aurora", "Aurora", AURORA, 0.9, "D"), ("Foehn-CAMS (mean)", "Foehn-CAMS", FOEHN, 1.4, "o"))
         # main curves (all leads, climatology) and, beside them, the zoom on days 3-5 (shaded in the main panel)

@@ -12,7 +12,7 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, LogNorm
 
 import fig_exposure_row1 as R1
-from gc_style import label, map_axes
+from gc_style import label, map_axes, world_coords
 from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, save
 
 PINK = ["#FBE3EC", "#F29BBD", "#E0457F", "#C2185B", "#5C0A2C"]
@@ -32,6 +32,7 @@ def main():
     lat_e = 84.0 - 0.4 * np.arange(361); lon_e = -180.0 + 0.4 * np.arange(901)
     pm = ax.pcolormesh(lon_e, lat_e, np.ma.masked_less(hid, 10), cmap=cm, norm=LogNorm(10, 1e5), transform=ccrs.PlateCarree(),
                        rasterized=True, zorder=2)
+    world_coords(ax, size=5.5)
     import cartopy.crs as ccrs_                                       # colour bar inside the frame, over the empty South Pacific
     rob = ax.projection
     xa, ya = rob.transform_point(-162, -40, ccrs_.PlateCarree()); xb, yb = rob.transform_point(-98, -36.5, ccrs_.PlateCarree())

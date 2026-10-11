@@ -16,7 +16,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "global1km"))
 from eval_cams12h import AUR, CFC, LAT, NX, RAW, to_domain  # noqa: E402
-from gc_style import AURORA, CAMS, FOEHN, label, land_mask_04, map_axes  # noqa: E402
+from gc_style import AURORA, CAMS, FOEHN, label, land_mask_04, map_axes, world_coords  # noqa: E402
 from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, pm_cmap, save  # noqa: E402
 
 RUNS = HERE.parent / "global1km" / "runs" / "cams04_flow_shift2.6_emis"
@@ -62,6 +62,7 @@ def main():
             ax = map_axes(fig, [fx(x0), fy(y0), fx(mw), fy(mh)], land=False)
             ax.imshow(np.where(land, np.maximum(F[L][nm], 0), np.nan), origin="upper", extent=(-180, 180, -60.2, 84.2),
                       transform=ccrs.PlateCarree(), cmap=cmap, norm=norm, interpolation="nearest", regrid_shape=1200, zorder=1)
+            world_coords(ax, left=j == 0, right=j == len(cols) - 1, bottom=i == len(LEADS) - 1, size=4.6)   # outer maps labelled
             if nm != "CAMS analysis":
                 ax.text(0.02, 0.10, f"RMSE {F[L][nm + '_rmse']:.1f}", transform=ax.transAxes, fontsize=4.8, zorder=6,
                         fontweight="bold" if nm == "Foehn-CAMS" else "normal")
@@ -69,7 +70,7 @@ def main():
                 ax.set_title(nm + (" (truth)" if nm == "CAMS analysis" else ""), fontsize=6.2, pad=2,
                              fontweight="bold" if nm == "Foehn-CAMS" else "normal")
             if j == 0:
-                ax.text(-0.05, 0.5, f"+{L // 24} d\n{int(str(vt)[8:10])} Sep", transform=ax.transAxes, rotation=90, ha="right",
+                ax.text(-0.15, 0.5, f"+{L // 24} d\n{int(str(vt)[8:10])} Sep", transform=ax.transAxes, rotation=90, ha="right",
                         va="center", fontsize=5.8)
     label(fig, fx(1), fy(top + 2.5), "a")
     yb = top - 2 * mh - 1.5 - 7.5

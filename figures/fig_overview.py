@@ -15,7 +15,7 @@ import zarr
 
 import final_model as FM
 from fig1_teaser_v6 import tiles
-from gc_style import map_axes
+from gc_style import geo_ticks, map_axes, world_coords
 from nature_style import DOUBLE, HERE, PM_BOUNDS, letter, plt, pm_cmap, save
 
 D0, H = 19, 1                                                   # start day 20 January (0-based 19), lead 1 day
@@ -62,7 +62,7 @@ def main():
     FH = 183 / 25.4
     fig = plt.figure(figsize=(DOUBLE, FH))
     # a: the globe at 1 km (ensemble mean) and the regions of b
-    ax = map_axes(fig, [0.01, 91 / 183, 0.98, 88 / 183])
+    ax = map_axes(fig, [0.035, 91 / 183, 0.93, 88 / 183])                 # room for the latitudes on both sides
     m = np.asarray(ours, np.float32); m[~land] = np.nan
     ax.imshow(m, origin="upper", extent=(-180, 180, -60, 84), transform=ccrs.PlateCarree(), cmap=cmap, norm=norm,
               regrid_shape=4400, zorder=1, interpolation="nearest")
@@ -74,6 +74,7 @@ def main():
         ax.plot(bx, by, transform=ccrs.PlateCarree(), color="#111111", lw=0.7, zorder=6)
         ax.text(e + 1.2, n + 0.5, str(k + 1), transform=ccrs.PlateCarree(), fontsize=6.5, fontweight="bold", va="center", zorder=7,
                 bbox=dict(boxstyle="circle,pad=0.12", fc="white", ec="#111111", lw=0.5))
+    world_coords(ax, size=5.5)
     letter(ax, "a", x=-0.005, y=0.985)
     cax = fig.add_axes([0.385, 101 / 183, 0.285, 0.0075])   # fully inside the Southern Ocean of a
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax, orientation="horizontal", extend="max", spacing="uniform", ticks=PM_BOUNDS)
@@ -83,13 +84,13 @@ def main():
     cb.set_label("Daily mean PM$_{2.5}$ on 21 January 2022 (µg m$^{-3}$)", fontsize=5.8, labelpad=2)
     # b: four regions x (CAMS 40 km, Foehn 1 km); the GHAP zooms are in the ED regions figure
     rows = (("CAMS forecast (40 km)", "cams"), ("Foehn (1 km)", "ours"), ("GHAP (1 km)", "ghap"))
-    cw = 0.208; ch = cw * DOUBLE / FH / ASPECT; x0 = 0.062; y0 = 82 / 183 - ch
+    cw = 0.205; ch = cw * DOUBLE / FH / ASPECT; x0 = 0.056; y0 = 82 / 183 - ch       # 7 mm gaps: each region has its latitudes
     for j, (nm, (n, s, w, e, wkm)) in enumerate(REG.items()):
         r0, r1 = int((84 - n) * 100), int((84 - s) * 100); c0, c1 = int((w + 180) * 100), int((e + 180) * 100)
         sel = (slat <= n) & (slat >= s) & (slon >= w) & (slon <= e)
         inbox = (la_all <= n) & (la_all >= s) & (lo_all >= w) & (lo_all <= e) & (NSD > 0) & off
         for i, (rt, key) in enumerate(rows):
-            a = fig.add_axes([x0 + j * 0.219, y0 - i * (ch + 0.012), cw, ch]); a.set_facecolor("white")
+            a = fig.add_axes([x0 + j * 0.2435, y0 - i * (ch + 0.012), cw, ch]); a.set_facecolor("white")
             if key == "cams":
                 ci0, ci1 = int((90 - n) / 0.4), int((90 - s) / 0.4) + 1; cj0, cj1 = int((w % 360) / 0.4), int((e % 360) / 0.4) + 1
                 lw0 = cj0 * 0.4 - 0.2; lw0 = lw0 - 360.0 if lw0 > 180 else lw0
@@ -121,13 +122,13 @@ def main():
                 a.plot([xb, xb + dlo], [yb, yb], color="#111111", lw=1.0, zorder=9, solid_capstyle="butt")
                 a.text(xb + dlo / 2, yb + 0.03 * (n - s), f"{L} km", ha="center", va="bottom", fontsize=5.2, zorder=9,
                        bbox=dict(boxstyle="square,pad=0.1", fc="white", ec="none", alpha=0.7))
-            a.set_xticks([]); a.set_yticks([])
+            geo_ticks(a, left=True, bottom=i == 2)                         # latitudes on every panel, longitudes under the last row
             for sp in a.spines.values():
                 sp.set_visible(True); sp.set_linewidth(0.5); sp.set_color("#333333")
             if i == 0:
                 a.set_title(f"{j + 1}  {nm}", fontsize=6.5, pad=2, fontweight="bold")
             if j == 0:
-                a.text(-0.05, 0.5, rt, transform=a.transAxes, rotation=90, ha="right", va="center", fontsize=6,
+                a.text(-0.17, 0.5, rt, transform=a.transAxes, rotation=90, ha="right", va="center", fontsize=6,
                        fontweight="bold" if key == "ours" else "normal")
             if i == 0 and j == 0:
                 letter(a, "b", x=-0.12, y=1.04)
