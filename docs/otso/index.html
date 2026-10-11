@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>Otso 1.1 — live PM2.5 forecast of the Foehn project (beta)</title>
-<meta name="description" content="Otso 1.1 runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles will be up to five days ahead. Research forecast, not an official alert." />
-<meta property="og:title" content="Otso 1.1 — live PM2.5 forecast (beta)" />
+<title>Otso 1.2 — live PM2.5 forecast of the Foehn project (beta)</title>
+<meta name="description" content="Otso 1.2 runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles will be up to five days ahead. Research forecast, not an official alert." />
+<meta property="og:title" content="Otso 1.2 — live PM2.5 forecast (beta)" />
 <meta property="og:description" content="Where will the fine particles be tomorrow? The coarse Foehn model, run daily on live inputs. Research forecast." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="../assets/favicon.png" />
@@ -282,7 +282,7 @@
 
 <header class="topbar">
   <div class="wrap topbar-row">
-    <a class="brand" href="../"><img src="../assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span><span style="color:var(--muted);font-weight:400">/ Otso 1.1</span></a>
+    <a class="brand" href="../"><img src="../assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span><span style="color:var(--muted);font-weight:400">/ Otso 1.2</span></a>
     <nav class="nav">
       <a href="#install">Install</a>
       <a href="#map">Map</a>
@@ -304,17 +304,17 @@
   <div class="wrap">
     <div class="hero-text">
       <p class="kicker">Foehn project · live research forecast</p>
-      <div class="otso-head"><h1 style="margin:0">Otso <span style="font-weight:500;color:var(--blue)">1.1</span></h1><span class="pill pill-beta">beta</span><span class="pill pill-live" id="pill-live" hidden>updated today</span></div>
+      <div class="otso-head"><h1 style="margin:0">Otso <span style="font-weight:500;color:var(--blue)">1.2</span></h1><span class="pill pill-beta">beta</span><span class="pill pill-live" id="pill-live" hidden>updated today</span></div>
       <p class="tag" style="margin-top:10px">Where will the fine particles be tomorrow, and the days after?</p>
-      <p class="lede">Every morning Otso 1.1 takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather
+      <p class="lede">Every morning Otso 1.2 takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather
         forecast of the same hour and the fires seen by satellite, computes the transport of the air with FLEXGREEN and forecasts
         PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
-        <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, run on live inputs. The 1 km Foehn is not run in real time.</p>
+        <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, fine-tuned on the live inputs of 2026. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
       <p class="status status-short" id="status-short" hidden></p>
       <p class="usage" id="stats" hidden></p>
       <div class="cta" style="margin:14px 0 0"><a class="btn btn-primary" href="#install">📲 Install Otso on your phone</a><a class="btn btn-ghost" href="#map">See the forecast</a></div>
-      <div class="disclaimer"><strong>Research forecast.</strong> <span class="long">Otso 1.1 is an experiment of a university group, not an official service. It has not yet
+      <div class="disclaimer"><strong>Research forecast.</strong> <span class="long">Otso 1.2 is an experiment of a university group, not an official service. It has not yet
         been evaluated in real time, it is not monitored around the clock, and it does not replace the air-quality forecasts, indices and alerts
         of your national or local authorities. If you must decide something about your health, use those.</span><span class="short">Not an official alert: for health decisions use your national air-quality service.</span></div>
     </div>
@@ -441,14 +441,24 @@
 
 <section class="band" id="scores">
   <div class="wrap">
-    <h2>How good is it? The first scores on live inputs</h2>
+    <h2>How good is it?</h2>
+    <h3 style="margin-top:6px">Otso 1.2: fine-tuned on 2026</h3>
+    <p class="sub">Otso 1.2 keeps the network of the paper and learns, for six passes, from the live inputs of January to August 2026 (243 days). Scored on 6–20 September, after its training period (no day in common with its training targets), against the CAMS analysis. RMSE of the ensemble mean over land, µg m⁻³.</p>
+    <div class="tablewrap"><table class="ct scores" id="v12-table"><thead><tr><th>Lead</th><th>Otso 1.2</th><th>Otso 1.1</th><th>CAMS forecast</th><th>persistence</th></tr></thead><tbody><tr><td>+12 h</td><td><b>11.1</b></td><td>13.5</td><td>–</td><td>18.9</td></tr><tr><td>+24 h</td><td><b>10.3</b></td><td>13.5</td><td>8.8</td><td>15.8</td></tr><tr><td>+48 h</td><td><b>11.4</b></td><td>14.5</td><td>–</td><td>18.2</td></tr><tr><td>+72 h</td><td><b>12.3</b></td><td>15.2</td><td>–</td><td>19.1</td></tr><tr><td>+96 h</td><td><b>12.8</b></td><td>15.7</td><td>–</td><td>19.1</td></tr><tr><td>+120 h</td><td><b>13.4</b></td><td>15.8</td><td>14.7</td><td>19.1</td></tr></tbody></table></div>
+    <ul class="scores-notes">
+      <li><strong>15 to 24 % lower error than Otso 1.1</strong> at every lead, and a probabilistic score (CRPS) 23 to 36 % lower: the members are both closer to the truth and better spread.</li>
+      <li><strong>Ahead of the CAMS operational forecast from three days on</strong>: 8 % lower error over land five days ahead (13.4 vs 14.7). The CAMS forecast keeps the lead one day ahead (8.8 vs 10.3), as expected from the system that also produces the analyses used as truth.</li>
+      <li>One reason: the CAMS system of 2026 differs from the 2017–2022 analyses the paper's model learnt from; seeing eight months of it was enough. All numbers: <a href="scores_otso12.json">scores_otso12.json</a>.</li>
+    </ul>
+    <h3 style="margin-top:22px">Otso 1.1: the paper's weights on live inputs</h3>
+
     <p class="sub">Before publishing, Otso 1.1 was run on the live inputs of 1–20 September 2026 (20 start days) and scored against the CAMS analysis of each valid time,
       with and without the satellite fires, next to the CAMS operational forecast and persistence (the analysis of the morning kept unchanged). RMSE of the ensemble mean, µg m⁻³, cosine-latitude weighted.</p>
     <div class="tablewrap"><table class="ct scores" id="scores-table"><thead><tr><th>Lead</th><th>Otso 1.1 · land</th><th>without fires</th><th>CAMS forecast</th><th>persistence</th><th>Otso 1.1 · all cells</th><th>CAMS forecast</th><th>persistence</th></tr></thead>
       <tbody><tr><td>+12 h</td><td><b>14.4</b></td><td>18.1</td><td>–</td><td>20.1</td><td>8.5</td><td>–</td><td>11.4</td></tr><tr><td>+24 h</td><td><b>14.5</b></td><td>15.2</td><td>9.2</td><td>17.2</td><td>8.7</td><td>5.4</td><td>10.1</td></tr><tr><td>+48 h</td><td><b>15.6</b></td><td>16.4</td><td>–</td><td>19.9</td><td>9.4</td><td>–</td><td>11.8</td></tr><tr><td>+72 h</td><td><b>16.3</b></td><td>17.0</td><td>–</td><td>20.7</td><td>9.8</td><td>–</td><td>12.3</td></tr><tr><td>+96 h</td><td><b>16.2</b></td><td>16.8</td><td>–</td><td>20.3</td><td>9.8</td><td>–</td><td>12.1</td></tr><tr><td>+120 h</td><td><b>16.1</b></td><td>16.6</td><td>15.0</td><td>20.2</td><td>9.6</td><td>8.9</td><td>12.0</td></tr></tbody></table></div>
     <h3 style="margin-top:26px">Live verification, updated every day</h3>
     <p class="sub">Every morning the forecasts of the last five days are scored against the CAMS analyses that have arrived since (nothing is hidden: every day counts). Last 30 days, RMSE of the ensemble mean over land, and the mean absolute error in the 60 published cities. <span id="live-note"></span></p>
-    <div class="tablewrap"><table class="ct scores" id="live-table"><thead><tr><th>Lead</th><th>days</th><th>Otso 1.1 · land</th><th>CAMS forecast</th><th>persistence</th><th>cities · Otso</th><th>cities · CAMS</th></tr></thead><tbody><tr><td colspan="7" class="small">Loading…</td></tr></tbody></table></div>
+    <div class="tablewrap"><table class="ct scores" id="live-table"><thead><tr><th>Lead</th><th>days</th><th>Otso · land</th><th>CAMS forecast</th><th>persistence</th><th>cities · Otso</th><th>cities · CAMS</th></tr></thead><tbody><tr><td colspan="7" class="small">Loading…</td></tr></tbody></table></div>
     <ul class="scores-notes">
       <li><strong>The fires matter.</strong> With the GFAS fires (injection height <code>injh</code>, the variable that replaces the <code>mami</code> of the training), the error over land is 20 % lower at 12 h and 3–15 % lower afterwards, and the bias over fire cells is +1 instead of −3 µg m⁻³.</li>
       <li><strong>Skilful, but weaker than in the paper's 2022 test.</strong> Otso beats persistence by 25 % at 12 h and 20 % at 120 h; in 2022 it beat it by 45 % and 34 %, and overtook the CAMS forecast from 48 h on. Here the CAMS forecast stays ahead (9.2 vs 14.5 over land at 24 h, 15.0 vs 16.1 at 120 h). September 2026 is also a harder period: the persistence error is 25–55 % larger than in 2022.</li>
@@ -460,12 +470,12 @@
 
 <section class="band band-soft" id="about">
   <div class="wrap">
-    <h2>What Otso 1.1 is, and is not</h2>
+    <h2>What Otso 1.2 is, and is not</h2>
     <div class="twocol">
       <div>
         <h3>What it is</h3>
         <ul>
-          <li><strong>The coarse Foehn model of the paper, unchanged.</strong> Otso 1.1 is Foehn-CAMS, the 0.4° version trained on the CAMS analyses of 2017–2022 in the protocol of Microsoft's Aurora, with the weights used for the paper's results. Nothing is retrained or tuned for the live run.</li>
+          <li><strong>The coarse Foehn model of the paper, brought up to date.</strong> Otso 1.2 is Foehn-CAMS, the 0.4° version trained on the CAMS analyses of 2017–2022 in the protocol of Microsoft's Aurora, fine-tuned on the live inputs of January–August 2026, because the CAMS system of 2026 differs from the one it learnt from. Otso 1.1, the paper's weights unchanged, ran on 10 and 11 October 2026.</li>
           <li><strong>Live inputs, every morning.</strong> The 00 UTC CAMS analysis (13 species and columns), the 00 UTC ECMWF IFS forecast from the open-data service (winds, temperature, humidity, pressure, rain, to +192 h), and the fires of the previous day from GFAS. FLEXGREEN recomputes, for every land cell and every lead, where its air was.</li>
           <li><strong>A probabilistic forecast.</strong> Eight members per day. The map shows their mean, their 90<sup>th</sup> percentile and the share of members above 25 µg m⁻³; the city table and the NetCDF file also give the 10 % and 90 % quantiles.</li>
           <li><strong>Reproducible.</strong> Each day's inputs, their sources and the exact variables used are logged with the forecast (see the <code>inputs</code> field of <code>index.json</code>). The code is on the <code>main</code> branch of the <a href="https://github.com/AmmarKheder/Foehn">Foehn repository</a>, folder <code>experiments/global1km/realtime</code>.</li>
@@ -477,7 +487,7 @@
           <li><strong>Not the 1 km Foehn.</strong> The paper's kilometre-scale forecasts need the 1 km record that exists only for the past; Otso works at 0.4°, about 40 km.</li>
           <li><strong>Weaker than in the paper's 2022 test, for now.</strong> The live chain differs from the paper in two ways we know of: the fire injection height comes from the GFAS variable <code>injh</code>, because the variable the model was trained with (<code>mami</code>) is no longer produced since GFAS v1.4.2 (January 2026); and the weather comes from the open-data IFS at 0.25° instead of the archived HRES. The <a href="#scores">scores on 1–20 September 2026</a> show a skilful forecast that nevertheless no longer beats the CAMS forecast; a fine-tuning on the 2025–2026 analyses is the next step.</li>
           <li><strong>Not an operational service.</strong> It runs on a shared supercomputer (LUMI) when a GPU is free; a day can be late or missing. The last seven days are kept.</li>
-          <li><strong>Not an alert.</strong> See the notice at the top. Otso is named after the bear of Finnish folklore; the version number counts the releases of the live chain (1.1: city search and the hindcast of the 2026 inputs), not the model, which is the paper's: a thing of the forest, best observed from a distance.</li>
+          <li><strong>Not an alert.</strong> See the notice at the top. Otso is named after the bear of Finnish folklore. Versions: 1.1, the paper's weights on live inputs; 1.2, fine-tuned on January–August 2026. A thing of the forest, best observed from a distance.</li>
         </ul>
       </div>
     </div>
@@ -520,7 +530,7 @@
       <a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" class="lg-csc" /></a>
     </div>
   </div>
-  <p class="fine">Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland. Otso 1.1 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. Research forecast, not an official alert. Contains modified Copernicus Atmosphere Monitoring Service information 2026; ECMWF open data (CC BY 4.0); city list © GeoNames (CC BY 4.0) and © OpenStreetMap contributors. © 2026 Ammar Kheder.</p>
+  <p class="fine">Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland. Otso 1.2 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. Research forecast, not an official alert. Contains modified Copernicus Atmosphere Monitoring Service information 2026; ECMWF open data (CC BY 4.0); city list © GeoNames (CC BY 4.0) and © OpenStreetMap contributors. © 2026 Ammar Kheder.</p>
 </div></footer>
 
 <script>
@@ -915,7 +925,7 @@
       const sel = document.getElementById("day"); sel.innerHTML = state.days.map((d) => `<option value="${d}">${d === latest.latest ? "Latest: " : ""}${d}</option>`).join("");
       await loadDay(state.day); const ix = state.idx[state.day];
       const age = (Date.now() - new Date(state.day + "T00:00:00Z")) / 864e5;
-      if (document.getElementById("app-meta")) document.getElementById("app-meta").textContent = "Otso 1.1 · forecast of " + new Date(state.day + "T00:00:00Z").toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + " · research forecast, not an alert";
+      if (document.getElementById("app-meta")) document.getElementById("app-meta").textContent = "Otso 1.2 · forecast of " + new Date(state.day + "T00:00:00Z").toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + " · research forecast, not an alert";
       document.getElementById("status-short").innerHTML = "<b>Forecast of " + new Date(state.day + "T00:00:00Z").toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + "</b> (00 UTC run) · published " + latest.updated.slice(11, 16) + " UTC · " + ix.members + " members";
       setStatus("<b>Forecast issued from the 00 UTC run of " + state.day + "</b>, published " + latest.updated.replace("T", " ") + " · " + ix.members + " members · leads +12 h to +120 h · inputs: CAMS analysis 00 UTC, ECMWF IFS 00 UTC (" + (ix.inputs.ifs_source || "").replace("https://", "") + "), GFAS " + (ix.inputs.gfas_version || "") + " fires of " + (ix.inputs.gfas_day || "") + " (injection height: <code>" + (ix.inputs.fire_injection_variable || "") + "</code>)." +
         (age > 1.5 ? " <span style='color:#8A5A00'>This forecast is " + Math.floor(age) + " days old: the daily run may have failed or be late.</span>" : ""), age <= 1.5);
@@ -969,7 +979,7 @@
     const am = document.createElement("p"); am.className = "app-meta"; am.id = "app-meta"; document.querySelector(".air-hero").appendChild(am);
     const mapSec = document.querySelector("#map .wrap"), mapcard = document.querySelector(".mapcard"), point = document.getElementById("point");
     mapSec.insertBefore(document.getElementById("welcome"), mapcard); mapSec.insertBefore(point, mapcard);   // the welcome card and the selected place right under the search box
-    document.title = "Otso 1.1 — PM2.5 forecast";
+    document.title = "Otso 1.2 — PM2.5 forecast";
     const cq0 = document.getElementById("city-q"); let rem = null; try { rem = JSON.parse(localStorage.getItem("otso-city") || "null"); } catch (e) {}
     if (!rem) setTimeout(() => { cq0.placeholder = "Your city: type it, or use your position"; }, 0);
   }
