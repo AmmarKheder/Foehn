@@ -3,9 +3,9 @@
      the cached copy is the offline fallback
    - static assets (style, gazetteer, coastlines, icons) are served from the cache and refreshed in the background
    - the live forecast (raw.githubusercontent.com) is network first; the last successful copy is kept for offline use */
-const VERSION = "otso-1.2-202610111019";
+const VERSION = "otso-1.2-202610111029";
 const SHELL = ["./", "./index.html", "../assets/style.css?v=20261011a", "./lines.json", "./gazetteer.json", "./manifest.webmanifest",
-               "./icon-192.png", "./icon-512.png", "../assets/logo_mark.svg", "../assets/favicon.png", "./qr.svg", "./labels.json", "../assets/amc_logo_full.png", "../assets/lumi_logo.png", "../assets/csc_logo.svg"];
+               "./icon-192.png", "./icon-512.png", "../assets/logo_mark.svg", "../assets/favicon.png", "./qr.svg", "./labels.json", "./i18n/en.json", "../assets/amc_logo_full.png", "../assets/lumi_logo.png", "../assets/csc_logo.svg"];
 self.addEventListener("install", (ev) => { ev.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (ev) => { ev.waitUntil(caches.keys().then(async (ks) => {
   const old = ks.filter((k) => k !== VERSION && k !== VERSION + "-data");
