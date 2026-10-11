@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Foehn — global kilometre-scale probabilistic forecasts of PM2.5</title>
+<title>Foehn — global high-resolution forecasts of PM2.5</title>
 <meta name="description" content="Foehn forecasts daily PM2.5 at 1 km over all inhabited land up to a week ahead, as a calibrated ensemble, with the transport of the air computed by FLEXGREEN. Interactive viewer of the forecasts of the paper." />
-<meta property="og:title" content="Foehn — global kilometre-scale probabilistic forecasts of PM2.5" />
+<meta property="og:title" content="Foehn — global high-resolution forecasts of PM2.5" />
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -37,7 +37,7 @@
     <div class="hero-text">
       <p class="kicker">INAR Helsinki · LUT University · AMC-Lahti</p>
       <img src="assets/logo.svg" alt="Foehn" style="width:min(100%,360px);display:block;margin:0 0 10px -4px" />
-      <p class="tag">Global kilometre-scale probabilistic forecasts of fine particulate matter</p>
+      <p class="tag">Global high-resolution forecasts of fine particulate matter</p>
       <p class="lede">Daily PM<sub>2.5</sub> for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as a
         calibrated ensemble. Foehn learns from the first global 1&nbsp;km record of PM<sub>2.5</sub>, generates whole continents
         in one pass by flow matching, and <strong>computes rather than learns the transport of the air</strong> with FLEXGREEN,
@@ -51,8 +51,8 @@
       <div class="stats">
         <div class="stat"><b>1 km</b><span>resolution, whole globe, no visible seam</span></div>
         <div class="stat"><b>7 days</b><span>calibrated ensemble, to a week ahead</span></div>
-        <div class="stat"><b>−20 %</b><span>RMSE vs the operational CAMS forecast at 6,612 stations, 1 day ahead</span></div>
-        <div class="stat"><b>78 %</b><span>of the stations with lower error than CAMS</span></div>
+        <div class="stat"><b>−17 %</b><span>RMSE vs the operational CAMS forecast at 6,324 stations, 1 day ahead</span></div>
+        <div class="stat"><b>75 %</b><span>of the stations with lower error than CAMS</span></div>
       </div>
     </div>
   </div>
@@ -86,16 +86,18 @@
 <section class="band band-soft" id="abstract">
   <div class="wrap">
     <h2>Paper</h2>
-    <p class="sub">Kheder A., Boy M. &amp; Liu Z.-S. <em>Global kilometre-scale probabilistic forecasts of fine particulate matter.</em> Manuscript submitted, 2026.</p>
-    <p>About a million deaths a year follow days of high fine particulate matter: the short-term toll that daily forecasts and
-      warnings exist to prevent. PM<sub>2.5</sub> changes from one street to the next, yet it is measured at sparse stations and
-      forecast on grids about 40&nbsp;km wide. Two bottlenecks kept machine learning from forecasting it where it harms:
-      resolution, and the peaks that squared-error training smooths away. Foehn removes both. It learns from the first global
-      record of daily PM<sub>2.5</sub> at 1&nbsp;km with the operational weather forecast as input, generates whole continents at
-      once by flow matching, and computes the transport of the air and of the emissions it meets with a particle model driven by
-      the forecast wind. At 6,612 monitoring stations unused in training, it is more accurate than the operational Copernicus
-      forecast issued at the same time at all its lead times, one to four days, and detects locally extreme pollution markedly
-      better. It also reveals the exposure that coarse grids hide from millions of people every day.</p>
+    <p class="sub">Kheder A., Boy M. &amp; Liu Z.-S. <em>Global high-resolution forecasts of fine particulate matter.</em> Manuscript submitted, 2026.</p>
+    <p>About a million deaths a year are attributable to short-term exposure to fine particulate matter (PM<sub>2.5</sub>),
+      and wildfire smoke also harms wildlife. Yet PM<sub>2.5</sub> varies from street to street, while forecasts use grids tens of
+      kilometres wide. Machine learning has transformed weather forecasting, but two problems keep it from the scale at which
+      air pollution harms. Kilometre-scale fields are too large to forecast in one piece, and the peaks that matter for health
+      are smoothed away by standard training or arrive with distant air. Here we show that both can be solved. Our model,
+      Foehn, learns from the first global record of daily PM<sub>2.5</sub> at kilometre scale, forecasts continent-sized windows
+      in one pass by flow matching, and computes the transport of the air with a particle model driven by the weather forecast.
+      In retrospective forecasts for 2022, it produced calibrated, seamless kilometre-scale ensembles over all inhabited land,
+      up to a week ahead. At thousands of stations not used to train or select it, they were more accurate than the operational
+      forecast issued at the same time, caught local extremes more reliably and reached people whom coarse grids hide.
+      Computing what physics knows, and learning the rest, makes forecasts accurate, inexpensive and interpretable.</p>
   </div>
 </section>
 
@@ -178,7 +180,7 @@
     <p class="sub">What Foehn is, and is not, in its present form.</p>
     <ul class="limits">
       <li>The 1&nbsp;km estimates Foehn learns from (GHAP) are produced after the fact; a real-time deployment would be trained on an operational analysis, as the comparison with Aurora on the CAMS analyses shows is possible.</li>
-      <li>Those estimates have their own errors at the stations (about 12&nbsp;µg&nbsp;m⁻³) and regional biases that Foehn inherits, as in India and Japan.</li>
+      <li>Those estimates have their own errors and regional biases, which Foehn inherits or amplifies, as in India, and they were fitted to measurements from many of the stations used to evaluate it.</li>
       <li>All members share one deterministic weather forecast; the spread represents the uncertainty of the weather only statistically.</li>
       <li>The viewer shows precomputed forecasts of 2022; Foehn is not run on demand here, because a forecast needs the 1&nbsp;km inputs of the start day.</li>
     </ul>
@@ -190,7 +192,7 @@
     <h2>Code &amp; data</h2>
     <table class="links">
       <tr><td>Code (MIT licence)</td><td><a href="https://github.com/AmmarKheder/Foehn">github.com/AmmarKheder/Foehn</a> — FLEXGREEN, data preparation, training, calibration, inference, evaluation, and every figure of the paper.</td></tr>
-      <tr><td>Trained weights</td><td>Available to the editors and referees; released with a Zenodo DOI upon publication.</td></tr>
+      <tr><td>Trained weights</td><td>Available to the editors and referees; released with the code upon publication.</td></tr>
       <tr><td>Target and inputs</td><td>GHAP daily 1&nbsp;km PM<sub>2.5</sub> (Wei et al., Zenodo); ECMWF IFS HRES forecasts (WeatherBench&nbsp;2); ERA5; CAMS global forecasts and analyses, GFAS and CAMS-GLOB-ANT (Copernicus Atmosphere Data Store); GHS-POP population.</td></tr>
       <tr><td>Evaluation stations</td><td>EEA, CNEMC, US EPA AQS, AirKorea, NIES Japan, CPCB India (partly through OpenAQ). Stations are used for evaluation only.</td></tr>
     </table>
@@ -201,7 +203,7 @@
   <div class="wrap">
     <h2>Cite</h2>
 <pre><code>@article{kheder2026foehn,
-  title  = {Global kilometre-scale probabilistic forecasts of fine particulate matter},
+  title  = {Global high-resolution forecasts of fine particulate matter},
   author = {Kheder, Ammar and Boy, Michael and Liu, Zhi-Song},
   year   = {2026},
   note   = {Manuscript submitted}

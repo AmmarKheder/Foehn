@@ -6,7 +6,7 @@
   <br><sub>Left: Foehn's forecast of daily PM<sub>2.5</sub> at 1 km for 21 January 2022, issued the evening before (ensemble mean). Right: FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</sub>
 </p>
 
-# Foehn: global kilometre-scale probabilistic forecasts of fine particulate matter
+# Foehn: global high-resolution forecasts of fine particulate matter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/website-ammarkheder.com%2FFoehn-1F5AA6)](https://ammarkheder.com/Foehn/)
@@ -59,18 +59,19 @@ ensemble member. The design is described in the paper.
 
 ## Results
 
-Test year 2022, forecasts scored against 6,612 official monitoring stations never used in training, with the CAMS operational
+Test year 2022 (retrospective forecasts), scored against 6,324 official monitoring stations never used to train or select the
+model, on UTC days like the forecasts, with the CAMS operational
 forecast and Aurora issued at the same time (details and intervals in the paper):
 
 | | Foehn | CAMS | Aurora |
 |---|---|---|---|
-| RMSE, 1 day (µg m⁻³) | **12.4** | 15.6 | 16.0 |
-| RMSE, 4 days | **14.5** | 16.6 | 17.5 |
-| CRPS, 1 day | **4.2** | 8.1 | 8.5 |
+| RMSE, 1 day (µg m⁻³) | **12.7** | 15.2 | 15.7 |
+| RMSE, 4 days | **14.4** | 16.4 | 17.3 |
+| CRPS, 1 day | **4.3** | 7.9 | 8.3 |
 | SEDI, local P99, 1 day | **0.63** | 0.45 | 0.43 |
-| Stations better than CAMS | **78 %** | – | – |
+| Stations better than CAMS | **75 %** | – | – |
 
-RMSE and CRPS at the 6,612 stations (the CRPS is the fair CRPS of four members; for a single forecast it is the absolute error); SEDI for the days above the local 99th percentile; the share of the 5,959 stations with at least 30 common days where Foehn's error is lower than CAMS's.
+RMSE and CRPS at the 6,324 stations (the CRPS is the fair CRPS of four members; for a single forecast it is the absolute error); SEDI for the days above the local 99th percentile; the share of the 5,954 stations with at least 30 common days where Foehn's error is lower than CAMS's.
 
 <p align="center">
   <img src="docs/figures/fig_transport.png" width="880" alt="The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time">
@@ -184,13 +185,13 @@ docs/figures/      figures of the paper used in this README and on the website
 ## Trained weights
 
 The weights of the final model (14.2 million parameters) and the forecasts of the 2022 evaluation are available to the editors
-and referees, and will be released here with a Zenodo DOI upon publication.
+and referees, and will be released here upon publication.
 
 ## Citation
 
 ```bibtex
 @article{kheder2026foehn,
-  title   = {Global kilometre-scale probabilistic forecasts of fine particulate matter},
+  title   = {Global high-resolution forecasts of fine particulate matter},
   author  = {Kheder, Ammar and Boy, Michael and Liu, Zhi-Song},
   year    = {2026},
   note    = {Manuscript submitted}
