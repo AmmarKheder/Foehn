@@ -522,13 +522,6 @@
       <div class="credit-org"><a href="https://www.amc-lahti.fi/">Atmospheric Modelling Centre Lahti</a> (AMC-Lahti) · University of Helsinki · LUT University</div>
       <div class="credit-links"><a href="../">The Foehn paper</a> · <a href="https://github.com/AmmarKheder/Foehn">Code and data</a> · <a href="https://github.com/AmmarKheder/Foehn/issues">Report a problem</a></div>
     </div>
-    <div class="foot-logos">
-      <a href="https://www.amc-lahti.fi/" title="Atmospheric Modelling Centre Lahti" class="tile-amc"><img src="../assets/amc_logo_full.png" alt="Atmospheric Modelling Centre Lahti" class="lg-amc" /></a>
-      <a href="https://www.helsinki.fi/en" title="University of Helsinki"><img src="../assets/helsinki_logo.png" alt="University of Helsinki" class="lg-uh" /></a>
-      <a href="https://www.lut.fi/en" title="LUT University"><img src="../assets/lut_logo.png" alt="LUT University" class="lg-lut" /></a>
-      <a href="https://www.lumi-supercomputer.eu/" title="LUMI supercomputer"><img src="../assets/lumi_logo.png" alt="LUMI" class="lg-lumi" /></a>
-      <a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="../assets/csc_logo.svg" alt="CSC" class="lg-csc" /></a>
-    </div>
   </div>
   <p class="fine">Otso runs every morning on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland. Otso 1.2 · Foehn project · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. Research forecast, not an official alert. Contains modified Copernicus Atmosphere Monitoring Service information 2026; ECMWF open data (CC BY 4.0); city list © GeoNames (CC BY 4.0) and © OpenStreetMap contributors. © 2026 Ammar Kheder.</p>
 </div></footer>
@@ -866,7 +859,7 @@
   // ---- your city: local gazetteer (GeoNames cities >= 15,000), searched by normalised prefix of words
   let GAZ = null, gazLoading = null, sel = -1, hits = [];
   const norm = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  function loadGaz() { if (!gazLoading) gazLoading = fetch("gazetteer.json").then((r) => r.json()).then((g) => { GAZ = g.map((r) => ({ name: r[0], country: pol(r[1]), lat: r[2], lon: r[3], pop: r[4], key: norm(r[0]) + (r[5] ? " " + norm(r[5]) : "") })); return GAZ; }); return gazLoading; }
+  function loadGaz() { if (!gazLoading) gazLoading = fetch("gazetteer.json").then((r) => r.json()).then((g) => { GAZ = g.map((r) => ({ ...fixPlace(r[0], r[1]), lat: r[2], lon: r[3], pop: r[4], key: norm(r[0]) + (r[5] ? " " + norm(r[5]) : "") })); return GAZ; }); return gazLoading; }
   function search(q) {
     q = norm(q.trim()); if (!GAZ || q.length < 2) return [];
     const words = q.split(/\s+/); const out = [];
@@ -878,17 +871,24 @@
   async function searchOnline(q, box) {                                                  // any place on Earth: OpenStreetMap data
     box = box || BOX; const seq = ++onlineSeq; let out = [];
     try { const r = await fetch("https://photon.komoot.io/api/?q=" + encodeURIComponent(q) + "&limit=6&lang=en"); const j = await r.json();
-      out = j.features.map((f) => ({ name: pol(f.properties.name || q), country: pol([f.properties.state, f.properties.country].filter(Boolean).join(", ")), lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0], pop: 0, online: true })); }
+      out = j.features.map((f) => ({ ...fixPlace(f.properties.name || q, [f.properties.state, f.properties.country].filter(Boolean).join(", ")), lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0], pop: 0, online: true })); }
     catch (e) { try { const r = await fetch("https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(q) + "&format=jsonv2&limit=6"); const j = await r.json();
-      out = j.map((x) => ({ name: pol(x.name || x.display_name.split(",")[0]), country: pol(x.display_name.split(",").slice(1, 3).join(",").trim()), lat: +x.lat, lon: +x.lon, pop: 0, online: true })); } catch (e2) {} }
+      out = j.map((x) => ({ ...fixPlace(x.name || x.display_name.split(",")[0], x.display_name.split(",").slice(1, 3).join(",").trim()), lat: +x.lat, lon: +x.lon, pop: 0, online: true })); } catch (e2) {} }
     if (seq !== onlineSeq) return;                                                         // a newer query is running
     const seen = new Set(box.hits.map((c) => c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon)));
     for (const c of out) { const k = c.name.toLowerCase() + "|" + Math.round(c.lat) + "|" + Math.round(c.lon); if (!seen.has(k) && c.lat > -60 && c.lat < 84) { box.hits.push(c); seen.add(k); } }
     if (box.sel < 0 && box.hits.length) box.sel = 0; renderList(box);
   }
   const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
-  const pol = (t) => String(t || "").replace(/\b(State of Israel|Israel|Occupied Palestinian Territor(?:y|ies)|Palestinian Territor(?:y|ies)|State of Palestine)\b/gi, "Palestine").replace(/ישראל|إسرائيل/g, "Palestine");
-  function renderList(box) { const b = box || BOX; b.list.innerHTML = b.hits.map((c, i) => `<li data-i="${i}" class="${i === b.sel ? "sel" : ""}">${esc(c.name)}<span>${esc(c.country)}${c.pop ? " · " + (c.pop >= 1000 ? (c.pop / 1000).toFixed(1) + " M" : c.pop + " k") : (c.online ? " · OpenStreetMap" : "")}</span></li>`).join("") + (b.input.value.trim().length >= 2 ? `<li class="more"><span>${b.hits.some((c) => c.online) ? "Places from OpenStreetMap included" : "Searching all places…"}</span></li>` : ""); b.list.hidden = !b.hits.length && b.input.value.trim().length < 2; }
+  function fixPlace(name, country) {                                                       // naming rules of the site owner
+    name = String(name || "").replace(/\b(West|East)\s+Jerusalem\b/gi, "Jerusalem").replace(/ירושלים|القدس/g, "Jerusalem").trim();
+    country = String(country || "").replace(/\b(Occupied Palestinian Territor(?:y|ies)|Palestinian Territor(?:y|ies)|State of Palestine)\b/gi, "Palestine")
+      .replace(/\b(State of Israel|Israel)\b|ישראל|إسرائيل/gi, "").replace(/\s*,(\s*,)+\s*/g, ", ").replace(/^[\s,]+|[\s,]+$/g, "").trim();
+    if (/^Jerusalem$/i.test(name)) country = "Palestine";
+    return { name, country };
+  }
+  const pol = (t) => { t = String(t || ""); const i = t.indexOf(","); const f = i < 0 ? fixPlace(t, "") : fixPlace(t.slice(0, i), t.slice(i + 1)); return f.name + (f.country ? ", " + f.country : ""); };
+  function renderList(box) { const b = box || BOX; b.list.innerHTML = b.hits.map((c, i) => `<li data-i="${i}" class="${i === b.sel ? "sel" : ""}">${esc(c.name)}<span>${esc([c.country, c.pop ? (c.pop >= 1000 ? (c.pop / 1000).toFixed(1) + " M" : c.pop + " k") : (c.online ? "OpenStreetMap" : "")].filter(Boolean).join(" · "))}</span></li>`).join("") + (b.input.value.trim().length >= 2 ? `<li class="more"><span>${b.hits.some((c) => c.online) ? "Places from OpenStreetMap included" : "Searching all places…"}</span></li>` : ""); b.list.hidden = !b.hits.length && b.input.value.trim().length < 2; }
   function choose(c) { list.hidden = true; cq.value = c.name + (c.country ? ", " + c.country : ""); try { localStorage.setItem("otso-city", JSON.stringify({ name: cq.value, lat: c.lat, lon: c.lon })); } catch (e) {} state.view = [c.lon - 22, c.lon + 22, c.lat - 9, c.lat + 9]; zoomAt(1, 0.5, 0.5); pick(c.lat, c.lon, c.name + (c.country ? ", " + c.country : "")); document.getElementById("map").scrollIntoView({ behavior: "smooth" }); }
   function suggestBox(input, listEl, onChoose) {                                          // a search box with suggestions from the gazetteer and OpenStreetMap
     const b = { input, list: listEl, hits: [], sel: -1, timer: null };
