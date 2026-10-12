@@ -14,7 +14,7 @@
 "hero.beta": "beta",
 "hero.updated": "updated today",
 "hero.tag": "Where will the fine particles be tomorrow, and the days after?",
-"hero.lede": "Every morning Otso takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather forecast of the same hour and the fires seen by satellite, computes the transport of the air with FLEXGREEN and forecasts PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the <a href=\"../\">Foehn paper</a>, fine-tuned on the live inputs of 2026. The 1 km Foehn is not run in real time.",
+"hero.lede": "Every morning Otso takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather forecast of the same hour and the fires seen by satellite, computes the transport of the air with FLEXGREEN and forecasts PM<sub>2.5</sub> from all its sources (traffic, industry, heating, agriculture, dust, sea salt and fires) over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the <a href=\"../\">Foehn paper</a>, fine-tuned on the live inputs of 2026. The 1 km Foehn is not run in real time.",
 "hero.loading": "Loading the latest forecast…",
 "hero.cta_install": "📲 Install Otso on your phone",
 "hero.cta_see": "See the forecast",

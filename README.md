@@ -12,7 +12,8 @@
 [![Website](https://img.shields.io/badge/website-ammarkheder.com%2FFoehn-1F5AA6)](https://ammarkheder.com/Foehn/)
 [![Paper](https://img.shields.io/badge/paper-submitted-lightgrey)](#citation)
 
-Foehn forecasts the daily fine particulate matter (PM<sub>2.5</sub>) of every inhabited place on Earth at 1 km, from one day to
+Foehn forecasts the daily fine particulate matter (PM<sub>2.5</sub>), from all its sources (traffic, industry, heating,
+agriculture, desert dust, sea salt and fires), of every inhabited place on Earth at 1 km, from one day to
 a week ahead, as a calibrated ensemble. It learns from the first global record of daily PM<sub>2.5</sub> at 1 km (GHAP) with
 the operational ECMWF weather forecast as input, generates whole continents in one pass by flow matching, and **computes rather
 than learns the transport of the air**: FLEXGREEN, a GPU re-implementation of the backward mode of the FLEXPART particle model,

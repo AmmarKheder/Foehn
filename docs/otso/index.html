@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Otso 1.2 — live PM2.5 forecast of the Foehn project (beta)</title>
-<meta name="description" content="Otso 1.2 runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles will be up to five days ahead. Research forecast, not an official alert." />
+<meta name="description" content="Otso 1.2 runs the 0.4° Foehn model every morning on the live CAMS analysis, the ECMWF forecast and the GFAS fires, and shows where fine particles from all sources (traffic, industry, heating, dust, sea salt, fires) will be up to five days ahead. Research forecast, not an official alert." />
 <meta property="og:title" content="Otso 1.2 — live PM2.5 forecast (beta)" />
 <meta property="og:description" content="Where will the fine particles be tomorrow? The coarse Foehn model, run daily on live inputs. Research forecast." />
 <meta property="og:type" content="website" />
@@ -324,8 +324,7 @@
       <div class="otso-head"><h1 style="margin:0">Otso <span style="font-weight:500;color:var(--blue)">1.2</span></h1><span class="pill pill-beta" data-i18n="hero.beta">beta</span><span class="pill pill-live" id="pill-live" data-i18n="hero.updated" hidden>updated today</span></div>
       <p class="tag" style="margin-top:10px" data-i18n="hero.tag">Where will the fine particles be tomorrow, and the days after?</p>
       <p class="lede" data-i18n-html="hero.lede">Every morning Otso 1.2 takes the 00 UTC analysis of the Copernicus Atmosphere Monitoring Service, the ECMWF weather
-        forecast of the same hour and the fires seen by satellite, computes the transport of the air with FLEXGREEN and forecasts
-        PM<sub>2.5</sub> over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
+        forecast of the same hour and the fires seen by satellite, computes the transport of the air with FLEXGREEN and forecasts PM<sub>2.5</sub> from all its sources (traffic, industry, heating, agriculture, dust, sea salt and fires) over all land, 12 hours to 5 days ahead, as an ensemble of 8 members. Otso is the coarse (0.4°) model of the
         <a href="../">Foehn paper</a>, the one evaluated in Aurora's protocol, fine-tuned on the live inputs of 2026. The 1 km Foehn is not run in real time.</p>
       <p class="status" id="status">Loading the latest forecast…</p>
       <p class="status status-short" id="status-short" hidden></p>

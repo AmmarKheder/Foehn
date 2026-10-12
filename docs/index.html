@@ -38,7 +38,8 @@
       <p class="kicker">INAR Helsinki · LUT University · AMC-Lahti</p>
       <img src="assets/logo.svg" alt="Foehn" style="width:min(100%,360px);display:block;margin:0 0 10px -4px" />
       <p class="tag">Global kilometre-scale forecasts of fine particulate matter</p>
-      <p class="lede">Daily PM<sub>2.5</sub> for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as a
+      <p class="lede">Daily PM<sub>2.5</sub> from all its sources (traffic, industry, heating, agriculture, desert dust, sea salt
+        and fires) for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as a
         calibrated ensemble. Foehn learns from the first global 1&nbsp;km record of PM<sub>2.5</sub>, generates whole continents
         in one pass by flow matching, and <strong>computes rather than learns the transport of the air</strong> with FLEXGREEN,
         a GPU re-implementation of the backward mode of the FLEXPART particle model.</p>
@@ -87,8 +88,7 @@
   <div class="wrap">
     <h2>Paper</h2>
     <p class="sub">Kheder A., Boy M. &amp; Liu Z.-S. <em>Global kilometre-scale forecasts of fine particulate matter.</em> Manuscript submitted, 2026.</p>
-    <p>About a million deaths a year are attributable to short-term exposure to fine particulate matter (PM<sub>2.5</sub>),
-      and wildfire smoke also harms wildlife. Yet PM<sub>2.5</sub> varies from street to street, while forecasts use grids tens of
+    <p>About a million deaths a year are attributable to short-term exposure to fine particulate matter (PM<sub>2.5</sub>), whatever its source: traffic, industry, heating, agriculture, desert dust or fires. Yet PM<sub>2.5</sub> varies from street to street, while forecasts use grids tens of
       kilometres wide. Machine learning has transformed weather forecasting, but two problems keep it from the scale at which
       air pollution harms. Kilometre-scale fields are too large to forecast in one piece, and the peaks that matter for health
       are smoothed away by standard training or arrive with distant air. Here we show that both can be solved. Our model,
@@ -156,7 +156,7 @@
       <figure><a href="figures/fig_hidden.png" target="_blank" rel="noopener"><img src="figures/fig_hidden.png" alt="Why the kilometre matters" loading="lazy" /></a><figcaption>The people a 40&nbsp;km forecast cannot warn: 186 million per day on average, and the detection of local extremes.</figcaption></figure>
       <figure><a href="figures/fig_gc2_realism.png" target="_blank" rel="noopener"><img src="figures/fig_gc2_realism.png" alt="Sharp realistic samples over the North China Plain" loading="lazy" /></a><figcaption>Sharp, realistic members: the January 2022 haze over the North China Plain, one and five days ahead, and the Beijing stations.</figcaption></figure>
       <figure><a href="figures/fig_transport.png" target="_blank" rel="noopener"><img src="figures/fig_transport.png" alt="The pollution follows the air" loading="lazy" /></a><figcaption>The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time.</figcaption></figure>
-      <figure><a href="figures/fig_smoke.png" target="_blank" rel="noopener"><img src="figures/fig_smoke.png" alt="Forecasting wildfire smoke five days ahead" loading="lazy" /></a><figcaption>The smoke of the Gironde fires of July 2022 at the Teich bird reserve, forecast five days ahead.</figcaption></figure>
+      <figure><a href="figures/fig_smoke.png" target="_blank" rel="noopener"><img src="figures/fig_smoke.png" alt="A case study: forecasting wildfire smoke over a bird reserve" loading="lazy" /></a><figcaption>A case study: the smoke of the Gironde fires of July 2022 over the Teich bird reserve.</figcaption></figure>
     </div>
   </div>
 </section>
