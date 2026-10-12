@@ -17,7 +17,6 @@
   <div class="wrap topbar-row">
     <a class="brand" href="#top"><img src="assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span></a>
     <nav class="nav">
-      <a href="otso/" style="color:var(--pink);font-weight:600">Otso 1.2 live ↗</a>
       <a href="#understand">Understanding pollution</a>
       <a href="#air">Where was the air?</a>
       <a href="#abstract">Paper</a>
@@ -47,7 +46,6 @@
       <div class="cta">
         <a class="btn btn-primary" href="#air">Where was the air you breathe?</a>
         <a class="btn btn-ghost" href="#viewer">Explore the forecasts</a>
-        <a class="btn btn-ghost" href="otso/" style="border-color:var(--pink);color:var(--pink)">Otso 1.2: today's forecast (beta)</a>
         <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn">Code on GitHub</a>
       </div>
       <div class="stats">
@@ -70,7 +68,7 @@
   <div class="wrap">
     <h2>Understanding air pollution</h2>
     <p class="sub">PM<sub>2.5</sub> is not one pollutant from one source. It is the mass of all the particles smaller than
-      2.5&nbsp;micrometres in the air we breathe, whatever made them. Foehn and Otso forecast that total.</p>
+      2.5&nbsp;micrometres in the air we breathe, whatever made them. Foehn forecasts that total.</p>
     <div class="understand-grid">
       <figure class="clip">
         <video controls preload="none" playsinline poster="assets/video/whats_in_the_air_poster.jpg"
@@ -113,15 +111,14 @@
         <div class="fact">
           <h3>What it does not include</h3>
           <p>Gases such as nitrogen dioxide, ozone or carbon monoxide are not PM<sub>2.5</sub>, although some gases
-            help to form it, and neither are coarse particles from 2.5 to 10&nbsp;µm. Foehn and Otso forecast the total
-            mass of PM<sub>2.5</sub>; they do not say which source each particle came from.</p>
+            help to form it, and neither are coarse particles from 2.5 to 10&nbsp;µm. Foehn forecasts the total
+            mass of PM<sub>2.5</sub>; it does not say which source each particle came from.</p>
         </div>
         <div class="fact wide">
           <h3>Why forecast it</h3>
           <p>Pollution moves: the wind carries it, mountains block it, valleys trap it, and a plume can cross a continent
             in a few days. Knowing a day or more in advance where the air will be unhealthy lets people, schools and
-            hospitals protect themselves. <a href="#air">See where the air you breathe came from</a>, or
-            <a href="otso/">today&rsquo;s forecast with Otso</a>.</p>
+            hospitals protect themselves. <a href="#air">See where the air you breathe came from</a>.</p>
         </div>
       </div>
     </div>
@@ -224,20 +221,7 @@
   </div>
 </section>
 
-<section class="band band-soft" id="otso">
-  <div class="wrap">
-    <h2>Otso 1.2: the live forecast (beta)</h2>
-    <p class="sub">Every morning the coarse Foehn model of the paper (Foehn-CAMS, 0.4°) is run on the 00 UTC CAMS analysis, the ECMWF open-data
-      forecast and the GFAS fires, with FLEXGREEN recomputing the transport. Eight members, 12 h to 5 days ahead, over all land. A research forecast,
-      not an official alert, that we publish so that the model can be watched working on days it has never seen.</p>
-    <div class="cta">
-      <a class="btn btn-primary" href="otso/">Open Otso 1.2</a>
-      <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn/tree/live">The data (live branch)</a>
-    </div>
-  </div>
-</section>
-
-<section class="band" id="limits">
+<section class="band band-soft" id="limits">
   <div class="wrap">
     <h2>Limitations</h2>
     <p class="sub">What Foehn is, and is not, in its present form.</p>
@@ -246,11 +230,12 @@
       <li>Those estimates have their own errors and regional biases, which Foehn inherits or amplifies, as in India, and they were fitted to measurements from many of the stations used to evaluate it.</li>
       <li>All members share one deterministic weather forecast; the spread represents the uncertainty of the weather only statistically.</li>
       <li>The viewer shows precomputed forecasts of 2022; Foehn is not run on demand here, because a forecast needs the 1&nbsp;km inputs of the start day.</li>
+      <li>A separate, experimental real-time run of the coarse 0.4° model (Otso) lives at <a href="https://ammarkheder.com/Otso/">ammarkheder.com/Otso</a>; it is not part of the paper.</li>
     </ul>
   </div>
 </section>
 
-<section class="band band-soft" id="code">
+<section class="band" id="code">
   <div class="wrap">
     <h2>Code &amp; data</h2>
     <table class="links">
@@ -262,7 +247,7 @@
   </div>
 </section>
 
-<section class="band" id="cite">
+<section class="band band-soft" id="cite">
   <div class="wrap">
     <h2>Cite</h2>
 <pre><code>@article{kheder2026foehn,
@@ -281,7 +266,7 @@
     <div class="foot-text">
       <div class="credit-by">Developed by <a href="https://ammarkheder.com/">Ammar Kheder</a></div>
       <div class="credit-org"><a href="https://www.amc-lahti.fi/">Atmospheric Modelling Centre Lahti</a> (AMC-Lahti) · University of Helsinki · LUT University</div>
-      <div class="credit-links"><a href="https://github.com/AmmarKheder/Foehn">Code and data</a> · <a href="otso/">Otso, the live forecast</a> · <a href="https://github.com/AmmarKheder/Foehn/issues">Report a problem</a></div>
+      <div class="credit-links"><a href="https://github.com/AmmarKheder/Foehn">Code and data</a> · <a href="https://github.com/AmmarKheder/Foehn/issues">Report a problem</a></div>
     </div>
     <div class="foot-logos">
       <a href="https://www.amc-lahti.fi/" title="Atmospheric Modelling Centre Lahti" class="tile-amc"><img src="assets/amc_logo_full.png" alt="Atmospheric Modelling Centre Lahti" class="lg-amc" /></a>
