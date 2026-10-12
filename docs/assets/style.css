@@ -166,3 +166,7 @@ ul.limits li { margin-bottom: 8px; }
 .fact p { margin: 0; color: var(--muted); font-size: 14.5px; }
 @media (max-width: 860px) { .understand-grid { grid-template-columns: minmax(0, 1fr); } .clip { max-width: 360px; margin: 0 auto; } }
 @media (max-width: 560px) { .facts { grid-template-columns: minmax(0, 1fr); } }
+.dub-langs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.dub-langs button { font: inherit; font-size: 13px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; min-height: 32px; }
+.dub-langs button:hover { border-color: var(--blue-soft); }
+.dub-langs button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; }

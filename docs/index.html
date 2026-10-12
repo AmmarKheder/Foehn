@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261012a" />
+<link rel="stylesheet" href="assets/style.css?v=20261012b" />
 </head>
 <body>
 
@@ -77,8 +77,18 @@
                aria-label="What's in the air? A short film by Ammar Kheder on air pollution and fine particles">
           <source src="assets/video/whats_in_the_air.mp4" type="video/mp4" />
         </video>
+        <audio id="dub" preload="none"></audio>
+        <div class="dub-langs" id="dub-langs" role="group" aria-label="Audio language">
+          <button type="button" data-lang="en" aria-pressed="true" lang="en">English</button>
+          <button type="button" data-lang="fr" aria-pressed="false" lang="fr">Français</button>
+          <button type="button" data-lang="es" aria-pressed="false" lang="es">Español</button>
+          <button type="button" data-lang="ar" aria-pressed="false" lang="ar" dir="rtl">العربية</button>
+          <button type="button" data-lang="zh" aria-pressed="false" lang="zh-Hans">中文</button>
+        </div>
         <figcaption><strong>What&rsquo;s in the air?</strong> A short film by Ammar Kheder (6&nbsp;min 50&nbsp;s).
-          Also on <a href="https://www.youtube.com/watch?v=CzB_6ZjmRxE" target="_blank" rel="noopener">YouTube</a>.</figcaption>
+          Also on <a href="https://www.youtube.com/watch?v=CzB_6ZjmRxE" target="_blank" rel="noopener">YouTube</a>.
+          The French, Spanish, Arabic and Chinese voices are AI translations made with the author&rsquo;s own voice; the
+          captions in the film stay in English.</figcaption>
       </figure>
       <div class="facts">
         <div class="fact">
@@ -447,6 +457,40 @@
     const m = location.hash.match(/air\?lat=(-?[\d.]+)&lon=(-?[\d.]+)/); if (m) pick(+m[1], +m[2]);
   }).catch(() => { document.getElementById("air-stats").textContent = "The transport data could not be loaded."; });
   bg.onload = draw; window.addEventListener("resize", size); size();
+})();
+</script>
+<script>
+/* dubbed audio of the film: the video is muted and an audio track per language follows it (play, pause, seek, rate) */
+(function () {
+  var v = document.querySelector("#understand video"), a = document.getElementById("dub"), box = document.getElementById("dub-langs");
+  if (!v || !a || !box) return;
+  var SRC = { fr: "assets/video/whats_in_the_air.fr.m4a", es: "assets/video/whats_in_the_air.es.m4a",
+              ar: "assets/video/whats_in_the_air.ar.m4a", zh: "assets/video/whats_in_the_air.zh.m4a" };
+  var lang = "en", btns = box.querySelectorAll("button");
+  function dubbed() { return lang !== "en"; }
+  function sync(force) { if (dubbed() && (force || Math.abs(a.currentTime - v.currentTime) > 0.25)) { try { a.currentTime = v.currentTime; } catch (e) {} } }
+  function setLang(l) {
+    lang = l;
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-lang") === l ? "true" : "false");
+    if (!dubbed()) { a.pause(); v.muted = false; return; }
+    if (a.getAttribute("data-lang") !== l) { a.src = SRC[l]; a.setAttribute("data-lang", l); }
+    v.muted = true; a.muted = false; a.volume = v.volume; a.playbackRate = v.playbackRate;
+    sync(true);
+    var p = a.play();                                    // inside the click: unlocks the audio element on phones
+    if (p && p.then) p.then(function () { if (v.paused) a.pause(); }).catch(function () {});
+  }
+  for (var i = 0; i < btns.length; i++) btns[i].addEventListener("click", function () { setLang(this.getAttribute("data-lang")); });
+  v.addEventListener("play", function () { if (dubbed()) { sync(true); a.play().catch(function () {}); } });
+  v.addEventListener("playing", function () { if (dubbed()) { sync(true); a.play().catch(function () {}); } });
+  ["pause", "waiting", "ended"].forEach(function (ev) { v.addEventListener(ev, function () { a.pause(); }); });
+  v.addEventListener("seeking", function () { sync(true); });
+  v.addEventListener("timeupdate", function () { if (!v.paused) sync(false); });
+  v.addEventListener("ratechange", function () { a.playbackRate = v.playbackRate; });
+  v.addEventListener("volumechange", function () {                   // the film's own volume and mute buttons drive the dub
+    if (!dubbed()) return;
+    a.volume = v.volume;
+    if (!v.muted) { v.muted = true; a.muted = !a.muted; }
+  });
 })();
 </script>
 </body>
