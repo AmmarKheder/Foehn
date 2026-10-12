@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261011a" />
+<link rel="stylesheet" href="assets/style.css?v=20261012a" />
 </head>
 <body>
 
@@ -18,6 +18,7 @@
     <a class="brand" href="#top"><img src="assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span></a>
     <nav class="nav">
       <a href="otso/" style="color:var(--pink);font-weight:600">Otso 1.2 live ↗</a>
+      <a href="#understand">Understanding pollution</a>
       <a href="#air">Where was the air?</a>
       <a href="#abstract">Paper</a>
       <a href="#how">How it works</a>
@@ -62,6 +63,58 @@
            aria-label="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, and FLEXGREEN: where the air arriving in thirty cities that day was, one to seven days before"></video>
     <noscript><img src="assets/foehn_globes.gif" alt="Foehn forecast and FLEXGREEN origins on two rotating globes" /></noscript>
     <p class="cap">Foehn's forecast of daily PM<sub>2.5</sub> at 1&nbsp;km for 21 January 2022, issued the evening before (ensemble mean), and FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</p>
+  </div>
+</section>
+
+<section class="band band-soft" id="understand">
+  <div class="wrap">
+    <h2>Understanding air pollution</h2>
+    <p class="sub">PM<sub>2.5</sub> is not one pollutant from one source. It is the mass of all the particles smaller than
+      2.5&nbsp;micrometres in the air we breathe, whatever made them. Foehn and Otso forecast that total.</p>
+    <div class="understand-grid">
+      <figure class="clip">
+        <video controls preload="none" playsinline poster="assets/video/whats_in_the_air_poster.jpg"
+               aria-label="What's in the air? A short film by Ammar Kheder on air pollution and fine particles">
+          <source src="assets/video/whats_in_the_air.mp4" type="video/mp4" />
+        </video>
+        <figcaption><strong>What&rsquo;s in the air?</strong> A short film by Ammar Kheder (6&nbsp;min 50&nbsp;s).
+          Also on <a href="https://www.youtube.com/watch?v=CzB_6ZjmRxE" target="_blank" rel="noopener">YouTube</a>.</figcaption>
+      </figure>
+      <div class="facts">
+        <div class="fact">
+          <h3>What PM<sub>2.5</sub> measures</h3>
+          <p>The total mass, in micrograms per cubic metre, of every particle finer than 2.5&nbsp;µm, about thirty times
+            thinner than a human hair. Like the weight of a bag of crisps, it says nothing about the sizes inside: two
+            cities with the same PM<sub>2.5</sub> can breathe very different particles. Ultrafine particles, below
+            0.1&nbsp;µm, weigh almost nothing but are the most numerous.</p>
+        </div>
+        <div class="fact">
+          <h3>Where it comes from</h3>
+          <p>Some particles are emitted directly: by traffic, industry, power plants, home heating, fires, desert dust,
+            sea spray and volcanoes. Many others are born in the air from gases: sulfur dioxide becomes sulfate, nitrogen
+            oxides become nitrate, ammonia from farming becomes ammonium, and organic vapours condense into new particles.</p>
+        </div>
+        <div class="fact">
+          <h3>Why it matters</h3>
+          <p>Larger particles stop in the nose and throat; PM<sub>2.5</sub> reaches the depths of the lungs, and the finest
+            particles cross into the blood. Fine particles are one of the leading risk factors for premature death
+            worldwide, and about a million deaths a year follow exposure over hours to days.</p>
+        </div>
+        <div class="fact">
+          <h3>What it does not include</h3>
+          <p>Gases such as nitrogen dioxide, ozone or carbon monoxide are not PM<sub>2.5</sub>, although some gases
+            help to form it, and neither are coarse particles from 2.5 to 10&nbsp;µm. Foehn and Otso forecast the total
+            mass of PM<sub>2.5</sub>; they do not say which source each particle came from.</p>
+        </div>
+        <div class="fact wide">
+          <h3>Why forecast it</h3>
+          <p>Pollution moves: the wind carries it, mountains block it, valleys trap it, and a plume can cross a continent
+            in a few days. Knowing a day or more in advance where the air will be unhealthy lets people, schools and
+            hospitals protect themselves. <a href="#air">See where the air you breathe came from</a>, or
+            <a href="otso/">today&rsquo;s forecast with Otso</a>.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 

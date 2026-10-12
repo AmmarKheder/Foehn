@@ -154,3 +154,15 @@ ul.limits li { margin-bottom: 8px; }
 /* phones: the air-origin controls wrap (label on its own line) */
 @media (max-width: 600px) { .air-controls .lead { flex-wrap: wrap; min-width: 0; width: 100%; } .air-controls .air-label { flex-basis: 100%; }
   .air-controls .lead input[type=range] { min-width: 0; } .air-controls .lead output { min-width: 0; } .air-legend { width: 100%; } }
+
+/* understanding air pollution: the film and five short facts */
+.understand-grid { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 32px; align-items: start; }
+.clip video { display: block; width: 100%; aspect-ratio: 9 / 16; background: #0b1220; border-radius: 14px; box-shadow: 0 10px 30px rgba(20, 61, 112, .18); }
+.clip figcaption { font-size: 13px; }
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.fact { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+.fact.wide { grid-column: 1 / -1; border-left: 4px solid var(--blue); }
+.fact h3 { margin: 0 0 6px; font-size: 16px; }
+.fact p { margin: 0; color: var(--muted); font-size: 14.5px; }
+@media (max-width: 860px) { .understand-grid { grid-template-columns: minmax(0, 1fr); } .clip { max-width: 360px; margin: 0 auto; } }
+@media (max-width: 560px) { .facts { grid-template-columns: minmax(0, 1fr); } }
