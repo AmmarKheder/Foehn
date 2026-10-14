@@ -173,3 +173,6 @@ table.bench thead th { font-size: 12.5px; color: var(--muted); font-weight: 600;
 table.bench tr:last-child td { border-bottom: none; }
 table.bench tr.best td { font-weight: 700; color: var(--blue-dark); background: #EEF4FB; }
 @media (max-width: 860px) { .cols2 { grid-template-columns: minmax(0, 1fr); gap: 14px; } .story h3 { font-size: 19px; } }
+details.bench-table { margin: 10px 0 0; }
+details.bench-table summary { cursor: pointer; color: var(--blue); font-weight: 600; font-size: 14.5px; padding: 6px 0; }
+details.bench-table[open] summary { margin-bottom: 6px; }

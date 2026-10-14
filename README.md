@@ -94,6 +94,20 @@ climatology. Europe, 2022; scores averaged over lead times of 1 to 4 days and th
 and climatology). RMSE in µg m⁻³ (lower is better), CSI of exceedances of 25 µg m⁻³ (higher is better), inference time and
 peak memory for one member of one forecast on one AMD MI250X compute die.
 
+<p align="center">
+  <a href="docs/figures/fig_benchmark_leadtime.png"><img src="docs/figures/web/fig_benchmark_leadtime.jpg" width="880" alt="Skill against five spatiotemporal networks by lead time: RMSE at 0.25 deg, at 1 km and at 2,971 EEA stations, and CSI of exceedances of 25 ug/m3"></a>
+</p>
+<p align="center">
+  <a href="docs/figures/fig_benchmark_scales_cost.png"><img src="docs/figures/web/fig_benchmark_scales_cost.jpg" width="880" alt="Skill by scale (error power by wavelength at 0.25 deg and 1 km) and error at 1 km against inference time"></a>
+</p>
+
+Foehn's network was the most accurate in 35 of 36 combinations of score, lead time and set of days (all days, the 10 % most
+polluted days and documented transport episodes), and 26 times faster than Aurora with a 35 % lower error at 1 km. The table
+is produced by `figures/benchmark_table.py`; the scripts of the benchmark are in `benchmark_europe/`.
+
+<details>
+<summary>The scores as a table</summary>
+
 | Model | RMSE, 0.25° | RMSE, 1 km | RMSE, 2,971 EEA stations | CSI, > 25 µg m⁻³ | Inference (s) | GPU memory (GB) |
 |---|---:|---:|---:|---:|---:|---:|
 | Foehn (flow matching, European 0.25° version) | **5.07** | **5.47** | **11.23** | **0.421** | 0.231 | 0.15 |
@@ -107,16 +121,7 @@ peak memory for one member of one forecast on one AMD MI250X compute die.
 | CAMS operational forecast | 8.43 | 8.86 | 12.12 | 0.204 | – | – |
 | Climatology | 7.70 | 8.13 | 12.14 | 0.238 | – | – |
 
-Foehn's network was the most accurate in 35 of 36 combinations of score, lead time and set of days (all days, the 10 % most
-polluted days and documented transport episodes), and 26 times faster than Aurora with a 35 % lower error at 1 km. The table
-is produced by `figures/benchmark_table.py`; the scripts of the benchmark are in `benchmark_europe/`.
-
-<p align="center">
-  <a href="docs/figures/fig_benchmark_leadtime.png"><img src="docs/figures/web/fig_benchmark_leadtime.jpg" width="880" alt="Skill against five spatiotemporal networks by lead time: RMSE at 0.25 deg, at 1 km and at 2,971 EEA stations, and CSI of exceedances of 25 ug/m3"></a>
-</p>
-<p align="center">
-  <a href="docs/figures/fig_benchmark_scales_cost.png"><img src="docs/figures/web/fig_benchmark_scales_cost.jpg" width="880" alt="Skill by scale (error power by wavelength at 0.25 deg and 1 km) and error at 1 km against inference time"></a>
-</p>
+</details>
 
 ## Getting started
 
