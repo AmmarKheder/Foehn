@@ -98,11 +98,15 @@ peak memory for one member of one forecast on one AMD MI250X compute die.
   <a href="docs/figures/fig_benchmark_leadtime.png"><img src="docs/figures/web/fig_benchmark_leadtime.jpg" width="880" alt="Skill against five spatiotemporal networks by lead time: RMSE at 0.25 deg, at 1 km and at 2,971 EEA stations, and CSI of exceedances of 25 ug/m3"></a>
 </p>
 <p align="center">
+  <a href="docs/figures/fig_benchmark_scorecard.png"><img src="docs/figures/web/fig_benchmark_scorecard.jpg" width="880" alt="Scorecard: change of Foehn's RMSE, CRPS and CSI relative to each system, 1 to 4 days ahead, on all days, on the 10 % most polluted days and during transported episodes; blue means Foehn better"></a>
+</p>
+<p align="center">
   <a href="docs/figures/fig_benchmark_scales_cost.png"><img src="docs/figures/web/fig_benchmark_scales_cost.jpg" width="880" alt="Skill by scale (error power by wavelength at 0.25 deg and 1 km) and error at 1 km against inference time"></a>
 </p>
 
 Foehn's network was the most accurate in 35 of 36 combinations of score, lead time and set of days (all days, the 10 % most
-polluted days and documented transport episodes), and 26 times faster than Aurora with a 35 % lower error at 1 km. The table
+polluted days and documented transport episodes). In the scorecard, blue means Foehn better: Foehn is better in
+319 of the 324 cells, and the five others are within 2 %. It was 26 times faster than Aurora with a 35 % lower error at 1 km. The table
 is produced by `figures/benchmark_table.py`; the scripts of the benchmark are in `benchmark_europe/`.
 
 <details>
