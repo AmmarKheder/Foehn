@@ -195,3 +195,7 @@ section.band-dark .sub { color: #A7AFB9; }
   box-shadow: 0 0 0 1px #2A3240, 0 18px 50px rgba(0, 0, 0, .55); }
 .explainer-feature figcaption { color: #8F98A3; font-size: 13px; margin-top: 10px; }
 .btn-watch { box-shadow: 0 6px 18px rgba(31, 90, 166, .35); }
+.ex-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.ex-tab { font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; border: 1px solid #3A4452; background: transparent; color: #C9CFD6; cursor: pointer; }
+.ex-tab:hover { border-color: #58C4DD; }
+.ex-tab.on { background: #58C4DD; border-color: #58C4DD; color: #0C0F14; font-weight: 600; }
