@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261014u" />
+<link rel="stylesheet" href="assets/style.css?v=20261014v" />
 </head>
 <body>
 
@@ -105,23 +105,21 @@
     <h2>How Foehn works</h2>
     <p class="sub">The PM<sub>2.5</sub> that reaches a place is set by what the arriving air contained and by what happened to it on the way. Foehn separates the two.</p>
       <figure class="story-fig arch-anim">
-        <video id="arch-video" muted loop playsinline preload="none" poster="figures/anim/foehn_explainer_poster.jpg?v=4" width="1920" height="1080"
-               aria-label="Animated explanation of how Foehn makes a forecast: computed transport, learned tracers and the generator, on real data">
-          <source src="figures/anim/foehn_explainer.mp4?v=4" type="video/mp4" />
+        <video id="arch-video" muted loop playsinline preload="none" poster="figures/anim/foehn_architecture_poster.jpg?v=3" width="1600" height="1190"
+               aria-label="Animation of how Foehn makes a forecast, step by step: computed transport, learned tracers and the generator">
+          <source src="figures/anim/foehn_architecture.mp4?v=3" type="video/mp4" />
         </video>
         <div class="anim-bar">
-          <div class="anim-steps" role="group" aria-label="Go to a part of the animation">
-            <button type="button" class="anim-step" data-step="0">The question</button>
-            <button type="button" class="anim-step" data-step="1"><b>a</b> Computed transport</button>
-            <button type="button" class="anim-step" data-step="2"><b>b</b> Learned tracers</button>
-            <button type="button" class="anim-step" data-step="3"><b>c</b> Generator, one pixel</button>
-            <button type="button" class="anim-step" data-step="4">Every pixel at once</button>
-            <button type="button" class="anim-step" data-step="5">The whole machine</button>
+          <div class="anim-steps" role="group" aria-label="Go to a step of the animation">
+            <button type="button" class="anim-step" data-step="0"><b>a</b> Computed transport</button>
+            <button type="button" class="anim-step" data-step="1"><b>b</b> Learned tracers</button>
+            <button type="button" class="anim-step" data-step="2"><b>c</b> Generator</button>
+            <button type="button" class="anim-step" data-step="3">From noise to forecast</button>
           </div>
           <div class="anim-tools"><button type="button" id="arch-toggle" class="play" aria-label="play the animation">▶</button>
             <a href="figures/fig_architecture.png" target="_blank" rel="noopener">Full-resolution figure</a></div>
         </div>
-        <figcaption id="arch-cap" aria-live="polite">A 100-second explanation on real data: the forecast issued on 20 January 2022 for Delhi, five days ahead. The buttons go to each part; the full-resolution figure is linked on the right.</figcaption></figure>
+        <figcaption id="arch-cap" aria-live="polite"><b>a</b>, the forecast wind drives FLEXGREEN, which follows particles backwards in time to where the arriving air was on the start day. <b>b</b>, an encoder turns the start day into tracers, read at the origins of the air. <b>c</b>, a conditional flow-matching network turns a noise field into a 1&nbsp;km forecast, for every lead time; each noise field gives one ensemble member.</figcaption></figure>
     <div class="cols2">
       <p><strong>FLEXGREEN, computed transport.</strong> A GPU re-implementation of the backward mode of the FLEXPART particle model
         releases particles in every 0.5° land cell on the target day and follows them backwards in the three-dimensional
@@ -131,6 +129,15 @@
         says the air was, and generates the 1&nbsp;km field of the target day by flow matching; each noise field gives one
         ensemble member, and whole continents are produced in one pass with no visible seam.</p>
     </div>
+    <h3 class="explainer-h">The explanation in 100 seconds</h3>
+    <figure class="story-fig explainer">
+      <video id="explainer-video" controls playsinline preload="none" poster="figures/anim/foehn_explainer_poster.jpg?v=4" width="1920" height="1080"
+             aria-label="Animated explanation of how Foehn makes a forecast, on real data">
+        <source src="figures/anim/foehn_explainer.mp4?v=4" type="video/mp4" />
+      </video>
+      <figcaption>Foehn explained on real data, for the forecast issued on 20 January 2022 for Delhi five days ahead: the computed transport,
+        what the air carried, and the generator from noise to a 1&nbsp;km forecast. Animation by Ammar Kheder.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -473,8 +480,8 @@
 (function () {
   // the architecture animation: the caption and the step buttons follow the video, which plays only while on screen
   const v = document.getElementById("arch-video"); if (!v) return;
-  const T = [0.0, 12.2, 31.0, 49.6, 69.6, 82.63];
-  const CAP = ["<b>The question</b>: what will the air over Delhi contain in five days? The forecast issued on 20 January 2022, for 25 January.", "<b>a</b>, Computed transport, with no learned parameter: the forecast wind, then FLEXGREEN following the air that arrives back in time, five days to where it was on the start day, for Delhi and then for 18 cities (blue: near the ground, pink: aloft).", "<b>b</b>, What the air carried: the start-day PM<sub>2.5</sub> read at the origins of the air, weighted by the share that survived near the ground, gives about 84&nbsp;µg&nbsp;m<sup>−3</sup> arriving at Delhi. Done for every place, this makes a transport map; the other 43 maps read tracers learned from the start day.", "<b>c</b>, The generator at one pixel: 64 noise draws carried by the network to 64 forecasts at Delhi, along their computed paths and at the four flow times of the sampler (0, 0.03, 0.17, 0.53). The ensemble contains the GHAP estimate made afterwards.", "<b>Every pixel at once</b>: the same four steps for the whole field, member 0 over half the globe and at 1&nbsp;km over Delhi, drawn as (1&nbsp;−&nbsp;τ)&nbsp;noise + τ × the network's own estimate of the forecast at that step.", "<b>The whole machine</b>: computed transport (blue) and learned parts (gold), from the forecast wind and the start day to a 1&nbsp;km forecast for every day ahead and every member."];
+  const T = [0.0, 9.6, 14.2, 25.2];
+  const CAP = ["<b>a</b>, Computed transport, with no learned parameters: the forecast wind drives FLEXGREEN, which follows particles backwards in time, here the air reaching 18 cities, five days back to where it was on the start day.", "<b>b</b>, Learned tracers: an encoder turns the start day (PM<sub>2.5</sub> at 0.25° and fires) into tracers, which are read at the origins of the air.", "<b>c</b>, Generator: conditioned on the start day at 1&nbsp;km, the forecast weather, fires and emissions and the transport maps, a flow-matching network turns a noise field into a 1&nbsp;km forecast in four steps, for every lead time; each noise field gives one ensemble member.", "<b>Close-up</b>, the generator as it runs (forecast issued on 20 January 2022, day 1): the network is called four times, at flow times τ&nbsp;=&nbsp;0, 0.03, 0.17 and 0.53. The maps show member 0 as (1&nbsp;−&nbsp;τ)&nbsp;noise + τ × the network's own estimate of the forecast at that step, over half the globe and at 1&nbsp;km over Delhi; the diagram follows 64 members at Delhi along their computed paths, from 64 noise fields to a forecast distribution that contains the GHAP estimate."];
   const btn = document.querySelectorAll(".anim-step"), cap = document.getElementById("arch-cap"), tog = document.getElementById("arch-toggle");
   let cur = -1, userPaused = false;
   function step() {
