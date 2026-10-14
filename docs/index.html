@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261014s" />
+<link rel="stylesheet" href="assets/style.css?v=20261014t" />
 </head>
 <body>
 
@@ -104,8 +104,21 @@
   <div class="wrap">
     <h2>How Foehn works</h2>
     <p class="sub">The PM<sub>2.5</sub> that reaches a place is set by what the arriving air contained and by what happened to it on the way. Foehn separates the two.</p>
-      <figure class="story-fig"><a href="figures/fig_architecture.png" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_architecture.jpg" width="1800" height="1339" alt="How Foehn makes a forecast: computed transport, learned tracers and the generator" decoding="async" /></a>
-        <figcaption><b>a</b>, the forecast wind drives FLEXGREEN, which follows particles backwards in time to where the arriving air was on the start day. <b>b</b>, an encoder turns the start day into tracers, read at the origins of the air. <b>c</b>, a conditional flow-matching network turns a noise field into a 1&nbsp;km forecast, for every lead time; each noise field gives one ensemble member.</figcaption></figure>
+      <figure class="story-fig arch-anim">
+        <video id="arch-video" muted loop playsinline preload="none" poster="figures/anim/foehn_architecture_poster.jpg" width="1600" height="1190"
+               aria-label="Animation of how Foehn makes a forecast, step by step: computed transport, learned tracers and the generator">
+          <source src="figures/anim/foehn_architecture.mp4" type="video/mp4" />
+        </video>
+        <div class="anim-bar">
+          <div class="anim-steps" role="group" aria-label="Go to a step of the animation">
+            <button type="button" class="anim-step" data-step="0"><b>a</b> Computed transport</button>
+            <button type="button" class="anim-step" data-step="1"><b>b</b> Learned tracers</button>
+            <button type="button" class="anim-step" data-step="2"><b>c</b> Generator</button>
+          </div>
+          <div class="anim-tools"><button type="button" id="arch-toggle" class="play" aria-label="play the animation">▶</button>
+            <a href="figures/fig_architecture.png" target="_blank" rel="noopener">Full-resolution figure</a></div>
+        </div>
+        <figcaption id="arch-cap" aria-live="polite"><b>a</b>, the forecast wind drives FLEXGREEN, which follows particles backwards in time to where the arriving air was on the start day. <b>b</b>, an encoder turns the start day into tracers, read at the origins of the air. <b>c</b>, a conditional flow-matching network turns a noise field into a 1&nbsp;km forecast, for every lead time; each noise field gives one ensemble member.</figcaption></figure>
     <div class="cols2">
       <p><strong>FLEXGREEN, computed transport.</strong> A GPU re-implementation of the backward mode of the FLEXPART particle model
         releases particles in every 0.5° land cell on the target day and follows them backwards in the three-dimensional
@@ -451,6 +464,33 @@
     const m = location.hash.match(/air\?lat=(-?[\d.]+)&lon=(-?[\d.]+)/); if (m) pick(+m[1], +m[2]);
   }).catch(() => { document.getElementById("air-stats").textContent = "The transport data could not be loaded."; });
   bg.onload = draw; window.addEventListener("resize", size); size();
+})();
+</script>
+<script>
+(function () {
+  // the architecture animation: the caption and the step buttons follow the video, which plays only while on screen
+  const v = document.getElementById("arch-video"); if (!v) return;
+  const T = [0.0, 9.6, 14.2];
+  const CAP = [ "<b>a</b>, Computed transport, with no learned parameters: the forecast wind drives FLEXGREEN, which follows particles backwards in time, here the air reaching 18 cities, five days back to where it was on the start day.", "<b>b</b>, Learned tracers: an encoder turns the start day (PM<sub>2.5</sub> at 0.25° and fires) into tracers, which are read at the origins of the air.", "<b>c</b>, Generator: conditioned on the start day at 1&nbsp;km, the forecast weather, fires and emissions and the transport maps, a flow-matching network turns a noise field into a 1&nbsp;km forecast in four steps, for every lead time; each noise field gives one ensemble member." ];
+  const btn = document.querySelectorAll(".anim-step"), cap = document.getElementById("arch-cap"), tog = document.getElementById("arch-toggle");
+  let cur = -1, userPaused = false;
+  function step() {
+    let k = 0; T.forEach((t, i) => { if (v.currentTime >= t - 0.05) k = i; });
+    if (k === cur) return; cur = k; cap.innerHTML = CAP[k];
+    btn.forEach((b, i) => { b.classList.toggle("on", i === k); b.setAttribute("aria-pressed", i === k ? "true" : "false"); });
+  }
+  function icon() { tog.textContent = v.paused ? "\u25B6" : "\u275A\u275A"; tog.setAttribute("aria-label", v.paused ? "play the animation" : "pause the animation"); }
+  v.addEventListener("timeupdate", step); v.addEventListener("seeked", step);
+  v.addEventListener("play", icon); v.addEventListener("pause", icon);
+  btn.forEach((b, i) => b.addEventListener("click", () => { v.currentTime = T[i] + 0.01; userPaused = false; v.play().catch(() => {}); step(); }));
+  tog.addEventListener("click", () => { if (v.paused) { userPaused = false; v.play().catch(() => {}); } else { userPaused = true; v.pause(); } });
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) userPaused = true;
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { if (!userPaused) v.play().catch(() => {}); } else if (!v.paused) v.pause();
+    }), { threshold: 0.3 }).observe(v);
+  } else if (!userPaused) v.play().catch(() => {});
+  icon();
 })();
 </script>
 </body>

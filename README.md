@@ -62,6 +62,7 @@ ensemble member.
 <p align="center">
   <a href="docs/figures/fig_architecture.png"><img src="docs/figures/web/fig_architecture.jpg" width="880" alt="How Foehn makes a forecast: a, computed transport (FLEXGREEN); b, learned tracers read at the origins of the air; c, the conditional flow-matching generator, from noise to a 1 km forecast for every lead time"></a>
 </p>
+<p align="center"><a href="https://ammarkheder.com/Foehn/#how">▶ Animated version, step by step, on the website</a></p>
 
 ## Results
 
