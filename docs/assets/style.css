@@ -155,3 +155,21 @@ ul.limits li { margin-bottom: 8px; }
 @media (max-width: 600px) { .air-controls .lead { flex-wrap: wrap; min-width: 0; width: 100%; } .air-controls .air-label { flex-basis: 100%; }
   .air-controls .lead input[type=range] { min-width: 0; } .air-controls .lead output { min-width: 0; } .air-legend { width: 100%; } }
 
+/* one-column story sections (results), architecture figure and the benchmark table */
+.story-fig { margin: 18px 0 6px; }
+.story-fig img { display: block; width: 100%; height: auto; }
+.story-fig figcaption { font-size: 13.5px; max-width: 880px; }
+.story { margin: 40px 0 0; }
+.story:first-of-type { margin-top: 26px; }
+.story h3 { font-size: 21px; margin: 0 0 8px; letter-spacing: -.005em; }
+.story > p { max-width: 860px; margin: 0; }
+.cols2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; margin-top: 22px; }
+.cols2 p { margin: 0; }
+.table-wrap { overflow-x: auto; margin: 4px 0 10px; -webkit-overflow-scrolling: touch; }
+table.bench { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 14px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); }
+table.bench th, table.bench td { padding: 8px 11px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.bench th:first-child, table.bench td:first-child { text-align: left; white-space: normal; }
+table.bench thead th { font-size: 12.5px; color: var(--muted); font-weight: 600; background: var(--bg-soft); }
+table.bench tr:last-child td { border-bottom: none; }
+table.bench tr.best td { font-weight: 700; color: var(--blue-dark); background: #EEF4FB; }
+@media (max-width: 860px) { .cols2 { grid-template-columns: minmax(0, 1fr); gap: 14px; } .story h3 { font-size: 19px; } }

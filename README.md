@@ -26,6 +26,7 @@ tells every receptor where its air was on the start day and which wildfire and a
 - [What is Foehn?](#what-is-foehn)
 - [How Foehn works](#how-foehn-works)
 - [Results](#results)
+- [Benchmark](#benchmark)
 - [Getting started](#getting-started)
 - [Repository layout](#repository-layout)
 - [Trained weights](#trained-weights)
@@ -46,7 +47,7 @@ forecasts it at the kilometre, for the whole planet, as a calibrated ensemble:
   up on the way.
 
 <p align="center">
-  <img src="docs/figures/fig_overview.png" width="880" alt="One forecast of the whole planet at 1 km, with four basin zooms against CAMS and GHAP">
+  <a href="docs/figures/fig_overview.png"><img src="docs/figures/web/fig_overview.jpg" width="880" alt="One forecast of the whole planet at 1 km, with four basin zooms against CAMS and GHAP"></a>
 </p>
 
 ## How Foehn works
@@ -56,7 +57,11 @@ land cell on the target day and follows them backwards in the three-dimensional 
 The result is the Green's function of the transport: where the arriving air was on the start day, at which height, and how
 much of its aerosol survived the journey. It has no learned parameter. The network reads the start-day fields where the
 physics says the air was, and generates the 1 km field of the target day by flow matching; each noise field gives one
-ensemble member. The design is described in the paper.
+ensemble member.
+
+<p align="center">
+  <a href="docs/figures/fig_architecture.png"><img src="docs/figures/web/fig_architecture.jpg" width="880" alt="How Foehn makes a forecast: a, computed transport (FLEXGREEN); b, learned tracers read at the origins of the air; c, the conditional flow-matching generator, from noise to a 1 km forecast for every lead time"></a>
+</p>
 
 ## Results
 
@@ -75,10 +80,42 @@ forecast and Aurora issued at the same time (details and intervals in the paper)
 RMSE and CRPS at the 6,324 stations (the CRPS is the fair CRPS of four members; for a single forecast it is the absolute error); SEDI for the days above the local 99th percentile; the share of the 5,954 stations with at least 30 common days where Foehn's error is lower than CAMS's.
 
 <p align="center">
-  <img src="docs/figures/fig_transport.png" width="880" alt="The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time">
+  <a href="docs/figures/fig_transport.png"><img src="docs/figures/web/fig_transport.jpg" width="880" alt="The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time"></a>
 </p>
 <p align="center">
-  <img src="docs/figures/fig_smoke.png" width="880" alt="Forecasting the smoke of the Gironde fires of July 2022 at the Teich bird reserve, five days ahead">
+  <a href="docs/figures/fig_smoke.png"><img src="docs/figures/web/fig_smoke.jpg" width="880" alt="Forecasting the smoke of the Gironde fires of July 2022 at the Teich bird reserve, five days ahead"></a>
+</p>
+
+## Benchmark
+
+The design was chosen in a controlled benchmark over Europe: five spatiotemporal networks retrained with exactly the inputs
+of Foehn's flow-matching network (its European 0.25° version), against the CAMS operational forecast, Aurora and
+climatology. Europe, 2022; scores averaged over lead times of 1 to 4 days and three training seeds (one run for Aurora, CAMS
+and climatology). RMSE in µg m⁻³ (lower is better), CSI of exceedances of 25 µg m⁻³ (higher is better), inference time and
+peak memory for one member of one forecast on one AMD MI250X compute die.
+
+| Model | RMSE, 0.25° | RMSE, 1 km | RMSE, 2,971 EEA stations | CSI, > 25 µg m⁻³ | Inference (s) | GPU memory (GB) |
+|---|---:|---:|---:|---:|---:|---:|
+| Foehn (flow matching, European 0.25° version) | **5.07** | **5.47** | **11.23** | **0.421** | 0.231 | 0.15 |
+| Foehn without the learned transport layer | 5.12 | 5.52 | 11.25 | 0.413 | 0.045 | 0.15 |
+| ConvLSTM | 5.26 | 5.68 | 11.32 | 0.398 | 0.011 | 0.72 |
+| Earthformer | 5.40 | 5.82 | 11.34 | 0.392 | 0.006 | 0.42 |
+| SimVP | 5.49 | 5.92 | 11.39 | 0.379 | 0.010 | 0.10 |
+| TopoFlow | 5.54 | 5.96 | 11.42 | 0.388 | 0.010 | 0.43 |
+| ClimaX | 5.76 | 6.19 | 11.49 | 0.359 | 0.010 | 0.95 |
+| Aurora | 7.98 | 8.44 | 12.20 | 0.212 | 6.0 | 20.40 |
+| CAMS operational forecast | 8.43 | 8.86 | 12.12 | 0.204 | – | – |
+| Climatology | 7.70 | 8.13 | 12.14 | 0.238 | – | – |
+
+Foehn's network was the most accurate in 35 of 36 combinations of score, lead time and set of days (all days, the 10 % most
+polluted days and documented transport episodes), and 26 times faster than Aurora with a 35 % lower error at 1 km. The table
+is produced by `figures/benchmark_table.py`; the scripts of the benchmark are in `benchmark_europe/`.
+
+<p align="center">
+  <a href="docs/figures/fig_benchmark_leadtime.png"><img src="docs/figures/web/fig_benchmark_leadtime.jpg" width="880" alt="Skill against five spatiotemporal networks by lead time: RMSE at 0.25 deg, at 1 km and at 2,971 EEA stations, and CSI of exceedances of 25 ug/m3"></a>
+</p>
+<p align="center">
+  <a href="docs/figures/fig_benchmark_scales_cost.png"><img src="docs/figures/web/fig_benchmark_scales_cost.jpg" width="880" alt="Skill by scale (error power by wavelength at 0.25 deg and 1 km) and error at 1 km against inference time"></a>
 </p>
 
 ## Getting started
