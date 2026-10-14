@@ -199,3 +199,9 @@ section.band-dark .sub { color: #A7AFB9; }
 .ex-tab { font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; border: 1px solid #3A4452; background: transparent; color: #C9CFD6; cursor: pointer; }
 .ex-tab:hover { border-color: #58C4DD; }
 .ex-tab.on { background: #58C4DD; border-color: #58C4DD; color: #0C0F14; font-weight: 600; }
+.hero-media .ex-tabs { justify-content: center; margin: 0 0 12px; }
+.hero-media .ex-tab { color: var(--ink); border-color: var(--line); background: #fff; }
+.hero-media .ex-tab:hover { border-color: var(--blue); }
+.hero-media .ex-tab.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+.hero-media .explainer-feature { max-width: 1060px; margin: 0 auto; }
+.hero-media .explainer-feature figcaption { color: var(--muted); text-align: center; }
