@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261014v" />
+<link rel="stylesheet" href="assets/style.css?v=20261014w" />
 </head>
 <body>
 
@@ -17,6 +17,7 @@
   <div class="wrap topbar-row">
     <a class="brand" href="#top"><img src="assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span></a>
     <nav class="nav">
+      <a href="#explained">Explained</a>
       <a href="#air">Where was the air?</a>
       <a href="#abstract">Paper</a>
       <a href="#how">How it works</a>
@@ -44,7 +45,8 @@
         in one pass by flow matching, and <strong>computes rather than learns the transport of the air</strong> with FLEXGREEN,
         a GPU re-implementation of the backward mode of the FLEXPART particle model.</p>
       <div class="cta">
-        <a class="btn btn-primary" href="#air">Where was the air you breathe?</a>
+        <a class="btn btn-primary btn-watch" href="#explained">&#9654;&nbsp; Watch: Foehn explained</a>
+        <a class="btn btn-ghost" href="#air">Where was the air you breathe?</a>
         <a class="btn btn-ghost" href="#viewer">Explore the forecasts</a>
         <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn">Code on GitHub</a>
       </div>
@@ -61,6 +63,22 @@
            aria-label="Foehn forecast of daily PM2.5 at 1 km for 21 January 2022, and FLEXGREEN: where the air arriving in thirty cities that day was, one to seven days before"></video>
     <noscript><img src="assets/foehn_globes.gif" alt="Foehn forecast and FLEXGREEN origins on two rotating globes" /></noscript>
     <p class="cap">Foehn's forecast of daily PM<sub>2.5</sub> at 1&nbsp;km for 21 January 2022, issued the evening before (ensemble mean), and FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</p>
+  </div>
+</section>
+
+<section class="band band-dark" id="explained">
+  <div class="wrap">
+    <h2>Foehn, explained</h2>
+    <p class="sub">How a forecast of air pollution at 1&nbsp;km is made, on real data and in the author's voice: the transport of
+      the air, computed backwards from the weather forecast; what that air carried; and the generator that turns noise into a
+      forecast. Two minutes, with sound.</p>
+    <figure class="explainer-feature">
+      <video id="explainer-video" controls playsinline preload="metadata" poster="figures/anim/foehn_explainer_poster.jpg?v=5" width="1920" height="1080"
+             aria-label="Foehn explained: an animated, narrated explanation of how the forecast is made">
+        <source src="figures/anim/foehn_explained.mp4?v=5" type="video/mp4" />
+      </video>
+      <figcaption>The forecast issued on 20 January 2022 for Delhi, five days ahead. Animation and voice &copy; 2026 Ammar Kheder.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -129,15 +147,6 @@
         says the air was, and generates the 1&nbsp;km field of the target day by flow matching; each noise field gives one
         ensemble member, and whole continents are produced in one pass with no visible seam.</p>
     </div>
-    <h3 class="explainer-h">The explanation in 100 seconds</h3>
-    <figure class="story-fig explainer">
-      <video id="explainer-video" controls playsinline preload="none" poster="figures/anim/foehn_explainer_poster.jpg?v=4" width="1920" height="1080"
-             aria-label="Animated explanation of how Foehn makes a forecast, on real data">
-        <source src="figures/anim/foehn_explainer.mp4?v=4" type="video/mp4" />
-      </video>
-      <figcaption>Foehn explained on real data, for the forecast issued on 20 January 2022 for Delhi five days ahead: the computed transport,
-        what the air carried, and the generator from noise to a 1&nbsp;km forecast. Animation by Ammar Kheder.</figcaption>
-    </figure>
   </div>
 </section>
 

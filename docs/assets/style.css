@@ -187,6 +187,11 @@ details.bench-table[open] summary { margin-bottom: 6px; }
 .anim-tools { display: flex; align-items: center; gap: 12px; font-size: 13px; }
 .arch-anim figcaption { min-height: 3.2em; }
 @media (max-width: 700px) { .arch-anim figcaption { min-height: 6.4em; } }
-.explainer-h { font-size: 19px; margin: 34px 0 4px; }
-.explainer video { display: block; width: 100%; height: auto; background: #0C0F14; border-radius: var(--radius); }
-.explainer figcaption { font-size: 13.5px; max-width: 880px; }
+section.band-dark { background: #0C0F14; border-top: 0; color: #E8EAED; }
+section.band-dark h2 { color: #fff; }
+section.band-dark .sub { color: #A7AFB9; }
+.explainer-feature { margin: 18px 0 0; }
+.explainer-feature video { display: block; width: 100%; height: auto; background: #000; border-radius: 12px;
+  box-shadow: 0 0 0 1px #2A3240, 0 18px 50px rgba(0, 0, 0, .55); }
+.explainer-feature figcaption { color: #8F98A3; font-size: 13px; margin-top: 10px; }
+.btn-watch { box-shadow: 0 6px 18px rgba(31, 90, 166, .35); }
