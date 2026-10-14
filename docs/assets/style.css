@@ -205,3 +205,7 @@ section.band-dark .sub { color: #A7AFB9; }
 .hero-media .ex-tab.on { background: var(--blue); border-color: var(--blue); color: #fff; }
 .hero-media .explainer-feature { max-width: 1060px; margin: 0 auto; }
 .hero-media .explainer-feature figcaption { color: var(--muted); text-align: center; }
+.ex-langs { margin-top: -4px; }
+.ex-lang { font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--muted); cursor: pointer; }
+.ex-lang:hover { border-color: var(--blue); }
+.ex-lang.on { border-color: var(--pink); color: var(--pink); font-weight: 600; }
