@@ -176,7 +176,7 @@ table.bench tr.best td { font-weight: 700; color: var(--blue-dark); background: 
 details.bench-table { margin: 10px 0 0; }
 details.bench-table summary { cursor: pointer; color: var(--blue); font-weight: 600; font-size: 14.5px; padding: 6px 0; }
 details.bench-table[open] summary { margin-bottom: 6px; }
-.arch-anim video { display: block; width: 100%; height: auto; background: #fff; }
+.arch-anim video { display: block; width: 100%; height: auto; background: #0C0F14; border-radius: var(--radius); }
 .anim-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; margin: 8px 0 4px; }
 .anim-steps { display: flex; flex-wrap: wrap; gap: 6px; }
 .anim-step { font: inherit; font-size: 13px; line-height: 1.2; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--muted); cursor: pointer; }
