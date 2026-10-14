@@ -9,7 +9,7 @@
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261014z" />
+<link rel="stylesheet" href="assets/style.css?v=20261014y" />
 </head>
 <body>
 
@@ -60,19 +60,13 @@
   </div>
   <div class="wrap hero-media" id="explained">
     <div class="ex-tabs" role="group" aria-label="Choose a version">
-      <button type="button" class="ex-tab on" data-ver="film">The full story &middot; 5&nbsp;min</button>
-      <button type="button" class="ex-tab" data-ver="explained">How it works &middot; 2&nbsp;min</button>
-    </div>
-    <div class="ex-tabs ex-langs" role="group" aria-label="Choose the language of the voice-over">
-      <button type="button" class="ex-lang on" data-lang="en" lang="en">English</button>
-      <button type="button" class="ex-lang" data-lang="fr" lang="fr">Français</button>
-      <button type="button" class="ex-lang" data-lang="ar" lang="ar" dir="rtl">العربية</button>
-      <button type="button" class="ex-lang" data-lang="zh-cn" lang="zh-Hans">中文</button>
+      <button type="button" class="ex-tab on" data-src="figures/anim/foehn_film.mp4?v=8" data-poster="figures/anim/foehn_film_poster.jpg?v=6">The full story &middot; 5&nbsp;min</button>
+      <button type="button" class="ex-tab" data-src="figures/anim/foehn_explained.mp4?v=8" data-poster="figures/anim/foehn_explainer_poster.jpg?v=6">How it works &middot; 2&nbsp;min</button>
     </div>
     <figure class="explainer-feature">
       <video id="explainer-video" controls playsinline preload="metadata" poster="figures/anim/foehn_film_poster.jpg?v=6" width="1920" height="1080"
              aria-label="Foehn explained: an animated, narrated film">
-        <source src="figures/anim/foehn_film.mp4?v=9" type="video/mp4" />
+        <source src="figures/anim/foehn_film.mp4?v=8" type="video/mp4" />
       </video>
       <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the paper.
         Animation and voice &copy; 2026 Ammar Kheder.</figcaption>
@@ -512,19 +506,11 @@
 </script>
 <script>
 (function () {
-  // the film and the short version, in four languages (same pictures, voice-over in the author's voice)
+  // the two versions of the explanation
   const v = document.getElementById("explainer-video"); if (!v) return;
-  const st = { ver: "film", lang: "en" };
-  const POSTER = { film: "figures/anim/foehn_film_poster.jpg?v=6", explained: "figures/anim/foehn_explainer_poster.jpg?v=6" };
-  function load() {
-    const f = "figures/anim/foehn_" + st.ver + (st.lang === "en" ? "" : "_" + st.lang) + ".mp4?v=9";
-    v.pause(); v.setAttribute("poster", POSTER[st.ver]); v.querySelector("source").setAttribute("src", f); v.load();
-  }
   document.querySelectorAll(".ex-tab").forEach((b) => b.addEventListener("click", () => {
-    document.querySelectorAll(".ex-tab").forEach((x) => x.classList.toggle("on", x === b)); st.ver = b.dataset.ver; load();
-  }));
-  document.querySelectorAll(".ex-lang").forEach((b) => b.addEventListener("click", () => {
-    document.querySelectorAll(".ex-lang").forEach((x) => x.classList.toggle("on", x === b)); st.lang = b.dataset.lang; load();
+    document.querySelectorAll(".ex-tab").forEach((x) => x.classList.toggle("on", x === b));
+    v.pause(); v.setAttribute("poster", b.dataset.poster); v.querySelector("source").setAttribute("src", b.dataset.src); v.load();
   }));
 })();
 </script>
