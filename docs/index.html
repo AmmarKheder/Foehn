@@ -115,9 +115,9 @@
     <h2>How Foehn works</h2>
     <p class="sub">The PM<sub>2.5</sub> that reaches a place is set by what the arriving air contained and by what happened to it on the way. Foehn separates the two.</p>
       <figure class="story-fig arch-anim">
-        <video id="arch-video" muted loop playsinline preload="none" poster="figures/anim/foehn_architecture_poster.jpg?v=5" width="1600" height="1190"
+        <video id="arch-video" muted loop playsinline preload="none" poster="figures/anim/foehn_architecture_poster.jpg?v=6" width="1600" height="1190"
                aria-label="Animation of how Foehn makes a forecast, step by step: computed transport, learned tracers and the generator">
-          <source src="figures/anim/foehn_architecture.mp4?v=5" type="video/mp4" />
+          <source src="figures/anim/foehn_architecture.mp4?v=6" type="video/mp4" />
         </video>
         <div class="anim-bar">
           <div class="anim-steps" role="group" aria-label="Go to a step of the animation">
@@ -127,7 +127,7 @@
             <button type="button" class="anim-step" data-step="3">From noise to forecast</button>
           </div>
           <div class="anim-tools"><button type="button" id="arch-toggle" class="play" aria-label="play the animation">▶</button>
-            <a href="figures/fig_architecture.png?v=3" target="_blank" rel="noopener">Full-resolution figure</a></div>
+            <a href="figures/fig_architecture.png?v=4" target="_blank" rel="noopener">Full-resolution figure</a></div>
         </div>
         <figcaption id="arch-cap" aria-live="polite"><b>a</b>, the forecast wind drives FLEXGREEN, which follows particles backwards in time to where the arriving air was on the start day. <b>b</b>, an encoder turns the start day into tracers, read at the origins of the air. <b>c</b>, a conditional flow-matching network turns a noise field into a 1&nbsp;km forecast, for every lead time; each noise field gives one ensemble member.</figcaption></figure>
     <div class="cols2">
@@ -482,7 +482,7 @@
   // the architecture animation: the caption and the step buttons follow the video, which plays only while on screen
   const v = document.getElementById("arch-video"); if (!v) return;
   const T = [0.0, 9.6, 14.2, 25.2];
-  const CAP = ["<b>a</b>, Computed transport, with no learned parameters: the forecast wind drives FLEXGREEN, which follows particles backwards in time, here the air reaching 18 cities, five days back to where it was on the start day.", "<b>b</b>, Learned tracers: an encoder turns the start day (PM<sub>2.5</sub> at 0.25° and fires) into tracers, which are read at the origins of the air; the emissions are read along its paths, without learning.", "<b>c</b>, Generator: conditioned on the start day at 1&nbsp;km, the forecast weather and the transport maps, a flow-matching network turns a noise field into a 1&nbsp;km forecast in four steps, for every lead time; each noise field gives one ensemble member.", "<b>Close-up</b>, the generator as it runs (forecast issued on 20 January 2022, day 1): the network is called four times, at flow times τ&nbsp;=&nbsp;0, 0.03, 0.17 and 0.53. The maps show member 0 as (1&nbsp;−&nbsp;τ)&nbsp;noise + τ × the network's own estimate of the forecast at that step, over half the globe and at 1&nbsp;km over Delhi; the diagram follows 64 members at Delhi along their computed paths, from 64 noise fields to a forecast distribution that contains the GHAP estimate."];
+  const CAP = ["<b>a</b>, Computed transport, with no learned parameters: the forecast wind drives FLEXGREEN, which follows particles backwards in time, here the air reaching 18 cities, five days back to where it was on the start day, and adds up the emissions that the air takes up on its way.", "<b>b</b>, Learned tracers: an encoder turns the start day (PM<sub>2.5</sub> at 0.25° and fires) into tracers, which are read at the origins of the air.", "<b>c</b>, Generator: conditioned on the start day at 1&nbsp;km, the forecast weather and the transport maps, a flow-matching network turns a noise field into a 1&nbsp;km forecast in four steps, for every lead time; each noise field gives one ensemble member.", "<b>Close-up</b>, the generator as it runs (forecast issued on 20 January 2022, day 1): the network is called four times, at flow times τ&nbsp;=&nbsp;0, 0.03, 0.17 and 0.53. The maps show member 0 as (1&nbsp;−&nbsp;τ)&nbsp;noise + τ × the network's own estimate of the forecast at that step, over half the globe and at 1&nbsp;km over Delhi; the diagram follows 64 members at Delhi along their computed paths, from 64 noise fields to a forecast distribution that contains the GHAP estimate."];
   const btn = document.querySelectorAll(".anim-step"), cap = document.getElementById("arch-cap"), tog = document.getElementById("arch-toggle");
   let cur = -1, userPaused = false;
   function step() {
