@@ -56,22 +56,30 @@ def main():
     cb.ax.set_xticklabels([f"{t:g}" for t in PM_BOUNDS])
     cb.outline.set_linewidth(0.4); cb.ax.tick_params(labelsize=5, length=1.5, pad=1)
     cb.set_label("Daily PM$_{2.5}$ (µg m$^{-3}$); black contour: 75 µg m$^{-3}$, WHO interim target 1", fontsize=5.5, labelpad=1)
-    # e: share of the exposure above each threshold that a 40 km grid hides, by region (the panel a of the Extended Data
-    # figure until 15 October 2026; the extremes and warnings panels went there, extremes_panels.py)
-    res = ex["res"]
+    # e: the people a 40 km grid hides (share of the person-days above 37.5 ug m-3 at 1 km whose 40 km cell is below, all
+    # pixels and days of 2022) and the share of them that Foehn warned (ensemble probability >= 0.5 at the pixel; 179 target
+    # days per lead, pixels with >= 100 residents; figdata_hidden_warned.py), by region; whiskers: 95 % intervals over days
+    from figdata_hidden_warned import TERMS, boot
+    from gc_style import FOEHN
+    res = ex["res"]; k375 = XT.index(37.5)
     regs = ["World", "South Asia", "East Asia", "Africa", "Middle East", "Southeast Asia", "Europe", "North America", "South America"]
+    hw = np.load(HERE / "data" / "hidden_warned_eval_pop_crps_e01.npz"); HR = [str(r) for r in hw["regions"]]; TT = list(TERMS)
     ab = fig.add_axes([fx(14), fy(8), fx(166), fy(26)])
-    for j, (thr, col, who) in enumerate(zip((15.0, 37.5, 75.0), PINK3, ("WHO guideline", "interim target 3", "interim target 1"))):
-        k = XT.index(thr)
-        share = np.array([100 * res[:, XR.index(r), 2, k].sum() / max(res[:, XR.index(r), 0, k].sum(), 1) for r in regs])
-        keep = np.array([res[:, XR.index(r), 0, k].sum() for r in regs]) > 1e9          # at least a billion person-days above
-        xb = np.arange(len(regs)) + (j - 1) * 0.27
-        ab.bar(xb[keep], share[keep], width=0.25, color=col, label=f"> {thr:g} µg m$^{{-3}}$, {who}", zorder=3)
-        print(f"hidden share > {thr:g}:", {r: round(float(v), 1) for r, v, kk in zip(regs, share, keep) if kk})
-    ab.set_xticks(range(len(regs))); ab.set_xticklabels(regs, fontsize=5.6); ab.set_ylim(0, 60)
-    ab.set_ylabel("Person-days hidden (%)", fontsize=6); clean(ab); ab.tick_params(labelsize=5.5); ab.tick_params(axis="x", length=0)
+    share = np.array([100 * res[:, XR.index(r), 2, k375].sum() / max(res[:, XR.index(r), 0, k375].sum(), 1) for r in regs])
+    x = np.arange(len(regs))
+    ab.bar(x - 0.27, share, width=0.25, color="#C2185B", zorder=3, label="hidden by a 40 km grid (% of the exposure above 37.5 µg m$^{-3}$)")
+    for j, (h, col, lab) in enumerate(((1, FOEHN, "of those, warned by Foehn 1 day ahead (%)"), (3, "#8FB2DD", "3 days ahead"))):
+        S = hw[f"sums_h{h}_37.5"]
+        v = np.array([boot(S[:, HR.index(r), :], TT.index("hid_w"), TT.index("hid")) for r in regs])
+        ab.bar(x + 0.27 * j, v[:, 0], width=0.25, color=col, zorder=3, label=lab)
+        ab.vlines(x + 0.27 * j, v[:, 1], v[:, 2], color="#1B1E23", lw=0.5, zorder=4)
+        fa = boot(S[:, HR.index("World"), :], TT.index("warn_fa"), TT.index("warn"))
+        print(f"e: warned of hidden, {h} d:", {r: round(float(a), 1) for r, a in zip(regs, v[:, 0])}, f"| false alarms (World) {fa[0]:.1f} %")
+    print("e: hidden share > 37.5:", {r: round(float(a), 1) for r, a in zip(regs, share)})
+    ab.set_xticks(x); ab.set_xticklabels(regs, fontsize=5.6); ab.set_ylim(0, 70)
+    ab.set_ylabel("Person-days (%)", fontsize=6); clean(ab); ab.tick_params(labelsize=5.5); ab.tick_params(axis="x", length=0)
     ab.legend(fontsize=5.4, frameon=False, loc="upper left", ncol=3, handlelength=1.0, columnspacing=1.2)
-    ab.set_title("Share of the exposure that a 40 km grid hides, by region (2022)", fontsize=6.3, loc="left", pad=5)
+    ab.set_title("The people a 40 km grid hides, and those Foehn warns (> 37.5 µg m$^{-3}$, 2022)", fontsize=6.3, loc="left", pad=5)
     marks = [(ab._left_title, "e")]
     fig.canvas.draw()                                         # letters: a beside the map, e just before its title, like b-d
     letter_left_of(fig, ax, "a", fy(166))
