@@ -18,7 +18,7 @@ import zarr
 from matplotlib.colors import BoundaryNorm, LinearSegmentedColormap
 
 from fig_exposure_zoom import ghap_box
-from gc_style import AURORA, CAMS, FOEHN, GHAP, clean, geo_ticks, label
+from gc_style import AURORA, CAMS, FOEHN, GHAP, clean, geo_ticks, label, letter_before
 import final_model as FM
 from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, pm_cmap, save
 
@@ -101,6 +101,7 @@ def main():
     fx = lambda mm: mm / (W / MM); fy = lambda mm: mm / (H / MM)
     pw = 20.4; ph = pw * 6.0 / (8.0 * np.cos(np.deg2rad(38.5)))
     ext = (w, e, s, n)
+    marks = []
     for row, h in enumerate((1, 5)):
         y0 = 127 - 7 - (row + 1) * ph - row * 9
         m = np.load(D / f"crop0_d{peak - h}_h{h}.npz")["members"].astype(np.float32)[:, sr0:sr1, sc0:sc1]
@@ -130,7 +131,7 @@ def main():
         if row == 1:
             fig.legend(*sa.get_legend_handles_labels(), fontsize=5, frameon=False, loc="lower left", bbox_to_anchor=(fx(132), fy(32)),
                        ncol=3, handlelength=1.8, columnspacing=1.0)
-        fig.text(fx(160), fy(y0 + ph + 3.5), f"$\\bf{{{'hp'[row]}}}$", fontsize=6.5, va="bottom")
+        marks.append((sa.title, "hp"[row]))                     # placed once the layout is drawn, just before "Power spectrum"
     # probability of > 75 by lead
     y0 = 35; pw2 = 27.0; ph2 = pw2 * 6.0 / (8.0 * np.cos(np.deg2rad(38.5)))
     pcm = LinearSegmentedColormap.from_list("prob", ["#FFFFFF", "#C6DBEF", "#6BAED6", "#2171B5", "#08306B"], N=10)
@@ -189,6 +190,9 @@ def main():
     print("obs:", np.round(obs[days], 0))
     print("band at peak doy24:", round(float(m1[23].min())), round(float(m1[23].max())), "| collapse doy25 obs", round(float(obs[25])), "mean1", round(float(m1[24].mean())))
     print("mean1:", np.round(m1.mean(1), 0))
+    fig.canvas.draw()
+    for t, s_ in marks:
+        letter_before(fig, t, s_, size=6.5)
     save(fig, "fig_gc2_realism")
     print("peak", peak, day)
 

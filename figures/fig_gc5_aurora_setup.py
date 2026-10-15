@@ -16,7 +16,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "global1km"))
 from eval_cams12h import AUR, CFC, LAT, NX, RAW, to_domain  # noqa: E402
-from gc_style import AURORA, CAMS, FOEHN, label, land_mask_04, map_axes, world_coords  # noqa: E402
+from gc_style import AURORA, CAMS, FOEHN, land_mask_04, letter_left_of, map_axes, world_coords  # noqa: E402
 from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, pm_cmap, save  # noqa: E402
 
 RUNS = HERE.parent / "global1km" / "runs" / "cams04_flow_shift2.6_emis"
@@ -55,6 +55,7 @@ def main():
     # ---- a: maps, 2 lead times x 4 systems (top band)
     mw, mh, top = 40.5, 21.0, 150 - 8
     cols = ["Foehn-CAMS", "Aurora", "CAMS forecast", "CAMS analysis"]
+    amaps, atitle = [], None
     for i, L in enumerate(LEADS):
         vt = np.datetime64("2022-09-01T00") + np.timedelta64(L, "h")
         for j, nm in enumerate(cols):
@@ -66,13 +67,15 @@ def main():
             if nm != "CAMS analysis":
                 ax.text(0.02, 0.10, f"RMSE {F[L][nm + '_rmse']:.1f}", transform=ax.transAxes, fontsize=4.8, zorder=6,
                         fontweight="bold" if nm == "Foehn-CAMS" else "normal")
+            if i == 0 and j == 0:
+                atitle = ax.title
             if i == 0:
                 ax.set_title(nm + (" (truth)" if nm == "CAMS analysis" else ""), fontsize=6.2, pad=2,
                              fontweight="bold" if nm == "Foehn-CAMS" else "normal")
             if j == 0:
+                amaps.append(ax)
                 ax.text(-0.15, 0.5, f"+{L // 24} d\n{int(str(vt)[8:10])} Sep", transform=ax.transAxes, rotation=90, ha="right",
                         va="center", fontsize=5.8)
-    label(fig, fx(1), fy(top + 2.5), "a")
     yb = top - 2 * mh - 1.5 - 7.5
     cax = fig.add_axes([fx(40), fy(yb), fx(110), fy(1.5)])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax, orientation="horizontal", extend="max", spacing="uniform",
@@ -88,6 +91,7 @@ def main():
     gw, gh, gxs, gys, y_top = 31.0, 30.0, 5.2, 6.0, yb - 9
     rows = [("rmse", "RMSE (µg m$^{-3}$)"), ("crps", "CRPS (µg m$^{-3}$)")]
     FC = ("CAMS forecast", "Aurora", "Foehn-CAMS")
+    bcol, btitle = [], None
     for ri, (key, ylab) in enumerate(rows):
         for ci, r in enumerate(GR):
             ax = fig.add_axes([fx(14 + ci * (gw + gxs)), fy(y_top - (ri + 1) * gh - ri * gys), fx(gw), fy(gh)])
@@ -127,6 +131,10 @@ def main():
             for s_ in ("top", "right"):
                 ax.spines[s_].set_visible(False)
             ax.grid(lw=0.3, color="#E6E6E6"); ax.set_axisbelow(True)
+            if ri == 0 and ci == 0:
+                btitle = ax.title
+            if ci == 0:
+                bcol.append(ax)
             if ri == 0:
                 ax.set_title(r, fontsize=6.3, pad=2, fontweight="bold" if r == "Global" else "normal")
             if ci == 0:
@@ -138,7 +146,9 @@ def main():
             if ri == 0 and ci == 0:
                 hl = ax.get_legend_handles_labels()
     fig.legend(*hl, fontsize=5.4, loc="lower center", bbox_to_anchor=(0.5, 0.0), ncol=5, frameon=False, handlelength=2.2, columnspacing=1.4)
-    label(fig, fx(1), fy(y_top + 1.5), "b")
+    fig.canvas.draw()                                         # a and b on the lines of their titles, 1 mm left of their labels
+    letter_left_of(fig, amaps, "a", atitle)
+    letter_left_of(fig, bcol, "b", btitle)
     save(fig, "fig_gc5_aurora_setup")
     print({L: {k: round(v, 2) for k, v in F[L].items() if k.endswith("_rmse")} for L in LEADS})
 

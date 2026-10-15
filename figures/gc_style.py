@@ -32,6 +32,28 @@ def label(fig, x, y, s):
     fig.text(x, y, s, fontsize=8, fontweight="bold", va="bottom", ha="left")
 
 
+def letter_before(fig, title, s, gap_mm=1.0, size=8):
+    """bold panel letter on the baseline of a panel title (a Text artist), gap_mm before its first character
+    (call after fig.canvas.draw(), once the title has its final position)"""
+    x = title.get_window_extent(fig.canvas.get_renderer()).x0 - gap_mm / 25.4 * fig.dpi
+    y = title.get_transform().transform(title.get_position())[1]
+    fig.text(*fig.transFigure.inverted().transform((x, y)), s, fontsize=size, fontweight="bold", ha="right", va="baseline")
+
+
+def letter_left_of(fig, items, s, y, gap_mm=1.0, size=8, va="bottom"):
+    """bold panel letter at height y (figure fraction, or a title whose baseline it then shares), its right edge gap_mm left
+    of the leftmost tick label, axis label or row label of the panel (axes and texts, one or several), so that every letter
+    sits at the same distance from its panel (after fig.canvas.draw())"""
+    from matplotlib.axes import Axes
+    r = fig.canvas.get_renderer(); inv = fig.transFigure.inverted()
+    items = items if isinstance(items, (list, tuple)) else [items]
+    x0 = min((a.get_tightbbox(r) if isinstance(a, Axes) else a.get_window_extent(r)).x0 for a in items)
+    x = inv.transform((x0 - gap_mm / 25.4 * fig.dpi, 0))[0]
+    if hasattr(y, "get_position"):
+        y, va = inv.transform(y.get_transform().transform(y.get_position()))[1], "baseline"
+    fig.text(x, y, s, fontsize=size, fontweight="bold", ha="right", va=va)
+
+
 def block_bootstrap(a, b, B=7, n=10000, seed=0):
     """paired moving-block bootstrap of the RMSE ratio - 1 from per-day (sse, count) arrays a, b (days, 2), NaN days dropped"""
     ok = np.isfinite(a[:, 0]) & np.isfinite(b[:, 0]) & (a[:, 1] > 0)

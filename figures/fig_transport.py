@@ -19,7 +19,7 @@ import numpy as np
 
 import final_model as FM
 from fig_exposure_zoom import ghap_box
-from gc_style import clean, geo_ticks, label
+from gc_style import clean, geo_ticks, label, letter_left_of
 from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, pm_cmap, save
 
 REGC = {"East Asia": "#D55E00", "South Asia": "#E69F00", "Europe": "#0072B2", "North America": "#CC79A7", "Africa": "#009E73"}
@@ -157,8 +157,9 @@ def main():
     aj.set_ylabel("CRPS reduction by the\ncomputed transport (%)", fontsize=6)
     for a_ in (ah, aj):
         clean(a_); a_.tick_params(labelsize=5.5)
-    for k in range(3):
-        label(fig, fx((2, 61, 122)[k]), fy(37), "hij"[k])
+    fig.canvas.draw()                                         # h-j: 1 mm left of the labels of each panel
+    for a_, s_ in zip((ah, ai, aj), "hij"):
+        letter_left_of(fig, a_, s_, fy(37))
     print("near-ground share, all land:", np.round(near, 1), "| distance km:", np.round(dmed), "| gain:", np.round(gain, 1))
     save(fig, "fig_transport")
 

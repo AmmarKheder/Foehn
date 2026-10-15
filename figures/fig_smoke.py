@@ -17,7 +17,7 @@ from matplotlib.colors import BoundaryNorm, LinearSegmentedColormap
 import final_model as FM
 from fig1_teaser_v6 import tiles
 from fig_exposure_zoom import ghap_box
-from gc_style import clean, geo_ticks, label
+from gc_style import clean, geo_ticks, label, letter_left_of
 from nature_style import DOUBLE, MM, PM_BOUNDS, plt, pm_cmap, save
 
 G = "/scratch/project_462001140/ammar/eccv/data/world/global1km"
@@ -162,7 +162,6 @@ def main():
           Patch(color="#EDEDED", label="no forecast in this evaluation (g)")]
     af.legend(handles=hf, loc="lower left", bbox_to_anchor=(0.0, 1.04), ncol=3, fontsize=5.0, frameon=False,
               handlelength=1.8, columnspacing=1.2, labelspacing=0.3, borderaxespad=0.0)
-    label(fig, fx(2), fy(yb + 30.5), "f")
     LD = np.arange(1, 8); P = np.full((len(LD), len(days_f)), np.nan)
     for i_, h in enumerate(LD):
         for j_, t in enumerate(days_f):
@@ -187,7 +186,6 @@ def main():
     ag.set_ylabel("Issued before", fontsize=6)
     for s_ in ag.spines.values():
         s_.set_visible(False)
-    label(fig, fx(2), fy(yb + 17.5), "g")
     ah = fig.add_axes([fx(137), fy(yb), fx(41), fy(28)])
     rng = np.random.default_rng(0)
     for h in LD:
@@ -208,8 +206,11 @@ def main():
            Line2D([0], [0], color="#7C8994", lw=0.6, ls=(0, (3, 2)), label=f"{THR:g} µg m$^{{-3}}$")]
     ah.legend(handles=hh_, loc="lower left", bbox_to_anchor=(0.0, 1.04), ncol=2, fontsize=5.0, frameon=False,
               handlelength=1.8, columnspacing=1.2, labelspacing=0.3, borderaxespad=0.0)
-    label(fig, fx(126), fy(yb + 28.8), "h")
     print("GHAP at the reserve:", " ".join(f"{day(d):%d}:{v:.0f}" for d, v in zip(days_f, gr)))
+    fig.canvas.draw()                                         # f and g in one column, 1 mm left of their axis labels; h likewise
+    letter_left_of(fig, [af, ag], "f", fy(yb + 30.5))
+    letter_left_of(fig, [af, ag], "g", fy(yb + 17.5))
+    letter_left_of(fig, ah, "h", fy(yb + 28.8))
     save(fig, "fig_smoke")
 
 

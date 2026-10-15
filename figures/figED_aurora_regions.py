@@ -17,7 +17,7 @@ from eval_cams12h import LAT, NX, REGIONS  # noqa: E402
 from fig_gc3_scorecards import boot_inits  # noqa: E402
 from fig_gc5_aurora_setup import fields  # noqa: E402
 import fig_gc5_aurora_setup as F5  # noqa: E402
-from gc_style import AURORA, CAMS, FOEHN, geo_ticks, land_mask_04, map_axes  # noqa: E402
+from gc_style import AURORA, CAMS, FOEHN, geo_ticks, land_mask_04, letter_left_of, map_axes  # noqa: E402
 from matplotlib.transforms import offset_copy  # noqa: E402
 from nature_style import DOUBLE, HERE, MM, plt, pm_cmap, save  # noqa: E402
 
@@ -39,6 +39,7 @@ def main():
     fx = lambda mm: mm / (W / MM); fy = lambda mm: mm / (H / MM)
     cols = ["CAMS analysis", "Foehn-CAMS", "Aurora", "CAMS forecast"]
     mw, mh, top = 29.5, 21.0, 168 - 8
+    rowlab, rowtop = [], []
     for i, r in enumerate(REG):
         N, S, Wl, E = REGIONS[r]
         y0 = top - (i + 1) * mh - i * 4.6                                      # room for the longitudes under each row
@@ -56,8 +57,9 @@ def main():
             if i == 0:
                 ax.set_title(nm, fontsize=6.2, pad=2, fontweight="bold" if nm == "Foehn-CAMS" else "normal")
             if j == 0:
-                ax.text(0, 0.5, r, transform=offset_copy(ax.transAxes, fig=fig, x=-18.5, y=0, units="points"), rotation=90,
-                        ha="right", va="center", fontsize=6, fontweight="bold")      # 6.5 mm left of the map, clear of its latitudes
+                rowlab += [fig.text(fx(16), fy(y0 + mh / 2), r, transform=offset_copy(fig.transFigure, fig=fig, x=-18.5, y=0, units="points"),
+                                    rotation=90,
+                        ha="right", va="center", fontsize=6, fontweight="bold")]     # 6.5 mm left of the row: one column of region names
         g = CR.index(r)
         SY = (("CAMS forecast", "CAMS forecast", CAMS, 0.9, "s"), ("Aurora", "Aurora", AURORA, 0.9, "D"), ("Foehn-CAMS (mean)", "Foehn-CAMS", FOEHN, 1.4, "o"))
         # main curves (all leads, climatology) and, beside them, the zoom on days 3-5 (shaded in the main panel)
@@ -92,12 +94,15 @@ def main():
         if i == 0:
             ac.set_title("May–November 2022", fontsize=5.8, pad=2)
             az.set_title("Days 3–5", fontsize=5.8, pad=2)
-        fig.text(fx(1), fy(y0 + mh + 0.6), "abcdef"[i], fontsize=8, fontweight="bold", va="bottom")
+        rowtop.append(fy(y0 + mh + 0.6))
     cax = fig.add_axes([fx(30), fy(3.0), fx(100), fy(1.6)])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax, orientation="horizontal", extend="max", spacing="uniform",
                       ticks=list(norm.boundaries))
     cb.ax.set_xticklabels([f"{t:g}" for t in norm.boundaries]); cb.ax.tick_params(labelsize=5, length=1.5, pad=1); cb.outline.set_linewidth(0.4)
     cb.set_label("PM$_{2.5}$ near the surface on 4 September 2022 00 UTC, forecasts issued 3 days earlier (µg m$^{-3}$)", fontsize=5.8, labelpad=1)
+    fig.canvas.draw()                                         # one column of letters, 1 mm left of the leftmost region name
+    for i, y_ in enumerate(rowtop):
+        letter_left_of(fig, rowlab, "abcdef"[i], y_)
     save(fig, "figED_aurora_regions")
 
 
