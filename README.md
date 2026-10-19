@@ -1,9 +1,17 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" width="360" alt="Foehn">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo/foehn_logo_dark.svg">
+    <img src="docs/assets/logo/foehn_logo_light.svg" width="300" alt="Foehn">
+  </picture>
 </p>
+
 <p align="center">
-  <img src="docs/assets/foehn_globes.gif" width="820" alt="Left: Foehn forecast of daily PM2.5 at 1 km for 21 January 2022. Right: FLEXGREEN, where the air arriving in thirty cities that day was, one to seven days before">
-  <br><sub>Left: Foehn's forecast of daily PM<sub>2.5</sub> at 1 km for 21 January 2022, issued the evening before (ensemble mean). Right: FLEXGREEN, where the air arriving in thirty cities on that day was, one to seven days before (256 particles per city; blue, in the mixed layer on the start day; pink, aloft).</sub>
+  <img src="docs/assets/readme/1_flexgreen.webp" width="200" alt="FLEXGREEN: the air reaching 18 cities on 25 January 2022, followed back five days">
+  <img src="docs/assets/readme/2_carried.webp" width="200" alt="The start-day PM2.5 turning into what that air carried: a transport map">
+  <img src="docs/assets/readme/3_generator.webp" width="200" alt="The generator: noise becoming one member of the forecast in four steps">
+  <img src="docs/assets/readme/4_one_km.webp" width="200" alt="The same at 1 km over Delhi and the upper Ganges plain">
+  <br><sub>Where the air came from (FLEXGREEN) · what it carried · noise becoming the forecast in four steps · the same at 1 km over Delhi.
+  Forecast for 25 January 2022, issued five days before (one member).</sub>
 </p>
 
 # Foehn: global kilometre-scale forecasts of fine particulate matter
@@ -60,9 +68,10 @@ physics says the air was, and generates the 1 km field of the target day by flow
 ensemble member.
 
 <p align="center">
-  <a href="docs/figures/fig_architecture.png"><img src="docs/figures/web/fig_architecture.jpg" width="880" alt="How Foehn makes a forecast: a, computed transport (FLEXGREEN); b, learned tracers read at the origins of the air; c, the conditional flow-matching generator, from noise to a 1 km forecast for every lead time"></a>
+  <a href="docs/figures/fig_architecture.png"><img src="docs/assets/readme/architecture.webp" width="880" alt="How Foehn makes a forecast, animated: a, computed transport (FLEXGREEN); b, learned tracers read at the origins of the air; c, the conditional flow-matching generator, from noise to a 1 km forecast for every lead time; close-up of the generator as it runs"></a>
+  <br><sub><b>a</b>, computed transport (FLEXGREEN) · <b>b</b>, learned tracers read where the air was · <b>c</b>, the flow-matching generator, from noise to a 1 km forecast in four steps · close-up of the generator as it runs. Click for the full-resolution figure.</sub>
 </p>
-<p align="center"><a href="https://ammarkheder.com/Foehn/#explained"><b>▶ Watch the film: Foehn explained (5 min, narrated)</b></a> · <a href="https://ammarkheder.com/Foehn/#how">the animated figure</a></p>
+<p align="center"><a href="https://ammarkheder.com/Foehn/#explained"><b>▶ Watch the film: Foehn, the full story (6 min, narrated)</b></a> · <a href="https://ammarkheder.com/Foehn/#how">the interactive animated figure</a></p>
 
 ## Results
 

@@ -8,14 +8,17 @@
 <meta property="og:title" content="Foehn — global kilometre-scale forecasts of PM2.5" />
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
-<link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="stylesheet" href="assets/style.css?v=20261014y" />
+<link rel="icon" type="image/png" href="assets/logo/favicon.png" />
+<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png" />
+<script>try { const t = localStorage.getItem("foehn-theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<meta name="color-scheme" content="light dark" />
+<link rel="stylesheet" href="assets/style.css?v=20261019a" />
 </head>
 <body>
 
 <header class="topbar">
   <div class="wrap topbar-row">
-    <a class="brand" href="#top"><img src="assets/logo_mark.svg" alt="" style="height:28px;width:28px" /><span>Foehn</span></a>
+    <a class="brand" href="#top"><img src="assets/logo/foehn_mark_small.svg" alt="" style="height:30px;width:30px" /><span>Foehn</span></a>
     <nav class="nav">
       <a href="#explained">Explained</a>
       <a href="#air">Where was the air?</a>
@@ -28,6 +31,10 @@
       <a href="#code">Code &amp; data</a>
       <a href="#cite">Cite</a>
     </nav>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode" title="Light / dark">
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+    </button>
   </div>
 </header>
 
@@ -37,7 +44,8 @@
   <div class="wrap">
     <div class="hero-text">
       <p class="kicker">INAR Helsinki · LUT University · AMC-Lahti</p>
-      <img src="assets/logo.svg" alt="Foehn" style="width:min(100%,360px);display:block;margin:0 0 10px -4px" />
+      <img class="logo-light" src="assets/logo/foehn_logo_light.svg" alt="Foehn" style="width:min(100%,380px);display:block;margin:0 0 12px -6px" />
+      <img class="logo-dark" src="assets/logo/foehn_logo_dark.svg" alt="Foehn" style="width:min(100%,380px);margin:0 0 12px -6px" />
       <p class="tag">Global kilometre-scale forecasts of fine particulate matter</p>
       <p class="lede">Daily PM<sub>2.5</sub> from all its sources (traffic, industry, heating, agriculture, desert dust, sea salt
         and fires) for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as a
@@ -512,6 +520,18 @@
     document.querySelectorAll(".ex-tab").forEach((x) => x.classList.toggle("on", x === b));
     v.pause(); v.setAttribute("poster", b.dataset.poster); v.querySelector("source").setAttribute("src", b.dataset.src); v.load();
   }));
+})();
+</script>
+<script>
+// the light / dark switch: remembered on this device; until used, the page follows the device setting
+(function () {
+  const b = document.getElementById("theme-toggle"), root = document.documentElement;
+  if (!b) return;
+  b.addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("foehn-theme", root.dataset.theme); } catch (e) {}
+  });
 })();
 </script>
 </body>
