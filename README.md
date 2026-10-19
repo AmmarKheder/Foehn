@@ -10,8 +10,8 @@
   <img src="docs/assets/readme/2_carried.webp" width="200" alt="The start-day PM2.5 turning into what that air carried: a transport map">
   <img src="docs/assets/readme/3_generator.webp" width="200" alt="The generator: noise becoming one member of the forecast in four steps">
   <img src="docs/assets/readme/4_one_km.webp" width="200" alt="The same at 1 km over Delhi and the upper Ganges plain">
-  <br><sub>Where the air came from (FLEXGREEN) · what it carried · noise becoming the forecast in four steps · the same at 1 km over Delhi.
-  Forecast for 25 January 2022, issued five days before (one member).</sub>
+  <br><sub>Where the air came from (FLEXGREEN, 30 cities on 21 January 2022, one to seven days before) · the start day turning into what the air carried
+  (transport map) · the 1 km forecast for 21 January forming from noise in the four steps of the sampler · the same at 1 km over Delhi.</sub>
 </p>
 
 # Foehn: global kilometre-scale forecasts of fine particulate matter
