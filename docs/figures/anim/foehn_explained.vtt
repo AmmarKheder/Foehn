@@ -88,241 +88,241 @@ Where was it the day before,
 and the days before that?
 
 21
-00:00:49.554 --> 00:00:53.164
+00:00:50.787 --> 00:00:54.397
 FLEXGREEN takes the weather
 forecast and runs it backwards.
 
 22
-00:00:53.214 --> 00:00:56.684
+00:00:54.447 --> 00:00:57.917
 Every fifteen minutes, it moves a
 particle of air against the wind,
 
 23
-00:00:56.734 --> 00:00:57.804
+00:00:57.967 --> 00:00:59.037
 in three dimensions,
 
 24
-00:00:57.854 --> 00:01:00.664
+00:00:59.087 --> 00:01:01.897
 with a small random kick for
 the turbulence near the ground.
 
 25
-00:01:01.488 --> 00:01:04.858
+00:01:02.721 --> 00:01:06.091
 It does this for thirty-two
 particles over every place on land,
 
 26
-00:01:04.908 --> 00:01:07.338
+00:01:06.141 --> 00:01:08.571
 released at random moments of the day.
 
 27
-00:01:07.388 --> 00:01:10.238
+00:01:08.621 --> 00:01:11.471
 Together, they draw
 where that air came from.
 
 28
-00:01:10.954 --> 00:01:13.124
+00:01:12.188 --> 00:01:14.358
 On the way, each particle fades:
 
 29
-00:01:13.254 --> 00:01:16.304
+00:01:14.488 --> 00:01:17.538
 rain and the ground take
 part of its aerosol away.
 
 30
-00:01:16.714 --> 00:01:18.984
+00:01:17.948 --> 00:01:20.218
 What remains is its weight.
 
 31
-00:01:19.721 --> 00:01:23.231
+00:01:20.954 --> 00:01:24.464
 Where the particles were, and their
 weights, make a map for each place:
 
 32
-00:01:23.841 --> 00:01:27.071
+00:01:25.074 --> 00:01:28.304
 its Green's function, named after
 the mathematician George Green.
 
 33
-00:01:27.701 --> 00:01:31.151
+00:01:28.934 --> 00:01:32.384
 Multiply the start day by this map,
 and you get what the air brings there.
 
 34
-00:01:31.501 --> 00:01:35.051
+00:01:32.734 --> 00:01:36.284
 The same map works for
 pollution, smoke and emissions:
 
 35
-00:01:35.601 --> 00:01:40.091
+00:01:36.834 --> 00:01:41.324
 computed once, with no learned
 parameter, in about five minutes a day.
 
 36
-00:01:41.921 --> 00:01:44.751
+00:01:44.455 --> 00:01:47.285
 Now, look at what that air
 was carrying on the start day.
 
 37
-00:01:45.087 --> 00:01:47.317
+00:01:47.621 --> 00:01:49.851
 Each particle reads the
 pollution where it was.
 
 38
-00:01:47.720 --> 00:01:50.010
+00:01:50.254 --> 00:01:52.544
 We keep the air that
 started near the ground,
 
 39
-00:01:50.060 --> 00:01:54.050
+00:01:52.594 --> 00:01:56.584
 weight each reading by how much
 of that air survived the journey,
 
 40
-00:01:54.200 --> 00:01:54.800
+00:01:56.734 --> 00:01:57.334
 and average.
 
 41
-00:01:55.220 --> 00:01:56.210
+00:01:57.754 --> 00:01:58.744
 Carried forward to Delhi,
 
 42
-00:01:56.260 --> 00:01:59.710
+00:01:58.794 --> 00:02:02.244
 that air brings about eighty-four
 micrograms per cubic metre.
 
 43
-00:02:00.221 --> 00:02:02.351
+00:02:02.755 --> 00:02:04.885
 Done for every place, this gives a map:
 
 44
-00:02:02.401 --> 00:02:04.451
+00:02:04.935 --> 00:02:06.985
 one of forty-four transport maps.
 
 45
-00:02:04.941 --> 00:02:07.351
+00:02:07.475 --> 00:02:09.885
 Thirty-two others are
 made from tracers that
 
 46
-00:02:07.401 --> 00:02:09.371
+00:02:09.935 --> 00:02:11.905
 the network learns from the start day;
 
 47
-00:02:09.461 --> 00:02:14.051
+00:02:11.995 --> 00:02:16.585
 the rest are computed, such as the
 emissions the air takes up on its way.
 
 48
-00:02:14.421 --> 00:02:16.231
+00:02:16.955 --> 00:02:18.765
 Here is one of those learned tracers.
 
 49
-00:02:16.301 --> 00:02:18.591
+00:02:18.835 --> 00:02:21.125
 The encoder makes it from the start day;
 
 50
-00:02:18.801 --> 00:02:20.351
+00:02:21.335 --> 00:02:22.885
 nothing tells it what it should mean,
 
 51
-00:02:20.401 --> 00:02:22.271
+00:02:22.935 --> 00:02:24.805
 it is learned together with the forecast.
 
 52
-00:02:22.581 --> 00:02:25.211
+00:02:25.115 --> 00:02:27.745
 The same transport then
 reads it where the air was.
 
 53
-00:02:25.361 --> 00:02:27.031
+00:02:27.895 --> 00:02:29.565
 That is what the generator receives.
 
 54
-00:02:27.555 --> 00:02:28.325
+00:02:30.088 --> 00:02:30.858
 Now, the generator.
 
 55
-00:02:28.515 --> 00:02:29.905
+00:02:31.048 --> 00:02:32.438
 Take a single pixel: Delhi.
 
 56
-00:02:30.335 --> 00:02:33.425
+00:02:32.868 --> 00:02:35.958
 The forecast does not start
 from a guess, but from noise.
 
 57
-00:02:33.775 --> 00:02:36.905
+00:02:36.308 --> 00:02:39.438
 Sixty-four random numbers, one
 for each member of the ensemble.
 
 58
-00:02:37.388 --> 00:02:37.998
+00:02:39.921 --> 00:02:40.531
 At each step,
 
 59
-00:02:38.048 --> 00:02:41.358
+00:02:40.581 --> 00:02:43.891
 a neural network looks at the
 current state and at the conditions,
 
 60
-00:02:41.408 --> 00:02:43.498
+00:02:43.941 --> 00:02:46.031
 and tells it which way to move.
 
 61
-00:02:43.821 --> 00:02:46.151
+00:02:46.354 --> 00:02:48.684
 In four steps, the noise
 becomes a forecast.
 
 62
-00:02:51.821 --> 00:02:55.731
+00:02:54.354 --> 00:02:58.264
 Sixty-four noise draws become
 sixty-four forecasts: an ensemble.
 
 63
-00:02:55.781 --> 00:02:58.771
+00:02:58.314 --> 00:03:01.304
 And the estimate made afterwards
 falls right inside it.
 
 64
-00:02:59.021 --> 00:03:01.251
+00:03:01.555 --> 00:03:03.785
 Now do the same for a
 whole continent at once:
 
 65
-00:03:01.301 --> 00:03:04.491
+00:03:03.835 --> 00:03:07.025
 twenty-nine million pixels, in
 a single pass of the network.
 
 66
-00:03:04.920 --> 00:03:08.530
+00:03:07.454 --> 00:03:11.064
 Watch the noise fade, as the
 kilometre-scale detail appears.
 
 67
-00:03:14.554 --> 00:03:15.584
+00:03:17.087 --> 00:03:18.117
 So here is the whole machine.
 
 68
-00:03:15.974 --> 00:03:18.144
+00:03:18.507 --> 00:03:20.677
 Computed transport tells
 where the air came from.
 
 69
-00:03:18.194 --> 00:03:19.884
+00:03:20.727 --> 00:03:22.417
 Learned tracers say what it carried.
 
 70
-00:03:19.934 --> 00:03:23.044
+00:03:22.467 --> 00:03:25.577
 And the generator turns noise
 into a one-kilometre forecast.
 
 71
-00:03:23.488 --> 00:03:27.183
+00:03:26.021 --> 00:03:29.717
 Every day ahead, every member,
 all land at one kilometre.
 
 72
-00:03:27.233 --> 00:03:28.323
+00:03:29.767 --> 00:03:30.856
 This is Foehn.
 
