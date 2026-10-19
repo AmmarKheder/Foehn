@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png" />
 <script>try { const t = localStorage.getItem("foehn-theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="assets/style.css?v=20261019a" />
+<link rel="stylesheet" href="assets/style.css?v=20261019b" />
 </head>
 <body>
 
@@ -47,6 +47,12 @@
       <img class="logo-light" src="assets/logo/foehn_logo_light.svg" alt="Foehn" style="width:min(100%,380px);display:block;margin:0 0 12px -6px" />
       <img class="logo-dark" src="assets/logo/foehn_logo_dark.svg" alt="Foehn" style="width:min(100%,380px);margin:0 0 12px -6px" />
       <p class="tag">Global kilometre-scale forecasts of fine particulate matter</p>
+      <div class="globe-row" aria-label="How a Foehn forecast is made, in four animated globes">
+        <figure><img src="assets/readme/1_flexgreen.webp" width="170" height="170" alt="FLEXGREEN: the air reaching 18 cities on 25 January 2022, followed back five days" /><figcaption>Where the air came from</figcaption></figure>
+        <figure><img src="assets/readme/2_carried.webp" width="170" height="170" alt="The start-day PM2.5 turning into what that air carried: a transport map" /><figcaption>What it carried</figcaption></figure>
+        <figure><img src="assets/readme/3_generator.webp" width="170" height="170" alt="The generator: noise becoming one member of the forecast in four steps" /><figcaption>Noise &rarr; forecast, in 4 steps</figcaption></figure>
+        <figure><img src="assets/readme/4_one_km.webp" width="170" height="170" alt="The same at 1 km over Delhi and the upper Ganges plain" /><figcaption>The same at 1&nbsp;km</figcaption></figure>
+      </div>
       <p class="lede">Daily PM<sub>2.5</sub> from all its sources (traffic, industry, heating, agriculture, desert dust, sea salt
         and fires) for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as a
         calibrated ensemble. Foehn learns from the first global 1&nbsp;km record of PM<sub>2.5</sub>, generates whole continents
