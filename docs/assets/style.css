@@ -43,7 +43,7 @@ h1 { font-size: 44px; line-height: 1.08; margin: 0 0 14px; letter-spacing: -.01e
 .btn-primary:hover { background: var(--blue-dark); text-decoration: none; }
 .btn-ghost { color: var(--blue); background: var(--surface); }
 .btn-ghost:hover { background: var(--bg-soft); text-decoration: none; }
-.hero-text { max-width: 820px; }
+.hero-text { max-width: none; }
 .hero-media { margin-top: 26px; }
 .hero-media img { width: 100%; max-width: 1020px; display: block; margin: 0 auto; }
 @media (max-width: 700px) { .hero-media img { max-width: 420px; } }
@@ -240,3 +240,17 @@ section.band-dark .sub { color: #A7AFB9; }
 .globe-row img { width: 100%; max-width: 170px; height: auto; display: block; margin: 0 auto; border: 0; border-radius: 50%; background: transparent; }
 .globe-row figcaption { font-size: 12.5px; color: var(--muted); margin-top: 8px; line-height: 1.35; }
 @media (max-width: 600px) { .globe-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; } .globe-row img { max-width: 150px; } }
+
+/* hero in two columns on wide screens: name and words on the left, the four globes as a 2 x 2 grid on the right;
+   on narrow screens: the name first, then the globes, then the words and the buttons */
+.hero-top { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); grid-template-areas: "head globes" "body globes";
+  column-gap: 44px; align-items: center; }
+.hero-head { grid-area: head; min-width: 0; align-self: end; }
+.hero-body { grid-area: body; min-width: 0; align-self: start; }
+.hero-right { grid-area: globes; min-width: 0; }
+.globe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 18px; max-width: 460px; margin: 0 0 0 auto; }
+.globe-grid img { max-width: 190px; }
+.hero .stats { margin-top: 26px; }
+@media (max-width: 960px) { .hero-top { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "globes" "body"; }
+  .globe-grid { margin: 4px 0 18px; max-width: 760px; grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .globe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
