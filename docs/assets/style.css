@@ -237,7 +237,7 @@ section.band-dark .sub { color: #A7AFB9; }
 /* the four animated globes under the logo (the same as at the top of the README) */
 .globe-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; max-width: 780px; margin: 18px 0 20px; }
 .globe-row figure { margin: 0; text-align: center; }
-.globe-row img { width: 100%; max-width: 170px; height: auto; display: block; margin: 0 auto; border: 0; border-radius: 50%; background: transparent; }
+.globe-row img { width: 100%; max-width: 170px; height: auto; display: block; margin: 0 auto; border: 0; background: transparent; }
 .globe-row figcaption { font-size: 12.5px; color: var(--muted); margin-top: 8px; line-height: 1.35; }
 @media (max-width: 600px) { .globe-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; } .globe-row img { max-width: 150px; } }
 
