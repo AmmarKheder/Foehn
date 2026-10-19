@@ -219,6 +219,13 @@ section.band-dark .sub { color: #A7AFB9; }
 .hero-media .ex-tab:hover { border-color: var(--blue); }
 .hero-media .ex-tab.on { background: var(--blue); border-color: var(--blue); color: var(--on-blue); }
 .hero-media .explainer-feature { max-width: 1060px; margin: 0 auto; }
+/* chapters under the film: one pill per scene, the current one lit while playing */
+.ex-chapters { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
+.ex-ch { font: inherit; font-size: 12.5px; line-height: 1.2; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.ex-ch:hover { border-color: var(--blue); color: var(--ink); }
+.ex-ch.on { border-color: var(--blue); color: var(--ink); box-shadow: inset 0 0 0 1px var(--blue); }
+.ex-ch-t { font-variant-numeric: tabular-nums; color: var(--blue); margin-right: 2px; }
+video::cue { background: rgba(12, 15, 20, 0.72); color: #F2F4F7; font-size: 0.9em; line-height: 1.3; }
 .hero-media .explainer-feature figcaption { color: var(--muted); text-align: center; }
 
 /* the theme switch and the two versions of the logo */

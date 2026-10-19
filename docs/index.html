@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png" />
 <script>try { const t = localStorage.getItem("foehn-theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="assets/style.css?v=20261019e" />
+<link rel="stylesheet" href="assets/style.css?v=20261019f" />
 </head>
 <body>
 
@@ -81,16 +81,18 @@
   </div>
   <div class="wrap hero-media" id="explained">
     <div class="ex-tabs" role="group" aria-label="Choose a version">
-      <button type="button" class="ex-tab on" data-src="figures/anim/foehn_film.mp4?v=26" data-src-mobile="figures/anim/foehn_film_720.mp4?v=26" data-poster="figures/anim/foehn_film_poster.jpg?v=7">The full story &middot; 7&nbsp;min</button>
-      <button type="button" class="ex-tab" data-src="figures/anim/foehn_explained.mp4?v=16" data-src-mobile="figures/anim/foehn_explained_720.mp4?v=16" data-poster="figures/anim/foehn_explainer_poster.jpg?v=7">How it works &middot; 3&nbsp;min</button>
+      <button type="button" class="ex-tab on" data-src="figures/anim/foehn_film.mp4?v=26" data-src-mobile="figures/anim/foehn_film_720.mp4?v=26" data-poster="figures/anim/foehn_film_poster.jpg?v=7" data-vtt="figures/anim/foehn_film.vtt?v=1" data-chapters="film">The full story &middot; 7&nbsp;min</button>
+      <button type="button" class="ex-tab" data-src="figures/anim/foehn_explained.mp4?v=16" data-src-mobile="figures/anim/foehn_explained_720.mp4?v=16" data-poster="figures/anim/foehn_explainer_poster.jpg?v=7" data-vtt="figures/anim/foehn_explained.vtt?v=1" data-chapters="short">How it works &middot; 3&nbsp;min</button>
     </div>
     <figure class="explainer-feature">
       <video id="explainer-video" controls playsinline preload="metadata" poster="figures/anim/foehn_film_poster.jpg?v=7" width="1920" height="1080"
              aria-label="Foehn explained: an animated, narrated film">
         <source src="figures/anim/foehn_film.mp4?v=26" type="video/mp4" />
+        <track kind="subtitles" src="figures/anim/foehn_film.vtt?v=1" srclang="en" label="English" default />
       </video>
+      <nav class="ex-chapters" id="ex-chapters" aria-label="Chapters"></nav>
       <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the paper.
-        Animation and voice &copy; 2026 Ammar Kheder.</figcaption>
+        Subtitles with the CC button. Animation and voice &copy; 2026 Ammar Kheder.</figcaption>
     </figure>
   </div>
 </section>
@@ -532,11 +534,39 @@
   // phones get the 720p versions (lower bitrate, H.264 main profile): the 1080p files played badly in Safari on iPhone
   const mobile = matchMedia("(max-width: 820px)").matches || /iPhone|iPad|Android/.test(navigator.userAgent);
   const pickSrc = (b) => (mobile && b.dataset.srcMobile) ? b.dataset.srcMobile : b.dataset.src;
+  // chapters: the start of each scene of the assembled films (manim/out/voice_*_scenes.json)
+  const CH = {
+    film: [[0, "A few days of bad air"], [18, "What are fine particles?"], [63, "1 km versus 40 km"], [97, "Where the air is measured"],
+           [130, "Why networks struggle"], [178, "The answer: Foehn"], [201, "Where was the air? FLEXGREEN"], [235, "Green's function"],
+           [296, "What the air carried"], [341, "The generator"], [387, "The whole machine"], [402, "Does it work?"]],
+    short: [[0, "Where was the air?"], [16, "FLEXGREEN runs the wind backwards"], [41, "Green's function"], [102, "What the air carried"],
+            [148, "The generator"], [194, "The whole machine"]]
+  };
+  const nav = document.getElementById("ex-chapters");
+  const mmss = (t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+  const chapters = (key) => {
+    if (!nav) return;
+    nav.innerHTML = "";
+    (CH[key] || []).forEach(([t, name]) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "ex-ch"; b.dataset.t = t;
+      b.innerHTML = `<span class="ex-ch-t">${mmss(t)}</span> ${name}`;
+      b.addEventListener("click", () => { v.currentTime = t; v.play(); nav.querySelectorAll(".ex-ch").forEach((x) => x.classList.toggle("on", x === b)); });
+      nav.appendChild(b);
+    });
+  };
+  v.addEventListener("timeupdate", () => {                       // the current chapter is highlighted while playing
+    if (!nav) return;
+    let cur = null; nav.querySelectorAll(".ex-ch").forEach((x) => { if (+x.dataset.t <= v.currentTime + 0.5) cur = x; });
+    nav.querySelectorAll(".ex-ch").forEach((x) => x.classList.toggle("on", x === cur));
+  });
   const on = document.querySelector(".ex-tab.on");
   if (on && mobile) { v.querySelector("source").setAttribute("src", pickSrc(on)); v.load(); }
+  chapters(on ? on.dataset.chapters : "film");
   document.querySelectorAll(".ex-tab").forEach((b) => b.addEventListener("click", () => {
     document.querySelectorAll(".ex-tab").forEach((x) => x.classList.toggle("on", x === b));
-    v.pause(); v.setAttribute("poster", b.dataset.poster); v.querySelector("source").setAttribute("src", pickSrc(b)); v.load();
+    v.pause(); v.setAttribute("poster", b.dataset.poster); v.querySelector("source").setAttribute("src", pickSrc(b));
+    const tr = v.querySelector("track"); if (tr && b.dataset.vtt) tr.setAttribute("src", b.dataset.vtt);
+    v.load(); chapters(b.dataset.chapters);
   }));
 })();
 </script>

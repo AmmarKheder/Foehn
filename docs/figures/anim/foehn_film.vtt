@@ -1,0 +1,615 @@
+WEBVTT
+
+1
+00:00:06.820 --> 00:00:09.390
+About a million deaths every
+year are attributable to
+
+2
+00:00:09.440 --> 00:00:12.030
+breathing fine particles
+over just a few days.
+
+3
+00:00:12.620 --> 00:00:16.410
+That is the timescale on which a forecast
+can let people protect themselves.
+
+4
+00:00:18.455 --> 00:00:19.625
+But what are fine particles?
+
+5
+00:00:19.995 --> 00:00:22.885
+They are specks of soot,
+smoke, dust and other matter,
+
+6
+00:00:22.935 --> 00:00:25.725
+no wider than two and a half
+thousandths of a millimetre:
+
+7
+00:00:25.775 --> 00:00:28.965
+about thirty times
+thinner than a human hair.
+
+8
+00:00:30.621 --> 00:00:36.271
+They come from traffic, industry, heating
+and fires, from desert dust and sea salt,
+
+9
+00:00:36.321 --> 00:00:42.191
+and from gases, such as volatile organic
+compounds, that turn into particles in the air.
+
+10
+00:00:45.588 --> 00:00:47.578
+Breathed in, they reach
+deep into the lungs,
+
+11
+00:00:47.628 --> 00:00:49.878
+and some can even enter the bloodstream.
+
+12
+00:00:52.288 --> 00:00:55.118
+We count them in micrograms
+per cubic metre of air.
+
+13
+00:00:55.168 --> 00:01:00.758
+For a single day, the World Health
+Organization advises staying below fifteen.
+
+14
+00:01:02.588 --> 00:01:03.978
+And this pollution is local.
+
+15
+00:01:04.108 --> 00:01:06.838
+It changes between a city
+centre and its suburbs,
+
+16
+00:01:06.888 --> 00:01:09.238
+along a valley, downwind of a fire.
+
+17
+00:01:09.587 --> 00:01:13.497
+Yet global forecasts are made on
+grids about forty kilometres wide.
+
+18
+00:01:14.007 --> 00:01:16.617
+Here is the same day,
+seen at forty kilometres.
+
+19
+00:01:17.407 --> 00:01:19.297
+The hotspots are flattened.
+
+20
+00:01:19.521 --> 00:01:21.711
+But a grid this coarse does
+not only blur the map.
+
+21
+00:01:21.761 --> 00:01:23.151
+It hides people.
+
+22
+00:01:23.401 --> 00:01:33.711
+In twenty twenty-two, even a perfect forty-kilometre forecast
+would have missed a hundred and eighty-six million people a day,
+
+23
+00:01:33.761 --> 00:01:35.211
+breathing air above a World
+Health Organization target.
+
+24
+00:01:37.055 --> 00:01:39.825
+Where you live also decides
+whether your air is measured.
+
+25
+00:01:40.754 --> 00:01:47.024
+A study published in twenty nineteen found that six
+countries in ten had no regular monitoring of fine particles,
+
+26
+00:01:47.074 --> 00:01:51.384
+and that people lived, on average, two hundred
+and twenty kilometres from the nearest monitor.
+
+27
+00:01:53.188 --> 00:01:55.858
+And coarse forecasts do
+not miss everyone equally.
+
+28
+00:01:56.378 --> 00:02:01.118
+In twenty twenty-two, a person in
+Pakistan or Egypt spent, on average,
+
+29
+00:02:01.168 --> 00:02:05.498
+more than three weeks in harmful air that
+a forty-kilometre forecast could not see.
+
+30
+00:02:05.548 --> 00:02:09.218
+In the United States or in
+Germany, it was less than one day.
+
+31
+00:02:10.488 --> 00:02:13.238
+Machine learning has
+transformed weather forecasting.
+
+32
+00:02:13.288 --> 00:02:16.278
+So why not forecast air
+pollution at one kilometre?
+
+33
+00:02:17.108 --> 00:02:18.958
+Two problems stand in the way.
+
+34
+00:02:20.221 --> 00:02:21.171
+The first is scale.
+
+35
+00:02:21.221 --> 00:02:25.651
+A continent at one kilometre is an
+image of tens of millions of pixels,
+
+36
+00:02:25.701 --> 00:02:29.551
+which is too large for most
+networks to take in one piece.
+
+37
+00:02:29.887 --> 00:02:31.817
+So networks are applied tile by tile,
+
+38
+00:02:31.867 --> 00:02:34.497
+and they leave seams at
+the edges of the tiles.
+
+39
+00:02:36.421 --> 00:02:37.551
+The second is the peaks.
+
+40
+00:02:37.741 --> 00:02:40.251
+Train a network to minimise
+its squared error,
+
+41
+00:02:40.531 --> 00:02:43.491
+and it predicts the average
+of all the possible futures.
+
+42
+00:02:43.787 --> 00:02:45.957
+The average is blurred,
+and its peak is lower.
+
+43
+00:02:46.067 --> 00:02:49.317
+The extremes that matter most
+for health are smoothed away.
+
+44
+00:02:50.554 --> 00:02:52.064
+And some peaks are not made locally.
+
+45
+00:02:52.194 --> 00:02:56.104
+Dust, smoke and haze can arrive with air
+that has travelled thousands of kilometres.
+
+46
+00:02:57.788 --> 00:03:00.898
+Our model, Foehn, is built
+to address both problems.
+
+47
+00:03:00.948 --> 00:03:03.878
+It forecasts a whole
+continent in one pass,
+
+48
+00:03:03.928 --> 00:03:06.658
+and joins these windows
+without visible seams.
+
+49
+00:03:06.708 --> 00:03:08.078
+It is generative:
+
+50
+00:03:08.288 --> 00:03:11.678
+it draws possible futures
+instead of their average,
+
+51
+00:03:11.728 --> 00:03:14.198
+and together they form an ensemble.
+
+52
+00:03:14.248 --> 00:03:17.818
+And it computes where the air
+comes from, instead of learning it.
+
+53
+00:03:17.948 --> 00:03:19.618
+Let's see how it works.
+
+54
+00:03:24.687 --> 00:03:25.897
+Let's take one question.
+
+55
+00:03:25.987 --> 00:03:29.377
+What will the air over Delhi
+contain, five days from now?
+
+56
+00:03:29.621 --> 00:03:30.971
+Start with the weather forecast:
+
+57
+00:03:31.041 --> 00:03:32.931
+the wind that will carry the air there.
+
+58
+00:03:33.820 --> 00:03:35.090
+Now, let's play it in reverse.
+
+59
+00:03:35.500 --> 00:03:41.390
+A physics engine called FLEXGREEN follows the
+air that will arrive in Delhi back in time,
+
+60
+00:03:41.440 --> 00:03:43.010
+to where it was five days earlier.
+
+61
+00:03:43.420 --> 00:03:46.230
+Particles of air are followed
+through the three-dimensional wind.
+
+62
+00:03:46.280 --> 00:03:48.190
+The blue ones stay near the ground;
+
+63
+00:03:48.240 --> 00:03:49.970
+the pink ones travel aloft.
+
+64
+00:03:50.154 --> 00:03:52.104
+The same is done for every place on land.
+
+65
+00:03:52.214 --> 00:03:53.564
+And none of this is learned:
+
+66
+00:03:53.614 --> 00:03:54.464
+it is computed.
+
+67
+00:03:55.420 --> 00:03:57.750
+How does FLEXGREEN know where the air was?
+
+68
+00:03:57.800 --> 00:04:00.350
+Take the air above one
+place on the forecast day.
+
+69
+00:04:00.400 --> 00:04:02.470
+Where was it the day before,
+and the days before that?
+
+70
+00:04:03.187 --> 00:04:06.797
+FLEXGREEN takes the weather
+forecast and runs it backwards.
+
+71
+00:04:06.847 --> 00:04:11.437
+Every fifteen minutes, it moves a particle of
+air against the wind, in three dimensions,
+
+72
+00:04:11.487 --> 00:04:14.297
+with a small random kick for
+the turbulence near the ground.
+
+73
+00:04:15.121 --> 00:04:18.491
+It does this for thirty-two
+particles over every place on land,
+
+74
+00:04:18.541 --> 00:04:20.971
+released at random moments of the day.
+
+75
+00:04:21.021 --> 00:04:23.871
+Together, they draw
+where that air came from.
+
+76
+00:04:24.587 --> 00:04:26.757
+On the way, each particle fades:
+
+77
+00:04:26.887 --> 00:04:29.937
+rain and the ground take
+part of its aerosol away.
+
+78
+00:04:30.347 --> 00:04:32.617
+What remains is its weight.
+
+79
+00:04:33.354 --> 00:04:36.864
+Where the particles were, and their
+weights, make a map for each place:
+
+80
+00:04:37.474 --> 00:04:40.704
+its Green's function, named after
+the mathematician George Green.
+
+81
+00:04:41.334 --> 00:04:44.784
+Multiply the start day by this map,
+and you get what the air brings there.
+
+82
+00:04:45.134 --> 00:04:48.684
+The same map works for
+pollution, smoke and emissions:
+
+83
+00:04:49.234 --> 00:04:53.724
+computed once, with no learned
+parameter, in about five minutes a day.
+
+84
+00:04:55.555 --> 00:04:58.385
+Now, look at what that air
+was carrying on the start day.
+
+85
+00:04:58.721 --> 00:05:00.951
+Each particle reads the
+pollution where it was.
+
+86
+00:05:01.354 --> 00:05:03.644
+We keep the air that
+started near the ground,
+
+87
+00:05:03.694 --> 00:05:08.424
+weight each reading by how much of that
+air survived the journey, and average.
+
+88
+00:05:08.854 --> 00:05:09.844
+Carried forward to Delhi,
+
+89
+00:05:09.894 --> 00:05:13.344
+that air brings about eighty-four
+micrograms per cubic metre.
+
+90
+00:05:13.855 --> 00:05:15.985
+Done for every place, this gives a map:
+
+91
+00:05:16.035 --> 00:05:18.085
+one of forty-four transport maps.
+
+92
+00:05:18.575 --> 00:05:23.005
+Thirty-two others are made from tracers
+that the network learns from the start day;
+
+93
+00:05:23.095 --> 00:05:27.685
+the rest are computed, such as the
+emissions the air takes up on its way.
+
+94
+00:05:28.055 --> 00:05:29.865
+Here is one of those learned tracers.
+
+95
+00:05:29.935 --> 00:05:32.225
+The encoder makes it from the start day;
+
+96
+00:05:32.435 --> 00:05:35.905
+nothing tells it what it should mean, it
+is learned together with the forecast.
+
+97
+00:05:36.215 --> 00:05:38.845
+The same transport then
+reads it where the air was.
+
+98
+00:05:38.995 --> 00:05:40.665
+That is what the generator receives.
+
+99
+00:05:41.188 --> 00:05:41.958
+Now, the generator.
+
+100
+00:05:42.148 --> 00:05:43.538
+Take a single pixel:
+
+101
+00:05:43.968 --> 00:05:43.538
+Delhi.
+
+102
+00:05:43.968 --> 00:05:47.058
+The forecast does not start
+from a guess, but from noise.
+
+103
+00:05:47.408 --> 00:05:50.538
+Sixty-four random numbers, one
+for each member of the ensemble.
+
+104
+00:05:51.021 --> 00:05:54.991
+At each step, a neural network looks at
+the current state and at the conditions,
+
+105
+00:05:55.041 --> 00:05:57.131
+and tells it which way to move.
+
+106
+00:05:57.454 --> 00:05:59.784
+In four steps, the noise
+becomes a forecast.
+
+107
+00:06:05.454 --> 00:06:08.404
+Sixty-four noise draws
+become sixty-four forecasts:
+
+108
+00:06:08.454 --> 00:06:09.364
+an ensemble.
+
+109
+00:06:09.414 --> 00:06:12.404
+And the estimate made afterwards
+falls right inside it.
+
+110
+00:06:12.655 --> 00:06:14.885
+Now do the same for a
+whole continent at once:
+
+111
+00:06:14.935 --> 00:06:18.125
+twenty-nine million pixels, in
+a single pass of the network.
+
+112
+00:06:18.554 --> 00:06:22.164
+Watch the noise fade, as the
+kilometre-scale detail appears.
+
+113
+00:06:28.187 --> 00:06:29.217
+So here is the whole machine.
+
+114
+00:06:29.607 --> 00:06:31.777
+Computed transport tells
+where the air came from.
+
+115
+00:06:31.827 --> 00:06:33.517
+Learned tracers say what it carried.
+
+116
+00:06:33.567 --> 00:06:36.677
+And the generator turns noise
+into a one-kilometre forecast.
+
+117
+00:06:41.721 --> 00:06:42.451
+Does it work?
+
+118
+00:06:42.561 --> 00:06:47.571
+We compared its forecasts, issued
+every second day of twenty twenty-two,
+
+119
+00:06:47.741 --> 00:06:51.351
+with measurements at more than six thousand
+stations that were never used to train it.
+
+120
+00:06:51.587 --> 00:06:54.817
+Compared with the air usually found
+in each place at that time of year,
+
+121
+00:06:54.867 --> 00:07:00.077
+its error is about a fifth lower one day ahead,
+and about a tenth lower four days ahead.
+
+122
+00:07:00.420 --> 00:07:03.210
+Simply repeating today's measurement
+does better for tomorrow,
+
+123
+00:07:03.260 --> 00:07:05.110
+but only where a station exists.
+
+124
+00:07:05.500 --> 00:07:08.510
+From two to four days
+ahead, Foehn does better.
+
+125
+00:07:09.621 --> 00:07:11.011
+Here is a real forecast at one kilometre,
+
+126
+00:07:11.601 --> 00:07:16.551
+issued on the eighth of January, twenty
+twenty-two, over the North China Plain.
+
+127
+00:07:16.601 --> 00:07:19.731
+It saw the haze clear, day
+after day, four days ahead.
+
+128
+00:07:23.321 --> 00:07:25.231
+And it forecasts at the
+scale of a kilometre,
+
+129
+00:07:25.321 --> 00:07:28.711
+where the people a coarse
+grid hides actually live.
+
+130
+00:07:30.688 --> 00:07:32.098
+Compute what physics knows.
+
+131
+00:07:32.588 --> 00:07:33.718
+Learn the rest.
+
+132
+00:07:34.108 --> 00:07:35.418
+This is Foehn.
+
