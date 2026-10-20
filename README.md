@@ -18,7 +18,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/website-ammarkheder.com%2FFoehn-1F5AA6)](https://ammarkheder.com/Foehn/)
-[![Paper](https://img.shields.io/badge/paper-submitted-lightgrey)](#citation)
+[![arXiv](https://img.shields.io/badge/arXiv-2610.25941-b31b1b)](https://arxiv.org/abs/2610.25941)
 
 Foehn forecasts the daily fine particulate matter (PM<sub>2.5</sub>), from all its sources (traffic, industry, heating,
 agriculture, desert dust, sea salt and fires), of every inhabited place on Earth at 1 km, from one day to
@@ -27,7 +27,7 @@ the operational ECMWF weather forecast as input, generates whole continents in o
 than learns the transport of the air**: FLEXGREEN, a GPU re-implementation of the backward mode of the FLEXPART particle model,
 tells every receptor where its air was on the start day and which wildfire and anthropogenic emissions it took up on the way.
 
-[Interactive viewer](https://ammarkheder.com/Foehn/#viewer) · [Paper](#citation) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
+[Interactive viewer](https://ammarkheder.com/Foehn/#viewer) · [Paper (arXiv:2610.25941)](https://arxiv.org/abs/2610.25941) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
 
 ## Contents
 
@@ -235,12 +235,18 @@ and referees, and will be released here upon publication.
 
 ## Citation
 
+Kheder A., Boy M. & Liu Z.-S. (2026). *Global probabilistic forecasting of air pollution.* arXiv:2610.25941.
+<https://arxiv.org/abs/2610.25941>
+
 ```bibtex
-@article{kheder2026foehn,
-  title   = {Global kilometre-scale forecasts of fine particulate matter},
-  author  = {Kheder, Ammar and Boy, Michael and Liu, Zhi-Song},
-  year    = {2026},
-  note    = {Manuscript submitted}
+@misc{kheder2026foehn,
+  title         = {Global probabilistic forecasting of air pollution},
+  author        = {Kheder, Ammar and Boy, Michael and Liu, Zhi-Song},
+  year          = {2026},
+  eprint        = {2610.25941},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2610.25941}
 }
 ```
 

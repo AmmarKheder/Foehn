@@ -25,7 +25,12 @@ keywords:
   - FLEXPART
 preferred-citation:
   type: article
-  title: "Global kilometre-scale probabilistic forecasts of fine particulate matter"
+  title: "Global probabilistic forecasting of air pollution"
+  url: "https://arxiv.org/abs/2610.25941"
+  identifiers:
+    - type: other
+      value: "arXiv:2610.25941"
+      description: "arXiv preprint (cs.AI)"
   authors:
     - family-names: Kheder
       given-names: Ammar
@@ -34,4 +39,4 @@ preferred-citation:
     - family-names: Liu
       given-names: Zhi-Song
   year: 2026
-  notes: "Manuscript submitted"
+  notes: "arXiv preprint, 19 October 2026"
