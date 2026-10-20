@@ -27,7 +27,7 @@ the operational ECMWF weather forecast as input, generates whole continents in o
 than learns the transport of the air**: FLEXGREEN, a GPU re-implementation of the backward mode of the FLEXPART particle model,
 tells every receptor where its air was on the start day and which wildfire and anthropogenic emissions it took up on the way.
 
-[Interactive viewer](https://ammarkheder.com/Foehn/#viewer) · [Paper (arXiv:2610.25941)](https://arxiv.org/abs/2610.25941) · [Film (YouTube)](https://youtu.be/XB7i0QX7OCo) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
+[Interactive viewer](https://ammarkheder.com/Foehn/#viewer) · [Paper (arXiv:2610.25941)](https://arxiv.org/abs/2610.25941) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
 
 ## Contents
 
