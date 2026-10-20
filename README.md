@@ -27,7 +27,7 @@ the operational ECMWF weather forecast as input, generates whole continents in o
 than learns the transport of the air**: FLEXGREEN, a GPU re-implementation of the backward mode of the FLEXPART particle model,
 tells every receptor where its air was on the start day and which wildfire and anthropogenic emissions it took up on the way.
 
-[Interactive viewer](https://ammarkheder.com/Foehn/#viewer) · [Paper (arXiv:2610.25941)](https://arxiv.org/abs/2610.25941) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
+[Interactive viewer](https://ammarkheder.com/Foehn/#viewer) · [Preprint (arXiv:2610.25941)](https://arxiv.org/abs/2610.25941) · [How it works](#how-foehn-works) · [Getting started](#getting-started)
 
 ## Contents
 
@@ -77,7 +77,7 @@ ensemble member.
 
 Test year 2022 (retrospective forecasts), scored against 6,324 official monitoring stations never used to train or select the
 model, on UTC days like the forecasts, with the CAMS operational
-forecast and Aurora issued at the same time (details and intervals in the paper):
+forecast and Aurora issued at the same time (details and intervals in the preprint):
 
 | | Foehn | CAMS | Aurora |
 |---|---|---|---|
@@ -159,7 +159,7 @@ exact calls used):
 | Train the global model, fine-tune it with the anthropogenic emissions, then train the ensemble on the CRPS | `foehn/fullflow_global_green.py` (see [Reproducing the final model](#reproducing-the-final-model)) |
 | Forecast and evaluate (global maps, stations, cases) | `foehn/eval_global_green.py` (`foehn/jobs/eval_green_job.sh`), `foehn/summarize_eval.py` |
 | Foehn in Aurora's protocol (0.4° CAMS analyses) | `foehn/foehn_cams.py`, `foehn/eval_cams12h.py` |
-| Figures and tables of the paper | `figures/*.py` (`figures/final_model.py` names the final run) |
+| Figures and tables of the preprint | `figures/*.py` (`figures/final_model.py` names the final run) |
 
 The controlled European benchmark that selected the design (five retrained networks, flow matching against regression, the
 learned transport layer, tiling seams) is in `benchmark_europe/`. `foehn/calibrate.py` is an EMOS post-processing experiment
@@ -167,7 +167,7 @@ that the final model does not use (no post-processing is applied; the ensemble i
 
 ### Reproducing the final model
 
-The final model of the paper is the run `green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4`, checkpoint
+The final model of the preprint is the run `green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4`, checkpoint
 `epoch=01.ckpt`, obtained in three stages with `foehn/fullflow_global_green.py train` (launched through
 `foehn/jobs/train_green_job.sh` on 4 nodes of LUMI-G; the Green's functions must have been computed first with
 `foehn/flexgreen.py`):
@@ -196,7 +196,7 @@ python eval_global_green.py runs/green_flow_shift25_global_L7_noant_whres_ghres_
 The scripts were run on the LUMI supercomputer (AMD MI250X, ROCm 6.1.3) inside the container
 `lumi-pytorch-rocm-6.1.3-python-3.12-pytorch-v2.4.1.sif` (PyTorch 2.4.1, Python 3.12, PyTorch Lightning), with the
 packages of `requirements.txt`. The data paths are absolute paths on LUMI, set at the top of each script (search for
-`/scratch/project_462001140`); on another machine, point them to your copies of the data listed in the paper's Data
+`/scratch/project_462001804`); on another machine, point them to your copies of the data listed in the preprint's Data
 availability. A syntax check of every script runs on each push (`python -m compileall`).
 
 ## Script map
@@ -223,9 +223,9 @@ foehn/             FLEXGREEN transport, data preparation, training, calibration,
 foehn/tests/       unit checks of FLEXGREEN (well-mixed limit, boundary layer, 12-h Green's functions)
 foehn/jobs/        SLURM scripts used on LUMI
 benchmark_europe/  stage 1: the controlled benchmark over Europe (dejavu, retrain, regional, fullimage, cascade, benchmark)
-figures/           every figure and table of the paper, and the scripts that build their intermediate data
+figures/           every figure and table of the preprint, and the scripts that build their intermediate data
 docs/              the website and the interactive viewer (GitHub Pages)
-docs/figures/      figures of the paper used in this README and on the website
+docs/figures/      figures of the preprint used in this README and on the website
 ```
 
 ## Trained weights

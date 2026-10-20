@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Foehn — global kilometre-scale forecasts of PM2.5</title>
-<meta name="description" content="Foehn forecasts daily PM2.5 at 1 km over all inhabited land up to a week ahead, as a calibrated ensemble, with the transport of the air computed by FLEXGREEN. Interactive viewer of the forecasts of the paper." />
+<meta name="description" content="Foehn forecasts daily PM2.5 at 1 km over all inhabited land up to a week ahead, as a calibrated ensemble, with the transport of the air computed by FLEXGREEN. Interactive viewer of the forecasts of the preprint." />
 <meta property="og:title" content="Foehn — global kilometre-scale forecasts of PM2.5" />
 <meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
@@ -22,7 +22,7 @@
     <nav class="nav">
       <a href="#explained">Explained</a>
       <a href="#air">Where was the air?</a>
-      <a href="#abstract">Paper</a>
+      <a href="#abstract">Preprint</a>
       <a href="#how">How it works</a>
       <a href="#viewer">Viewer</a>
       <a href="#results">Results</a>
@@ -59,7 +59,7 @@
         <a class="btn btn-primary btn-watch" href="#explained">&#9654;&nbsp; Watch the film: Foehn explained</a>
         <a class="btn btn-ghost" href="#air">Where was the air you breathe?</a>
         <a class="btn btn-ghost" href="#viewer">Explore the forecasts</a>
-        <a class="btn btn-ghost" href="https://arxiv.org/abs/2610.25941">Paper on arXiv</a>
+        <a class="btn btn-ghost" href="https://arxiv.org/abs/2610.25941">Preprint on arXiv</a>
         <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn">Code on GitHub</a>
       </div>
       </div>
@@ -92,7 +92,7 @@
         <track kind="subtitles" src="figures/anim/foehn_film.vtt?v=3" srclang="en" label="English" default />
       </video>
       <nav class="ex-chapters" id="ex-chapters" aria-label="Chapters"></nav>
-      <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the paper.
+      <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the preprint.
         Subtitles with the CC button. Animation and voice &copy; 2026 Ammar Kheder.</figcaption>
     </figure>
   </div>
@@ -119,7 +119,7 @@
 
 <section class="band band-soft" id="abstract">
   <div class="wrap">
-    <h2>Paper</h2>
+    <h2>Preprint</h2>
     <p class="sub">Kheder A., Boy M. &amp; Liu Z.-S. <em>Global probabilistic forecasting of air pollution.</em> arXiv:2610.25941, 2026 &mdash; <a href="https://arxiv.org/abs/2610.25941">abstract</a> &middot; <a href="https://arxiv.org/pdf/2610.25941">PDF</a>.</p>
     <p>About a million deaths a year are attributable to short-term exposure to fine particulate matter (PM<sub>2.5</sub>), whatever its source: traffic, industry, heating, agriculture, desert dust or fires. Yet PM<sub>2.5</sub> varies from street to street, while forecasts use grids tens of
       kilometres wide. Machine learning has transformed weather forecasting, but two problems keep it from the scale at which
@@ -169,7 +169,7 @@
 <section class="band band-soft" id="viewer">
   <div class="wrap">
     <h2>Interactive viewer</h2>
-    <p class="sub">The forecasts of the three case studies of the paper, as issued: choose a case, a target day and how many days
+    <p class="sub">The forecasts of the three case studies of the preprint, as issued: choose a case, a target day and how many days
       before the forecast was issued, and compare Foehn's ensemble with the 1&nbsp;km reference estimates (GHAP, made after the
       fact) and the CAMS operational forecast issued at the same time. Every panel is a genuine output of the final model
       (16 members, 1&nbsp;km); nothing is recomputed in the browser. The address bar follows your selection, so a view can be shared.</p>
@@ -296,7 +296,7 @@
   <div class="wrap">
     <h2>Code &amp; data</h2>
     <table class="links">
-      <tr><td>Code (MIT licence)</td><td><a href="https://github.com/AmmarKheder/Foehn">github.com/AmmarKheder/Foehn</a> — FLEXGREEN, data preparation, training, calibration, inference, evaluation, and every figure of the paper.</td></tr>
+      <tr><td>Code (MIT licence)</td><td><a href="https://github.com/AmmarKheder/Foehn">github.com/AmmarKheder/Foehn</a> — FLEXGREEN, data preparation, training, calibration, inference, evaluation, and every figure of the preprint.</td></tr>
       <tr><td>Trained weights</td><td>Available to the editors and referees; released with the code upon publication.</td></tr>
       <tr><td>Target and inputs</td><td>GHAP daily 1&nbsp;km PM<sub>2.5</sub> (Wei et al., Zenodo); ECMWF IFS HRES forecasts (WeatherBench&nbsp;2); ERA5; CAMS global forecasts and analyses, GFAS and CAMS-GLOB-ANT (Copernicus Atmosphere Data Store); GHS-POP population.</td></tr>
       <tr><td>Evaluation stations</td><td>EEA, CNEMC, US EPA AQS, AirKorea, NIES Japan, CPCB India (partly through OpenAQ). Stations are used for evaluation only.</td></tr>
