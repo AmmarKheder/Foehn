@@ -594,88 +594,88 @@ And the generator turns noise
 into a one-kilometre forecast.
 
 130
-00:07:04.188 --> 00:07:04.918
+00:06:46.488 --> 00:06:47.218
 Does it work?
 
 131
-00:07:05.028 --> 00:07:10.038
+00:06:47.328 --> 00:06:52.338
 We compared its forecasts, issued
 every second day of twenty twenty-two,
 
 132
-00:07:10.208 --> 00:07:12.418
+00:06:52.508 --> 00:06:54.718
 with measurements at
 more than six thousand
 
 133
-00:07:12.468 --> 00:07:13.818
+00:06:54.768 --> 00:06:56.118
 stations that were never used to train it.
 
 134
-00:07:14.054 --> 00:07:17.284
+00:06:56.354 --> 00:06:59.584
 Compared with the air usually found
 in each place at that time of year,
 
 135
-00:07:17.334 --> 00:07:20.144
+00:06:59.634 --> 00:07:02.444
 its error is about a
 fifth lower one day ahead,
 
 136
-00:07:20.194 --> 00:07:22.544
+00:07:02.494 --> 00:07:04.844
 and about a tenth lower four days ahead.
 
 137
-00:07:22.921 --> 00:07:25.711
+00:07:05.221 --> 00:07:08.011
 Simply repeating today's measurement
 does better for tomorrow,
 
 138
-00:07:25.761 --> 00:07:27.611
+00:07:08.061 --> 00:07:09.911
 but only where a station exists.
 
 139
-00:07:28.001 --> 00:07:31.011
+00:07:10.301 --> 00:07:13.311
 From two to four days
 ahead, Foehn does better.
 
 140
-00:07:32.155 --> 00:07:33.545
+00:07:14.455 --> 00:07:15.845
 Here is a real forecast at one kilometre,
 
 141
-00:07:34.135 --> 00:07:35.725
+00:07:16.435 --> 00:07:18.025
 issued on the eighth of January,
 
 142
-00:07:35.775 --> 00:07:39.085
+00:07:18.075 --> 00:07:21.385
 twenty twenty-two, over
 the North China Plain.
 
 143
-00:07:39.135 --> 00:07:42.265
+00:07:21.435 --> 00:07:24.565
 It saw the haze clear, day
 after day, four days ahead.
 
 144
-00:07:45.855 --> 00:07:47.765
+00:07:28.155 --> 00:07:30.065
 And it forecasts at the
 scale of a kilometre,
 
 145
-00:07:47.855 --> 00:07:51.245
+00:07:30.155 --> 00:07:33.545
 where the people a coarse
 grid hides actually live.
 
 146
-00:07:53.221 --> 00:07:54.631
+00:07:35.521 --> 00:07:36.931
 Compute what physics knows.
 
 147
-00:07:55.121 --> 00:07:56.251
+00:07:37.421 --> 00:07:38.551
 Learn the rest.
 
 148
-00:07:56.641 --> 00:07:57.951
+00:07:38.941 --> 00:07:40.251
 This is Foehn.
 

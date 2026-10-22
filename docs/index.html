@@ -82,14 +82,14 @@
   </div>
   <div class="wrap hero-media" id="explained">
     <div class="ex-tabs" role="group" aria-label="Choose a version">
-      <button type="button" class="ex-tab on" data-src="figures/anim/foehn_film.mp4?v=29" data-src-mobile="figures/anim/foehn_film_720.mp4?v=29" data-poster="figures/anim/foehn_film_poster.jpg?v=7" data-vtt="figures/anim/foehn_film.vtt?v=4" data-chapters="film">The full story &middot; 7&nbsp;min</button>
+      <button type="button" class="ex-tab on" data-src="figures/anim/foehn_film.mp4?v=30" data-src-mobile="figures/anim/foehn_film_720.mp4?v=30" data-poster="figures/anim/foehn_film_poster.jpg?v=7" data-vtt="figures/anim/foehn_film.vtt?v=5" data-chapters="film">The full story &middot; 7&nbsp;min</button>
       <button type="button" class="ex-tab" data-src="figures/anim/foehn_explained.mp4?v=20" data-src-mobile="figures/anim/foehn_explained_720.mp4?v=20" data-poster="figures/anim/foehn_explainer_poster.jpg?v=7" data-vtt="figures/anim/foehn_explained.vtt?v=4" data-chapters="short">How it works &middot; 3&nbsp;min</button>
     </div>
     <figure class="explainer-feature">
       <video id="explainer-video" controls playsinline preload="metadata" poster="figures/anim/foehn_film_poster.jpg?v=7" width="1920" height="1080"
              aria-label="Foehn explained: an animated, narrated film">
-        <source src="figures/anim/foehn_film.mp4?v=29" type="video/mp4" />
-        <track kind="subtitles" src="figures/anim/foehn_film.vtt?v=4" srclang="en" label="English" default />
+        <source src="figures/anim/foehn_film.mp4?v=30" type="video/mp4" />
+        <track kind="subtitles" src="figures/anim/foehn_film.vtt?v=5" srclang="en" label="English" default />
       </video>
       <nav class="ex-chapters" id="ex-chapters" aria-label="Chapters"></nav>
       <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the preprint.
@@ -537,7 +537,10 @@
   const pickSrc = (b) => (mobile && b.dataset.srcMobile) ? b.dataset.srcMobile : b.dataset.src;
   // chapters: the start of each scene of the assembled films (manim/out/voice_*_scenes.json)
   const CH = {
-    film: [[0, "A few days of bad air"], [18, "What are fine particles?"], [63, "1 km versus 40 km"], [97, "Where the air is measured"], [130, "Why networks struggle"], [178, "The answer: Foehn"], [201, "Where was the air? FLEXGREEN"], [237, "Green's function"], [300, "What the air carried"], [346, "The generator"], [392, "The whole machine"], [406, "The architecture"], [424, "Does it work?"], [473, "Compute what physics knows"]],
+    film: [[0, "A few days of bad air"], [18, "What are fine particles?"], [63, "1 km versus 40 km"], [97, "Where the air is measured"],
+           [130, "Why networks struggle"], [178, "The answer: Foehn"], [201, "Where was the air? FLEXGREEN"], [237, "Green's function"],
+           [300, "What the air carried"], [346, "The generator"], [392, "The whole machine"], [406, "Does it work?"],
+           [455, "Compute what physics knows"]],
     short: [[0, "Where was the air?"], [16, "FLEXGREEN runs the wind backwards"], [41, "Green's function"], [104, "What the air carried"], [150, "The generator"], [196, "The whole machine"], [216, "The architecture"]]
   };
   const nav = document.getElementById("ex-chapters");
