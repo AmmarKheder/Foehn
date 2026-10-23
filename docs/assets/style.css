@@ -227,6 +227,23 @@ section.band-dark .sub { color: #A7AFB9; }
 .ex-ch-t { font-variant-numeric: tabular-nums; color: var(--blue); margin-right: 2px; }
 video::cue { background: rgba(12, 15, 20, 0.72); color: #F2F4F7; font-size: 0.9em; line-height: 1.3; }
 .hero-media .explainer-feature figcaption { color: var(--muted); text-align: center; }
+/* the full story is the film on YouTube: a thumbnail with a play button, replaced by the player on click, in the same 16:9 box as the hosted video */
+.explainer-feature [hidden] { display: none !important; }
+.yt-box { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 0 0 1px #2A3240, 0 18px 50px rgba(0, 0, 0, .55); }
+.yt-box iframe, .yt-facade { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+.hero-media .yt-facade img { width: 100%; height: 100%; max-width: none; margin: 0; object-fit: cover; border: 0; border-radius: 0; background: #000; transition: filter .2s; }
+.yt-facade:hover img { filter: brightness(1.1); }
+.yt-facade:focus-visible { outline: 3px solid var(--blue); outline-offset: -3px; }
+.yt-play { position: absolute; left: 50%; top: 50%; width: 68px; height: 48px; margin: -24px 0 0 -34px; border-radius: 12px; background: rgba(230, 0, 0, .92);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, .5); transition: background .15s, transform .15s; }
+.yt-play::after { content: ""; position: absolute; left: 27px; top: 13px; border-style: solid; border-width: 11px 0 11px 18px; border-color: transparent transparent transparent #fff; }
+.yt-facade:hover .yt-play, .yt-facade:focus-visible .yt-play { background: #f00; transform: scale(1.08); }
+@media (max-width: 700px) { .yt-play { width: 56px; height: 40px; margin: -20px 0 0 -28px; border-radius: 10px; }
+  .yt-play::after { left: 22px; top: 11px; border-width: 9px 0 9px 15px; } }
+.yt-note { text-align: center; color: var(--muted); font-size: 13.5px; margin: 10px 0 0; }
+.yt-note b { color: var(--ink); font-weight: 600; }
+.yt-note .gear { width: 1.05em; height: 1.05em; vertical-align: -.17em; fill: none; stroke: currentColor; }
 
 /* the theme switch and the two versions of the logo */
 .top-right { display: flex; align-items: center; gap: 16px; }

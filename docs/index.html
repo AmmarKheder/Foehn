@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png" />
 <script>try { const t = localStorage.getItem("foehn-theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="assets/style.css?v=20261019f" />
+<link rel="stylesheet" href="assets/style.css?v=20261023a" />
 </head>
 <body>
 
@@ -82,15 +82,25 @@
   </div>
   <div class="wrap hero-media" id="explained">
     <div class="ex-tabs" role="group" aria-label="Choose a version">
-      <button type="button" class="ex-tab on" data-src="figures/anim/foehn_film.mp4?v=30" data-src-mobile="figures/anim/foehn_film_720.mp4?v=30" data-poster="figures/anim/foehn_film_poster.jpg?v=7" data-vtt="figures/anim/foehn_film.vtt?v=5" data-chapters="film">The full story &middot; 8&nbsp;min</button>
+      <button type="button" class="ex-tab on" data-yt="XB7i0QX7OCo" data-chapters="film">The full story &middot; 8&nbsp;min</button>
       <button type="button" class="ex-tab" data-src="figures/anim/foehn_explained.mp4?v=20" data-src-mobile="figures/anim/foehn_explained_720.mp4?v=20" data-poster="figures/anim/foehn_explainer_poster.jpg?v=7" data-vtt="figures/anim/foehn_explained.vtt?v=4" data-chapters="short">How it works &middot; 4&nbsp;min</button>
     </div>
     <figure class="explainer-feature">
-      <video id="explainer-video" controls playsinline preload="metadata" poster="figures/anim/foehn_film_poster.jpg?v=7" width="1920" height="1080"
+      <!-- the full story is the film on YouTube: a thumbnail with a play button until it is clicked, then the player in the same box -->
+      <div class="yt-box" id="yt-box">
+        <a class="yt-facade" id="yt-facade" href="https://www.youtube.com/watch?v=XB7i0QX7OCo" target="_blank" rel="noopener" aria-label="Play the film on YouTube: Foehn, the full story">
+          <img src="https://i.ytimg.com/vi/XB7i0QX7OCo/maxresdefault.jpg" width="1280" height="720" alt="" decoding="async"
+               onload="if(this.naturalWidth&lt;400&amp;&amp;this.src.indexOf('maxres')&gt;0)this.src='https://i.ytimg.com/vi/XB7i0QX7OCo/hqdefault.jpg'"
+               onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/XB7i0QX7OCo/hqdefault.jpg'" />
+          <span class="yt-play" aria-hidden="true"></span>
+        </a>
+      </div>
+      <video id="explainer-video" hidden controls playsinline preload="metadata" width="1920" height="1080"
              aria-label="Foehn explained: an animated, narrated film">
-        <source src="figures/anim/foehn_film.mp4?v=30" type="video/mp4" />
-        <track kind="subtitles" src="figures/anim/foehn_film.vtt?v=5" srclang="en" label="English" default />
+        <source type="video/mp4" />
+        <track kind="subtitles" srclang="en" label="English" default />
       </video>
+      <p class="yt-note" id="yt-note"><b>Watch it in your language:</b> <svg class="gear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.75" stroke-width="5.5"/><circle cx="12" cy="12" r="9.75" stroke-width="2.5" stroke-dasharray="3.83 3.83" transform="rotate(-11.25 12 12)"/></svg> Settings &rsaquo; Audio track (32 languages)</p>
       <nav class="ex-chapters" id="ex-chapters" aria-label="Chapters"></nav>
       <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the preprint.
         Subtitles with the CC button. Animation and voice &copy; 2026 Ammar Kheder.</figcaption>
@@ -538,8 +548,10 @@
 </script>
 <script>
 (function () {
-  // the two versions of the explanation
+  // the two versions of the explanation: the full story is the film on YouTube, the short one is hosted here
   const v = document.getElementById("explainer-video"); if (!v) return;
+  const box = document.getElementById("yt-box"), fac = document.getElementById("yt-facade"), note = document.getElementById("yt-note");
+  const YT = "https://www.youtube-nocookie.com/embed/XB7i0QX7OCo?autoplay=1&rel=0&playsinline=1";
   // phones get the 720p versions (lower bitrate, H.264 main profile): the 1080p files played badly in Safari on iPhone
   const mobile = matchMedia("(max-width: 820px)").matches || /iPhone|iPad|Android/.test(navigator.userAgent);
   const pickSrc = (b) => (mobile && b.dataset.srcMobile) ? b.dataset.srcMobile : b.dataset.src;
@@ -553,13 +565,31 @@
   };
   const nav = document.getElementById("ex-chapters");
   const mmss = (t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+  let yt = false;                                                // true while the YouTube tab is the one shown
+  const ytPlay = (t) => {                                        // the thumbnail gives way to the player, in the same box
+    if (!box) return;
+    const f = document.createElement("iframe");
+    f.src = YT + (t ? "&start=" + t : "");
+    f.title = "Foehn, the full story: an animated, narrated film (YouTube)";
+    f.allow = "autoplay; encrypted-media; picture-in-picture"; f.allowFullscreen = true; f.loading = "lazy";
+    f.referrerPolicy = "strict-origin-when-cross-origin";
+    box.textContent = ""; box.appendChild(f); f.focus();
+  };
+  const ytStop = () => { if (box && fac) { box.textContent = ""; box.appendChild(fac); } };   // removing the iframe stops the film
+  if (fac) fac.addEventListener("click", (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;                  // a new-tab click still opens YouTube
+    e.preventDefault(); ytPlay(0);
+  });
   const chapters = (key) => {
     if (!nav) return;
     nav.innerHTML = "";
     (CH[key] || []).forEach(([t, name]) => {
       const b = document.createElement("button"); b.type = "button"; b.className = "ex-ch"; b.dataset.t = t;
       b.innerHTML = `<span class="ex-ch-t">${mmss(t)}</span> ${name}`;
-      b.addEventListener("click", () => { v.currentTime = t; v.play(); nav.querySelectorAll(".ex-ch").forEach((x) => x.classList.toggle("on", x === b)); });
+      b.addEventListener("click", () => {
+        if (yt) { ytPlay(t); return; }                           // the YouTube player restarts at the chapter
+        v.currentTime = t; v.play(); nav.querySelectorAll(".ex-ch").forEach((x) => x.classList.toggle("on", x === b));
+      });
       nav.appendChild(b);
     });
   };
@@ -568,15 +598,22 @@
     let cur = null; nav.querySelectorAll(".ex-ch").forEach((x) => { if (+x.dataset.t <= v.currentTime + 0.5) cur = x; });
     nav.querySelectorAll(".ex-ch").forEach((x) => x.classList.toggle("on", x === cur));
   });
-  const on = document.querySelector(".ex-tab.on");
-  if (on && mobile) { v.querySelector("source").setAttribute("src", pickSrc(on)); v.load(); }
-  chapters(on ? on.dataset.chapters : "film");
-  document.querySelectorAll(".ex-tab").forEach((b) => b.addEventListener("click", () => {
-    document.querySelectorAll(".ex-tab").forEach((x) => x.classList.toggle("on", x === b));
-    v.pause(); v.setAttribute("poster", b.dataset.poster); v.querySelector("source").setAttribute("src", pickSrc(b));
-    const tr = v.querySelector("track"); if (tr && b.dataset.vtt) tr.setAttribute("src", b.dataset.vtt);
-    v.load(); chapters(b.dataset.chapters);
-  }));
+  const tabs = document.querySelectorAll(".ex-tab");
+  const show = (b) => {
+    tabs.forEach((x) => x.classList.toggle("on", x === b));
+    yt = !!b.dataset.yt;
+    v.pause(); ytStop();                                         // what is left behind stops: the MP4 is paused, the YouTube iframe removed
+    v.hidden = yt; if (box) box.hidden = !yt; if (note) note.hidden = !yt;
+    if (!yt) {
+      v.setAttribute("poster", b.dataset.poster); v.querySelector("source").setAttribute("src", pickSrc(b));
+      const tr = v.querySelector("track"); if (tr && b.dataset.vtt) tr.setAttribute("src", b.dataset.vtt);
+      v.load();
+    }
+    chapters(b.dataset.chapters);
+  };
+  tabs.forEach((b) => b.addEventListener("click", () => { if (!b.classList.contains("on")) show(b); }));
+  const first = document.querySelector(".ex-tab.on");
+  if (first) show(first);
 })();
 </script>
 <script>
