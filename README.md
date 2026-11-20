@@ -35,6 +35,7 @@ tells every receptor where its air was on the start day and which wildfire and a
 - [How Foehn works](#how-foehn-works)
 - [Results](#results)
 - [Benchmark](#benchmark)
+- [Version 1.1.0: real time, downscaling and new analyses](#version-110-real-time-downscaling-and-new-analyses)
 - [Getting started](#getting-started)
 - [Repository layout](#repository-layout)
 - [Trained weights](#trained-weights)
@@ -139,6 +140,25 @@ is produced by `figures/benchmark_table.py`; the scripts of the benchmark are in
 
 </details>
 
+## Version 1.1.0: real time, downscaling and new analyses
+
+Release v1.1.0 adds the code of the revised manuscript, which issues kilometre-scale forecasts in real time.
+
+- **Real-time forecast at 0.4°** ([`foehn/realtime/`](foehn/realtime/)): the network of the comparison in Aurora's protocol,
+  fine-tuned on the inputs available every morning and run each day from the CAMS analysis, the open-data weather forecast of
+  ECMWF and the fire emissions of the previous day, with eight members.
+- **Generative downscaling to 1 km** ([`downscaling/`](downscaling/)): a model that draws a 1 km member over all land from each
+  coarse member. It builds on functional flow matching ([CD-FFM](https://github.com/Holmes-Alan/CD-FFM)), with the computed
+  transport among its inputs and a noise prior refitted to the 1 km estimates. The folder also holds the real-time 1 km
+  forecast, the reforecasts, the scorer of the verification at the monitors and the tests on 2022.
+- **Analyses** ([`analyses/`](analyses/)): comparisons at equal issuance time, hidden exposure and warnings, reliability of the
+  ensembles, the tests of the dependence between the stations and the 1 km estimates, and the effect of the emission inputs
+  against a control.
+- **Figures** ([`figures/version_1_1/`](figures/version_1_1/)): the figures added or redrawn in this version and the builder of the
+  Source Data.
+
+Stations and monitors are used for evaluation only. Each folder has a README that lists its scripts.
+
 ## Getting started
 
 The code was developed and run on the LUMI supercomputer (AMD MI250X, ROCm) with PyTorch and PyTorch Lightning; it has no
@@ -224,8 +244,12 @@ The figure scripts in `figures/` are named after the figure they draw (`fig_*.py
 foehn/             FLEXGREEN transport, data preparation, training, calibration, inference and evaluation of the global model
 foehn/tests/       unit checks of FLEXGREEN (well-mixed limit, boundary layer, 12-h Green's functions)
 foehn/jobs/        SLURM scripts used on LUMI
+foehn/realtime/    the real-time forecast at 0.4 degrees (version 1.1.0)
+downscaling/       generative downscaling to 1 km, real-time 1 km forecast, reforecasts and their verification (version 1.1.0)
+analyses/          the analyses added in version 1.1.0
 benchmark_europe/  stage 1: the controlled benchmark over Europe (dejavu, retrain, regional, fullimage, cascade, benchmark)
 figures/           every figure and table of the preprint, and the scripts that build their intermediate data
+figures/version_1_1/  the figures added or redrawn in version 1.1.0 and the builder of the Source Data
 docs/              the website and the interactive viewer (GitHub Pages)
 docs/figures/      figures of the preprint used in this README and on the website
 ```
