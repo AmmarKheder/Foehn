@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png" />
 <script>try { const t = localStorage.getItem("foehn-theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="assets/style.css?v=20261023a" />
+<link rel="stylesheet" href="assets/style.css?v=20261119a" />
 </head>
 <body>
 
@@ -25,6 +25,7 @@
       <a href="#abstract">Preprint</a>
       <a href="#how">How it works</a>
       <a href="#viewer">Viewer</a>
+      <a href="#realtime">Real time</a>
       <a href="#results">Results</a>
       <a href="#benchmark">Benchmark</a>
       <a href="#limits">Limitations</a>
@@ -59,6 +60,7 @@
         <a class="btn btn-primary btn-watch" href="#explained">&#9654;&nbsp; Watch the film: Foehn explained</a>
         <a class="btn btn-ghost" href="#air">Where was the air you breathe?</a>
         <a class="btn btn-ghost" href="#viewer">Explore the forecasts</a>
+        <a class="btn btn-ghost" href="#realtime">Today's forecast</a>
         <a class="btn btn-ghost" href="https://arxiv.org/abs/2610.25941">Preprint on arXiv</a>
         <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn">Code on GitHub</a>
       </div>
@@ -217,6 +219,73 @@
   </div>
 </section>
 
+<section class="band" id="realtime">
+  <div class="wrap">
+    <h2>Foehn in real time</h2>
+    <p class="sub">The forecasts above are retrospective: the 1&nbsp;km model of the preprint starts from kilometre-scale estimates of
+      the start day, which are produced after the fact. This section shows the latest daily forecast of a version that needs
+      only inputs available in real time. It is a research forecast, not an alert service.</p>
+    <div class="rt-card" id="rt-card">
+      <p class="rt-issue" id="rt-issue" aria-live="polite">The latest forecast is loaded when this section comes into view.</p>
+      <p class="rt-since">Issued daily at 0.4° since 10&nbsp;October 2026, and at 1&nbsp;km since November 2026. A run can be late, and a day can be missing.</p>
+      <p class="rt-stale" id="rt-stale" hidden></p>
+      <div class="rt-days" id="rt-days" role="group" aria-label="Forecast day"></div>
+      <div class="rt-map" id="rt-map">
+        <div class="rt-gl" id="rt-gl"></div>
+        <div class="rt-poster" id="rt-poster" role="img" aria-label="World map of the forecast"></div>
+        <p class="rt-badge">Research forecast: it does not replace official alerts.</p>
+        <button type="button" class="btn btn-primary rt-open" id="rt-open" hidden>Open the street map</button>
+        <p class="rt-msg" id="rt-msg" role="status" hidden></p>
+      </div>
+      <div class="rt-foot">
+        <div class="rt-legend" id="rt-legend"></div>
+        <label class="rt-op" for="rt-opacity">Opacity <input type="range" id="rt-opacity" min="0.2" max="1" step="0.05" value="1" /></label>
+      </div>
+      <p class="help" id="rt-help"></p>
+    </div>
+    <ul class="limits rt-notes">
+      <li><strong>What it is.</strong> The design of the preprint in its 0.4° version (the one compared with Aurora), fine-tuned on the
+        real-time inputs of January to August 2026 and run each day from the CAMS analysis of 00&nbsp;UTC, the ECMWF weather forecast
+        and the latest fire emissions, with eight members. A second generative model, trained on the 1&nbsp;km estimates of
+        2017–2020, then draws each member at 1&nbsp;km. The map shows the mean of the eight daily means for five days; day&nbsp;1 is
+        the day of issue, already under way when the forecast is published.</li>
+      <li><strong>What it is not.</strong> It is not the 1&nbsp;km model evaluated in the preprint, and it is not an alert: it does not
+        replace the air-quality forecasts and warnings of national or local authorities. The street map only helps to find a
+        place: the forecast has one value per square kilometre and does not resolve streets.</li>
+      <li><strong>Where it is not 1&nbsp;km.</strong> <span id="rt-coarse">Days 3 to 5 are computed at 1&nbsp;km but published at about 2.4&nbsp;km per pixel at the equator (days 1 and 2: about 1.2&nbsp;km).</span>
+        Where the 1&nbsp;km model gives no value (permanent ice, and gaps in the 1&nbsp;km estimates it learnt from), the map shows
+        the 0.4° forecast as it is or, in small gaps, an interpolation of the 1&nbsp;km values around; these places are hatched
+        on the street map. The maps cover land between 60°&nbsp;S and 84°&nbsp;N.</li>
+    </ul>
+    <div class="rt-verif" id="rt-verif">
+      <h3>Checked every day at the monitors</h3>
+      <p class="rt-vsub">Each day the forecast is kept at the pixels of about 12,000 OpenAQ monitors and compared with their daily means once
+        these are published, about four days later. No day is left out, and the monitors are never an input of the two models.
+        The chart gives the forecast's own errors by lead day.</p>
+      <p class="rt-vsub">Over 48 issue days of autumn 2026 (the forecasts issued on 3–11&nbsp;November and reforecasts of 39 earlier days made by the
+        same frozen system from the data of each day), at 11,121 monitors, the error of the 1&nbsp;km forecast is 14&nbsp;% below that of the
+        operational CAMS forecast of the same cycle (95&nbsp;% interval, 7–21&nbsp;%), 10&nbsp;% below that of the 0.4° forecast it is drawn from and
+        5&nbsp;% below that of the climatology of the 1&nbsp;km estimates. In Europe the two forecasts are equal, and the day-to-day changes at a
+        monitor are damped: the forecast follows the level and the pattern of pollution better than its variations.</p>
+      <p class="rt-keys"><span><i class="rt-k"></i>RMSE</span><span><i class="rt-k rt-kb"></i>bias (forecast − monitors)</span><span>daily mean PM<sub>2.5</sub>, µg&nbsp;m<sup>−3</sup></span></p>
+      <div class="rt-chartbox">
+        <svg class="rt-chart" id="rt-chart" viewBox="0 0 560 250" role="group" aria-label="Error and bias of the real-time forecast at the monitors, by lead day"></svg>
+        <div class="rt-tip" id="rt-tip" hidden></div>
+      </div>
+      <p class="note" id="rt-vnote">The verification is loaded when this block comes into view.</p>
+      <details class="bench-table">
+        <summary>Show the numbers as a table</summary>
+        <div class="table-wrap"><table class="bench rt-vtable">
+          <thead><tr><th>Lead day</th><th>Verified days</th><th>Monitor-days</th><th>RMSE</th><th>Bias</th><th>Inside the 10–90&nbsp;% range of the members</th></tr></thead>
+          <tbody id="rt-vrows"></tbody>
+        </table></div>
+      </details>
+      <p class="note">Read with care: these are a few weeks of one season; OpenAQ gathers official and low-cost monitors, which are not
+        harmonised; the 1&nbsp;km estimates the second model learnt from were themselves fitted to monitors<span id="rt-vspread"></span>.</p>
+    </div>
+  </div>
+</section>
+
 <section class="band" id="results">
   <div class="wrap">
     <h2>Results</h2>
@@ -302,10 +371,10 @@
     <h2>Limitations</h2>
     <p class="sub">What Foehn is, and is not, in its present form.</p>
     <ul class="limits">
-      <li>The 1&nbsp;km estimates Foehn learns from (GHAP) are produced after the fact; a real-time deployment would be trained on an operational analysis, as the comparison with Aurora on the CAMS analyses shows is possible.</li>
+      <li>The 1&nbsp;km estimates Foehn learns from (GHAP) are produced after the fact, so the 1&nbsp;km model of the preprint cannot start from today. The forecast shown under <a href="#realtime">Real time</a> starts instead from an operational analysis at 0.4°, as in the comparison with Aurora, and reaches 1&nbsp;km through a second model; it has been verified over one autumn only (48 issue days).</li>
       <li>Those estimates have their own errors and regional biases, which Foehn inherits or amplifies, as in India, and they were fitted to measurements from many of the stations used to evaluate it.</li>
       <li>All members share one deterministic weather forecast; the spread represents the uncertainty of the weather only statistically.</li>
-      <li>The viewer shows precomputed forecasts of 2022; Foehn is not run on demand here, because a forecast needs the 1&nbsp;km inputs of the start day.</li>
+      <li>The viewer shows precomputed forecasts of 2022; the 1&nbsp;km model of the preprint is not run on demand here, because a forecast needs the 1&nbsp;km inputs of the start day. The daily forecast under <a href="#realtime">Real time</a> comes from another, more recent system.</li>
     </ul>
   </div>
 </section>
@@ -351,7 +420,7 @@
       <a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="assets/csc_logo.svg" alt="CSC" class="lg-csc" /></a>
     </div>
   </div>
-  <p class="fine">Foehn was trained and is run on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland. Foehn · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. © 2026 Ammar Kheder.</p>
+  <p class="fine">Foehn was trained on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland, where the forecasts of the preprint were also computed. Foehn · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. © 2026 Ammar Kheder.</p>
 </div></footer>
 
 <script>
@@ -626,6 +695,16 @@
     root.dataset.theme = dark ? "light" : "dark";
     try { localStorage.setItem("foehn-theme", root.dataset.theme); } catch (e) {}
   });
+})();
+</script>
+<script>
+// "Foehn in real time": its script and its data are fetched only when the section comes near the screen
+(function () {
+  const sec = document.getElementById("realtime"); if (!sec) return;
+  const load = () => { const s = document.createElement("script"); s.src = "assets/realtime.js?v=20261120a"; document.body.appendChild(s); };
+  if (!("IntersectionObserver" in window)) { load(); return; }
+  const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: "500px 0px" });
+  io.observe(sec);
 })();
 </script>
 </body>

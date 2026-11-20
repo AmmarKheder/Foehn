@@ -278,3 +278,98 @@ video::cue { background: rgba(12, 15, 20, 0.72); color: #F2F4F7; font-size: 0.9e
 @media (max-width: 960px) { .hero-top { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "globes" "body"; }
   .globe-grid { margin: 4px 0 18px; max-width: 760px; grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .globe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ===== Foehn in real time (section #realtime): every id starts with rt-, the colours come from the page tokens ===== */
+#realtime { --rt-sea: #d3dae0; --rt-land: rgb(242, 243, 240); --rt-warn-bg: #fff8e8; --rt-warn-ink: #4a3b12; --rt-warn-line: #f3d9a4; --rt-icon: none; --rt-shadow: 0 6px 22px rgba(16, 24, 40, .16); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #realtime { --rt-sea: #0b1118; --rt-land: rgb(12, 12, 12); --rt-warn-bg: #2a2412; --rt-warn-ink: #f3d9a4; --rt-warn-line: #5a4a1a; --rt-icon: invert(1); --rt-shadow: 0 6px 22px rgba(0, 0, 0, .5); } }
+:root[data-theme="dark"] #realtime { --rt-sea: #0b1118; --rt-land: rgb(12, 12, 12); --rt-warn-bg: #2a2412; --rt-warn-ink: #f3d9a4; --rt-warn-line: #5a4a1a; --rt-icon: invert(1); --rt-shadow: 0 6px 22px rgba(0, 0, 0, .5); }
+#realtime [hidden] { display: none !important; }
+.rt-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; transition: background-color .25s ease, border-color .25s ease; }
+.rt-issue { margin: 0; font-size: 15px; font-weight: 600; }
+.rt-since { margin: 2px 0 12px; font-size: 13px; color: var(--muted); }
+.rt-stale { margin: 0 0 12px; padding: 7px 10px; font-size: 13px; border-radius: 8px; background: var(--rt-warn-bg); color: var(--rt-warn-ink); border: 1px solid var(--rt-warn-line); }
+.rt-days { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 12px; min-height: 46px; }
+.rt-days button[data-lead] { font: inherit; font-size: 13px; line-height: 1.25; padding: 6px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; text-align: center; }
+.rt-days button[data-lead]:hover { border-color: var(--blue); }
+.rt-days button[data-lead] small { display: block; font-size: 11px; color: var(--muted); }
+.rt-days button.on { background: var(--blue); border-color: var(--blue); color: var(--on-blue); font-weight: 600; }
+.rt-days button.on small { color: var(--on-blue); opacity: .85; font-weight: 400; }
+.rt-days .play { flex: none; height: 34px; }
+/* the map box: a world view of four tiles first, the street map (MapLibre) in the same box once it is opened */
+.rt-map { position: relative; height: min(clamp(340px, 62vh, 600px), 84vw); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--rt-sea); }
+#rt-gl { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* the world view: one Web Mercator world across the box, centred at 20.9° N as the street map is when it opens (0.4406 = that latitude in the square) */
+.rt-poster { position: absolute; inset: 0; overflow: hidden; background: var(--rt-sea); }
+.rt-world { position: absolute; left: 0; top: 50%; width: 100%; aspect-ratio: 1; transform: translateY(-44.06%); }
+.rt-tiles { width: 100%; height: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+.rt-tiles img { display: block; width: 100%; max-width: none; height: auto; aspect-ratio: 1; border: 0; }
+.rt-badge { position: absolute; z-index: 3; left: 10px; top: 10px; margin: 0; max-width: calc(100% - 64px); padding: 5px 9px; font-size: 12px; line-height: 1.3; border-radius: 8px;
+  background: var(--rt-warn-bg); color: var(--rt-warn-ink); border: 1px solid var(--rt-warn-line); pointer-events: none; }
+.rt-open { position: absolute; z-index: 3; left: 50%; bottom: 18px; transform: translateX(-50%); font-family: inherit; white-space: nowrap; cursor: pointer; box-shadow: var(--rt-shadow); }
+.rt-msg { position: absolute; z-index: 3; left: 50%; bottom: 18px; transform: translateX(-50%); width: max-content; max-width: 86%; margin: 0; padding: 8px 12px; font-size: 13px; text-align: center;
+  border-radius: 8px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--rt-shadow); }
+.rt-live .rt-poster { display: none; }
+.rt-foot { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: flex-end; justify-content: space-between; margin-top: 12px; }
+.rt-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: flex-end; min-height: 30px; font-size: 12.5px; color: var(--muted); }
+.rt-lunit { color: var(--ink); font-weight: 600; }
+.rt-lscale { display: flex; }
+/* the swatches take the opacity of the forecast layer (--rt-op, set by the script) over the land colour of the basemap: the legend shows the colours of the map */
+.rt-lscale div { width: 40px; background: linear-gradient(var(--rt-land), var(--rt-land)) top / 100% 12px no-repeat; }
+.rt-lscale i { display: block; height: 12px; opacity: var(--rt-op, 1); }
+.rt-lscale b { display: block; width: 40px; margin: 3px 0 0 -20px; text-align: center; font-size: 11px; font-weight: 400; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rt-lscale div:first-child b { width: auto; margin-left: 0; text-align: left; }
+.rt-lhatch, .rt-op { display: none; align-items: center; }
+.rt-live .rt-lhatch { display: inline-flex; gap: 6px; } .rt-live .rt-op { display: flex; gap: 8px; font-size: 13px; color: var(--muted); }
+.rt-lhatch i { flex: none; width: 26px; height: 12px; border-radius: 3px; background-color: #74add1; background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, .55) 0 1px, transparent 1px 6px); }
+.rt-op input { width: 110px; accent-color: var(--blue); }
+#rt-help { margin-bottom: 0; }
+ul.rt-notes { margin: 20px 0 0; max-width: 900px; } .rt-notes li { font-size: 14.5px; }
+/* the box opened by a click on the street map, and the controls of the map, in the page colours (both themes) */
+#realtime .maplibregl-popup-content { min-width: 170px; padding: 10px 12px; font-size: 13.5px; line-height: 1.4; border-radius: 10px; background: var(--surface); color: var(--ink); box-shadow: var(--rt-shadow); }
+#realtime [class*="popup-anchor-bottom"] .maplibregl-popup-tip { border-top-color: var(--surface); }
+#realtime [class*="popup-anchor-top"] .maplibregl-popup-tip { border-bottom-color: var(--surface); }
+#realtime .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: var(--surface); }
+#realtime .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--surface); }
+#realtime .maplibregl-popup-close-button { padding: 0 6px; font-size: 18px; color: var(--muted); }
+.rt-pn { margin: 0 18px 2px 0; font-weight: 700; }
+.rt-pv { margin-top: 2px; font-size: 24px; line-height: 1.15; } .rt-pv small { margin-left: 5px; font-size: 12.5px; color: var(--muted); }
+.rt-pc { display: flex; align-items: center; gap: 6px; margin: 2px 0; font-weight: 600; } .rt-pc i { flex: none; width: 10px; height: 10px; border-radius: 50%; opacity: var(--rt-op, 1); }
+.rt-ps { font-size: 12.5px; color: var(--muted); }
+#realtime .maplibregl-ctrl-group { background: var(--surface); }
+#realtime .maplibregl-ctrl-group button + button { border-top-color: var(--line); }
+#realtime .maplibregl-ctrl-group button .maplibregl-ctrl-icon, #realtime .maplibregl-ctrl-attrib-button { filter: var(--rt-icon); }
+#realtime .maplibregl-ctrl-attrib { font-size: 11px; background: var(--surface); background: color-mix(in srgb, var(--surface) 84%, transparent); color: var(--muted); }
+#realtime .maplibregl-ctrl-attrib a { color: var(--muted); }
+#realtime .maplibregl-ctrl-scale { background: var(--surface); background: color-mix(in srgb, var(--surface) 75%, transparent); color: var(--ink); border-color: var(--ink); }
+/* the verification at the monitors: one small chart (one axis, two series), its readout and its table */
+.rt-verif { margin-top: 28px; }
+.rt-verif h3 { margin: 0 0 8px; font-size: 21px; letter-spacing: -.005em; }
+.rt-vsub { max-width: 860px; margin: 0 0 12px; }
+.rt-keys { display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: center; margin: 0 0 2px; font-size: 13px; color: var(--muted); }
+.rt-tr { display: inline-flex; align-items: center; gap: 6px; }
+.rt-k { display: inline-block; flex: none; width: 18px; height: 0; border-top: 2px solid var(--blue); vertical-align: middle; }
+.rt-keys .rt-k { margin-right: 6px; }
+.rt-kb { border-top-color: var(--pink); }
+.rt-chartbox { position: relative; max-width: 640px; }
+.rt-chart { display: block; width: 100%; height: auto; overflow: visible; }
+.rt-chart text { fill: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.rt-chart .rt-val { fill: var(--ink); font-weight: 600; }
+.rt-chart .rt-grid { stroke: var(--line); stroke-width: 1; }
+.rt-chart .rt-zero, .rt-chart .rt-cross { stroke: var(--muted); stroke-width: 1; }
+.rt-chart polyline { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.rt-chart .rt-rmse { stroke: var(--blue); } .rt-chart .rt-bias { stroke: var(--pink); }
+.rt-chart .rt-drmse { fill: var(--blue); stroke: var(--bg); stroke-width: 2; } .rt-chart .rt-dbias { fill: var(--pink); stroke: var(--bg); stroke-width: 2; }
+.rt-chart .rt-hit { fill: transparent; outline: none; }
+.rt-tip { position: absolute; top: 6px; z-index: 2; display: flex; flex-direction: column; gap: 2px; min-width: 150px; padding: 8px 10px; font-size: 12.5px; line-height: 1.35; border-radius: 8px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--rt-shadow); pointer-events: none; }
+.rt-tip b { font-size: 12px; font-weight: 600; color: var(--muted); }
+.rt-tn { margin-top: 2px; font-size: 11.5px; color: var(--muted); }
+.rt-verif .table-wrap { max-width: 760px; } table.rt-vtable { min-width: 520px; }
+@media (max-width: 600px) {
+  .rt-card { padding: 12px; } .rt-map { height: clamp(260px, 80vw, 420px); } .rt-open { bottom: 14px; }
+  .rt-days { gap: 5px; } .rt-days button[data-lead] { flex: 1 1 0; min-width: 0; padding: 6px 2px; } .rt-mo { display: none; }
+  .rt-lscale div { width: 26px; } .rt-lscale b { width: 26px; margin-left: -13px; font-size: 10px; }
+}
+/* eleven links in the top bar: a slightly tighter row between the phone layout and the full width */
+@media (min-width: 861px) and (max-width: 1100px) { .nav { gap: 12px; font-size: 13.5px; } }
+@media (min-width: 861px) and (max-width: 990px) { .nav { gap: 8px; font-size: 12px; } }

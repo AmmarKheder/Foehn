@@ -1,0 +1,50 @@
+# Copies the files of the daily real-time forecast (branches "live1km" and "verif") from their source repository into the
+# branches of the same names of this repository, so that the section "Foehn in real time" of the site reads its data
+# from this repository only. The source address is the repository secret RT_SOURCE (Settings > Secrets and variables >
+# Actions; an https address ending in .git); it is masked in the logs. Without the secret the workflow does nothing.
+# Each run replaces a branch by a single commit (no history is kept) and only when its source has changed.
+name: Real-time data
+on:
+  schedule:
+    - cron: "35 11,12,14,17,23 * * *"   # the forecast is published at about 11:05 UTC; later runs catch a late cycle
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: realtime-data
+  cancel-in-progress: false
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Copy the two data branches
+        env:
+          RT_SOURCE: ${{ secrets.RT_SOURCE }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$RT_SOURCE" ]; then echo "The secret RT_SOURCE is not set: nothing to copy."; exit 0; fi
+          DEST="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          N="[Oo][Tt][Ss][Oo]"
+          for B in live1km verif; do
+            D="$RUNNER_TEMP/$B"; mkdir -p "$D"; cd "$D"
+            git init -q
+            git fetch -q --depth 1 "$RT_SOURCE" "$B"
+            git checkout -q FETCH_HEAD
+            SRC_ID=$(git rev-parse FETCH_HEAD)
+            OLD=$(curl -fsS "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${B}/.source" 2>/dev/null || true)
+            if [ "$OLD" = "$SRC_ID" ]; then echo "$B: up to date"; continue; fi
+            # the text files carry only dates, numbers and colours for the page; internal names are removed
+            find . -path ./.git -prune -o -type f \( -name '*.json' -o -name '*.txt' \) -print0 \
+              | xargs -0 -r sed -i -E "s/${N}04/rt04/g; s/${N} 0\\.4 deg/the 0.4 deg forecast/g; s/${N} 1 km/real-time 1 km/g; s/${N}( ?[0-9]+\\.[0-9]+)?/the real-time system/g"
+            printf '# Foehn in real time: data of the site section\n\nFiles read by the section "Foehn in real time" of https://ammarkheder.com/Foehn/ (research forecast, not an alert service).\nThis branch holds one commit, replaced at every update.\n' > README.md
+            echo "$SRC_ID" > .source
+            rm -rf .git
+            git init -q
+            git checkout -q -b "$B"
+            git add -A
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Real-time data"
+            git push -q -f "$DEST" "$B"
+            echo "$B: copied"
+          done
