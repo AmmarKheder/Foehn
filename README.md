@@ -22,7 +22,8 @@
 
 Foehn forecasts the daily fine particulate matter (PM<sub>2.5</sub>), from all its sources (traffic, industry, heating,
 agriculture, desert dust, sea salt and fires), of every inhabited place on Earth at 1 km, from one day to
-a week ahead, as a calibrated ensemble. It learns from the first global record of daily PM<sub>2.5</sub> at 1 km (GHAP) with
+a week ahead, as an ensemble. Since version 1.1.0, a forecast of the same design at 0.4° and a generative downscaling also
+deliver 1 km ensembles **in real time**, every day, for five days. Foehn learns from the first global record of daily PM<sub>2.5</sub> at 1 km (GHAP) with
 the operational ECMWF weather forecast as input, generates whole continents in one pass by flow matching, and **computes rather
 than learns the transport of the air**: FLEXGREEN, a GPU re-implementation of the backward mode of the FLEXPART particle model,
 tells every receptor where its air was on the start day and which wildfire and anthropogenic emissions it took up on the way.
@@ -45,15 +46,18 @@ tells every receptor where its air was on the start day and which wildfire and a
 ## What is Foehn?
 
 Air pollution is forecast on grids about 40 km wide, while PM<sub>2.5</sub> changes from one street to the next. Foehn
-forecasts it at the kilometre, for the whole planet, as a calibrated ensemble:
+forecasts it at the kilometre, for the whole planet, as an ensemble:
 
 - **Kilometre scale, one pass.** A generative network trained by flow matching produces whole continents at 1 km in one
   pass, with no visible seam between the windows that cover the land.
-- **Sharp, calibrated ensembles.** Each sample is one plausible 1 km forecast; the ensemble is trained so that its spread
-  matches its error, to seven days ahead.
+- **Sharp, reliable ensembles.** Each sample is one plausible 1 km forecast; the ensemble is trained so that its spread
+  matches its error against the 1 km estimates, to seven days ahead.
 - **Computed transport (FLEXGREEN).** The physics decides where the air comes from; the network learns only what it carries.
   Every forecast comes with its Green's functions: where the air reaching each place was, at which height, and what it took
   up on the way.
+- **In real time (version 1.1.0).** The 1 km model starts from estimates that are produced after the fact. A forecast of
+  the same design at 0.4°, run each day from the operational analysis, and a generative downscaling that draws each of its
+  members at 1 km deliver kilometre-scale ensembles every day.
 
 <p align="center">
   <a href="docs/figures/fig_overview.png"><img src="docs/figures/web/fig_overview.jpg" width="880" alt="One forecast of the whole planet at 1 km, with four basin zooms against CAMS and GHAP"></a>
@@ -78,7 +82,7 @@ ensemble member.
 
 ## Results
 
-Test year 2022 (retrospective forecasts), scored against 6,324 official monitoring stations never used to train or select the
+Test year 2022 (retrospective forecasts), scored at more than 6,000 official monitoring stations never used to train or select the
 model, on UTC days like the forecasts, with the CAMS operational
 forecast and Aurora issued at the same time (details and intervals in the preprint):
 
@@ -87,16 +91,29 @@ forecast and Aurora issued at the same time (details and intervals in the prepri
 | RMSE, 1 day (µg m⁻³) | **12.7** | 15.2 | 15.7 |
 | RMSE, 4 days | **14.4** | 16.4 | 17.3 |
 | CRPS, 1 day | **4.3** | 7.9 | 8.3 |
-| SEDI, local P99, 1 day | **0.63** | 0.45 | 0.43 |
+| SEDI, local P99, 1 day | **0.63** | 0.47 | 0.46 |
 | Stations better than CAMS | **75 %** | – | – |
 
-RMSE and CRPS at the 6,324 stations (the CRPS is the fair CRPS of four members; for a single forecast it is the absolute error); SEDI for the days above the local 99th percentile; the share of the 5,954 stations with at least 30 common days where Foehn's error is lower than CAMS's.
+RMSE and CRPS at the stations (6,028 scored 1 day ahead; the CRPS is the fair CRPS of four members; for a single forecast it is the absolute error); SEDI over land for the days above the local 99th percentile of the 1 km estimates, every system issued at the same time; the share of the 5,954 stations with at least 30 common days where Foehn's error is lower than CAMS's.
 
 <p align="center">
   <a href="docs/figures/fig_transport.png"><img src="docs/figures/web/fig_transport.jpg" width="880" alt="The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time"></a>
 </p>
 <p align="center">
   <a href="docs/figures/fig_smoke.png"><img src="docs/figures/web/fig_smoke.jpg" width="880" alt="Forecasting the smoke of the Gironde fires of July 2022 at the Teich bird reserve, five days ahead"></a>
+</p>
+
+### In real time
+
+Over 48 issue days of autumn 2026 (the forecasts issued on 3–11 November and reforecasts of 39 earlier days made by the same
+frozen system from the data of each day), at 11,121 OpenAQ monitors that no part of the system has seen, the error of the
+real-time 1 km forecast is 14 % below that of the CAMS forecast of the same cycle (95 % interval, 7–21 %) and lower on each of
+the five lead days; it is 10 % below that of the 0.4° forecast from which it is drawn and 5 % below that of the climatology of
+the 1 km estimates. In Europe the two forecasts are equal. The scorer is in
+[`downscaling/realtime_1km/replay/score/`](downscaling/realtime_1km/replay/score/).
+
+<p align="center">
+  <img src="docs/figures/web/fig_realtime_monitors.png" width="520" alt="Real-time forecasts at 11,121 monitors: RMSE by lead day of the 1 km forecast, the 0.4 degree forecast, the CAMS forecast and the climatology">
 </p>
 
 ## Benchmark
