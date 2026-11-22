@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-G = Path("/scratch/project_462001140/ammar/eccv/data/world/global1km")
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 RUNS = HERE.parent / "global1km" / "runs"
 NR, NC = 288, 720
 RLAT = 84.0 - 0.125 - 0.5 * np.arange(NR)
@@ -52,7 +52,7 @@ def main():
     RM = [land if b is None else land & (LA2 <= b[0]) & (LA2 > b[1]) & (LO2 >= b[2]) & (LO2 < b[3]) for b in REG.values()]
     days = list(range(0, 358, 4))
     aloft = np.full((len(days), 7, len(REG)), np.nan); dist = np.full((len(days), 7, len(REG)), np.nan)
-    amap = np.zeros((7, NR, NC)); nmap = 0
+    amap = np.zeros((7, NR, NC)); cmap = np.zeros((7, NR, NC))   # sum and count over the days with a surviving particle
     org_path = G / "green" / "hres" / "origins_2022.npy"
     for i, d in enumerate(days):
         for h in range(1, 8):
@@ -68,7 +68,7 @@ def main():
                 aloft[i, h - 1, g] = (W * np.nan_to_num(a) * mm).sum() / (W * mm).sum()
                 dist[i, h - 1, g] = (W * np.nan_to_num(dk) * mm).sum() / (W * mm).sum()
             amap[h - 1] += np.where(ok & land, a, 0)
-        nmap += 1
+            cmap[h - 1] += ok & land
         if i % 10 == 0:
             print(f"day {d}: aloft by lead (land) {np.round(aloft[i, :, 0], 2)}, distance {np.round(dist[i, :, 0])} km", flush=True)
     # Beijing origins (256 particles), every lead, target 25 January
@@ -97,7 +97,7 @@ def main():
         fc[lab] = E
         print(lab, "forecast of the 25th, mean of members by lead:", np.round(np.nanmean(E, 1)))
     out = dict(days=np.array(days), leads=np.arange(1, 8), regions=np.array(list(REG)), aloft=aloft, dist=dist,
-               aloft_map=(amap / max(nmap, 1)).astype(np.float32), obs=obs, obs_first_doy=0,
+               aloft_map=np.where(cmap > 0, amap / np.maximum(cmap, 1), 0).astype(np.float32),   # a day without survivor does not count obs=obs, obs_first_doy=0,
                **{f"bj_org_{h}": v for h, v in bj.items()}, **{f"fc_{k}": v for k, v in fc.items()})
     np.savez(HERE / "data" / "transport_fig.npz", **out)
     m = np.nanmean(aloft, 0)

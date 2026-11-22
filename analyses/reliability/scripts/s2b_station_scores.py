@@ -9,10 +9,10 @@ import sys
 
 import numpy as np
 
-from rel_common import DATA, HERE, block_weights
+from rel_common import DATA, HERE, SFX, block_weights
 
 TAG = sys.argv[1] if len(sys.argv) > 1 else "final"
-RES = HERE / "results"; RES.mkdir(exist_ok=True)
+RES = HERE / f"results{SFX}"; RES.mkdir(exist_ok=True)
 Z = np.load(DATA / f"sums_{TAG}.npz")
 K = Z["keys"]; GROUPS = [str(g) for g in Z["groups"]]; THR = Z["thr"]; M = int(Z["members"]); SD_EDGES = Z["sd_edges"]
 LAT, LON, SRC = Z["lat"], Z["lon"], Z["src"]

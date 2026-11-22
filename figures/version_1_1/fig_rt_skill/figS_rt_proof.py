@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""The real-time forecasts verified at the monitors, ONE small panel (asked by the author on 2026-11-20: "just prove the real
-time"): RMSE by lead day of the real-time 1 km forecast, of its 0.4 degree input, of the CAMS forecast of the same cycle and of
+"""The real-time forecasts verified at the monitors, ONE small panel:
+RMSE by lead day of the real-time 1 km forecast, of its 0.4 degree input, of the CAMS forecast of the same cycle and of
 the climatology of the 1 km estimates, on the identical 1,819,647 station-days at 11,121 monitors (48 issue days).
 Numbers: numbers.json (keys b_lead/rmse and legend_numbers), built by rt_skill_data.py from the scorer directory
 replay/score_cams3h (the CAMS daily mean is that of its eight 3-hourly steps).

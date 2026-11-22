@@ -15,14 +15,14 @@ Comparisons (gain = 100 (1 - score_model / score_reference), positive = model be
 Two statistics, both against the 1 km estimates (GHAP) on identical pixels / cells and forecasts:
   km1   sums over the 1 km land pixels of each region with a valid target (array `recs` of the evaluation files): RMSE of
         the ensemble mean, fair CRPS of the four members, spread-skill ratio sqrt((M+1)/M mean variance) / RMSE. This is
-        the statistic of Fig. 5j (figdata_transport_gain.py) and of the author's control_report.py.
+        the statistic of Fig. 5j (figdata_transport_gain.py) and of control_report.py.
   c25   the 0.25 degree cell means of the ensemble mean and of GHAP stored for every forecast (`map25`, `map25_ghap`): RMSE
         of the ensemble mean over the land cells of each box, each cell once. The members are not stored at 0.25 degrees, so
         the CRPS exists only as km1. Boxes: the nine regions, "All regions" (their sum, as km1: overlaps counted twice),
         "All land" (every valid cell between 84N and 60S once), North China Plain, Indo-Gangetic Plain.
 Intervals: 95 %, paired moving-block bootstrap over start days (the same resampled start days for the two models; blocks
 of 7 consecutive start days, i.e. 14 calendar days since every second day is a start day; 10,000 resamples; generator
-seed 0 as in figdata_transport_gain.py, which makes the author's files reproducible to the last digit). Sensitivity: two
+seed 0 as in figdata_transport_gain.py, which makes the stored files reproducible to the last digit). Sensitivity: two
 more seeds and blocks of 4 and 14 start days.
 Extra rows: leads pooled ("1-7", "1-3", "5-7": one RMSE / CRPS over all forecasts of these leads) and, for the emissions,
 the change of the gain between leads 1-3 and leads 5-7 with its interval ("holds" when it includes zero).
@@ -259,8 +259,8 @@ def check_author(grows, srows, f):
         mine = G[("km1", r["region"], int(r["lead_days"]), lab, r["metric"])]
         d = max(abs(mine[0] - float(r["gain_pct"])), abs(mine[1] - float(r["ci95_lo"])), abs(mine[2] - float(r["ci95_hi"])))
         worst = max(worst, d); n += 1
-    f.write(f"control_gains.csv (author, 13 Oct): {n} rows (gain, lower, upper); largest absolute difference with this "
-            f"recomputation: {worst:.4f} percentage points (author's file is rounded to 0.01)\n")
+    f.write(f"control_gains.csv (stored, 13 Oct): {n} rows (gain, lower, upper); largest absolute difference with this "
+            f"recomputation: {worst:.4f} percentage points (the stored file is rounded to 0.01)\n")
     worst = [0.0, 0.0, 0.0]; n = 0
     for r in csv.DictReader(open(AUTHOR / "control_scores.csv")):
         mine = S[("km1", r["region"], int(r["lead_days"]), r["model"])]
@@ -268,7 +268,7 @@ def check_author(grows, srows, f):
             worst[j] = max(worst[j], abs(float(mine[k]) - float(r[col])))
         n += 1
     f.write(f"control_scores.csv: {n} rows; largest absolute difference: RMSE {worst[0]:.4f}, CRPS {worst[1]:.5f}, "
-            f"spread-skill {worst[2]:.4f} (author's file rounded to 0.001, 0.0001, 0.001)\n")
+            f"spread-skill {worst[2]:.4f} (the stored file rounded to 0.001, 0.0001, 0.001)\n")
     if any(r[0] == "c25" for r in grows):
         worst = 0.0; n = 0
         lab = {("e02", "ctrl"): "emissions", ("ctrl", "A"): "fine_tuning_alone", ("e02", "A"): "submitted"}
@@ -278,7 +278,7 @@ def check_author(grows, srows, f):
             mine = G[("c25", r["box"], int(r["lead_days"]), lab[(r["model"], r["reference"])], "rmse")]
             lo, hi = (float(v) for v in r["ci95"].split(";"))
             worst = max(worst, abs(mine[0] - float(r["rmse_gain_pct"])), abs(mine[1] - lo), abs(mine[2] - hi)); n += 1
-        f.write(f"pixel_regions_ctrl.csv (two plains, 0.25 degree cells; author's bootstrap resamples the forecasts common to A, "
+        f.write(f"pixel_regions_ctrl.csv (two plains, 0.25 degree cells; the stored bootstrap resamples the forecasts common to A, "
                 f"e02 and ctrl, this one those common to the four models: same start days): {n} rows; largest absolute "
                 f"difference: {worst:.4f} percentage points\n")
 

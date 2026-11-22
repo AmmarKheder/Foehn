@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""WP1a, decision A of the coordinator (2026-11-19): the ten leads 12, 24, ..., 120 h of the CAMS operational PM2.5
+"""WP1a (2026-11-19): the ten leads 12, 24, ..., 120 h of the CAMS operational PM2.5
 forecast (00 UTC cycle) for the issue days whose realtime/data/<d>/cams_fc.npz holds only the leads 24 and 120 h
 (2026-09-01..09-20 and 2026-10-10: files of the September hindcast), so that the baseline 'cams' (daily mean of lead day
 L = trapezoid of the instants 24(L-1), 24L-12, 24L h) can be built for them.
@@ -8,7 +8,7 @@ Written ONLY under <replay>/camsfc/: <d>/cams_fc.npz in the format of the chain'
 (pm25 (10, 451, 900) float16 ug m-3, lat (451,), lon (900,), leads (10,)) and <d>/fetch.json. Nothing is written in
 realtime/data; the stored two-lead files stay as they are; no lead is interpolated.
 The request is the chain's own (realtime/fetch_camsfc.py, same dataset, variable, type, time, format) and the client is
-the chain's (realtime/fetch.py ads(): the user's ADS account, as the daily chain uses it; the key is never printed).
+the chain's (realtime/fetch.py ads(): the ADS account that the daily chain uses; the key is never printed).
 Requests are sent one after the other. A day whose cams_fc.npz exists is skipped (resubmission continues).
   --check D   fetch day D (which already has ten leads in realtime/data) into camsfc/_check/D/ and compare it with the
               stored file -> camsfc/check_<D>.json

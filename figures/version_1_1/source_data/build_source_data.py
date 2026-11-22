@@ -1679,7 +1679,7 @@ def sfig11(fg, sh):
 
 # ================================================================================================ OUTPUT
 TITLE = "Global probabilistic forecasting of fine particulate air pollution at the kilometre scale"
-FORBIDDEN = ("ot" + "so", "/scr" + "atch/", "/p" + "fs/", "/proj" + "appl/")       # never in a delivered file (built from pieces: this file is delivered too)
+FORBIDDEN = ("/scr" + "atch/", "/p" + "fs/", "/proj" + "appl/")       # never in a delivered file (built from pieces: this file is delivered too)
 FIGLIST = []                                              # (figure label, sheet prefix, figure file, remark), filled by main()
 README_COLS = ["sheet", "figure", "panel", "figure file", "what the rows are (units in the text)", "columns", "rows"]
 

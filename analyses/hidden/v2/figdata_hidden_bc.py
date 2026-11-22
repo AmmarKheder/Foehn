@@ -30,6 +30,7 @@ cell has no map take no value and are never warned by the new systems (counted i
     python figdata_hidden_bc.py [workers] [start days of a test]   -> data/hidden_bc_pop.npz (or data/hidden_bc_pop_test.npz)"""
 import datetime as dt
 import glob
+import os
 import sys
 import time
 from multiprocessing import get_context
@@ -42,12 +43,13 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 from regions import BOXES, GROUP_NAMES, pixel_groups  # noqa: E402  (../regions.py, unchanged)
 
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
-RUN = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/global1km/runs/"
-           "green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4")
-EVP = RUN / "eval_pop_crps_e01"
-CAMS = "/scratch/project_462001804/ammar/eccv/data/world/cams_forecast_daily/2022.zarr"
-GH = Path("/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/data/processed/ghap")
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
+RUN = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/global1km/runs/"
+           "green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4"))
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+EVP = RUN / f"eval_pop_crps_e01{SFX}"
+CAMS = (os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr")
+GH = Path((os.environ["FOEHN_WORK"] + "/global_model_forecasting_air_pollution/data/processed/ghap"))
 GW = 36000
 THR = (15.0, 25.0, 37.5, 50.0, 75.0)
 MARGIN = 0.10
@@ -279,7 +281,7 @@ def main():
     res.sort(key=lambda r: (r[0][1], r[0][0]))
     K = np.array([(k[0], k[1], t) for k, t, *_ in res])
     T1 = np.stack([r[2] for r in res])
-    out = HERE / "data" / ("hidden_bc_pop_test.npz" if only else "hidden_bc_pop.npz")
+    out = HERE / f"data{SFX}" / ("hidden_bc_pop_test.npz" if only else "hidden_bc_pop.npz")
     np.savez(out, keys=K, T1=T1, diag=np.array([r[3] for r in res]), diag2=np.array([r[4] for r in res]), regions=np.array(REG),
              thr=np.array(THR), sys1=np.array(SYS1), margin=MARGIN, mult=np.array(MULT), sweep=np.array(SWEEP), diag2_systems=np.array(DIAG2),
              diag_cols=np.array(["valid residents", "valid residents without a cell map", "valid residents outside the mask (no pattern)",

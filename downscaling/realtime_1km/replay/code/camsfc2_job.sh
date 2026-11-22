@@ -8,7 +8,7 @@
 #SBATCH --mem=16G
 #SBATCH --time=06:00:00
 #SBATCH --output=/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/realtime_1km/replay/logs/%x_%j.out
-# WP1a, decision A of the coordinator, second version: ONE request for all the cycles that lack the ten leads of the CAMS
+# WP1a, second version: ONE request for all the cycles that lack the ten leads of the CAMS
 # forecast (camsfc_fetch2.py; a request already queued, running or done is re-attached, never sent twice). CPU, internet.
 #   sbatch camsfc2_job.sh [--no-check]
 set -uo pipefail

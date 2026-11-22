@@ -1,7 +1,7 @@
 # Generative downscaling to 1 km and the real-time 1 km forecast
 
 The second stage of the real-time system of the paper: a generative model that draws a 1 km member of daily PM2.5 over all
-land from each member of a coarse forecast (Methods, *Real-time forecasting*: *Downscaling to 1 km*, *From the coarse ensemble
+land from each member of a coarse forecast (Methods and Supplementary Methods, *Real-time forecasting*: *Downscaling to 1 km*, *From the coarse ensemble
 to 1 km*, *Calibration of the real-time ensemble*, *Tests of the downscaler*, *Verification at monitors*).
 
 **Dependency.** The encoder, the query and the pointwise flow are those of the functional flow matching code of Liu, Toropainen & Boy (CD-FFM; https://github.com/Holmes-Alan/CD-FFM, archived at https://doi.org/10.5281/zenodo.23499076). That code is imported, not copied:
@@ -25,10 +25,15 @@ clone it into `CD-FFM/` beside this folder (`cdffm_aq/__init__.py` holds the pat
   `replay/code/` recomputes past cycles (reforecasts) at the monitors from the data of their day, `replay/score/` is the
   scorer of the paper (identical station-days, two-way block bootstrap), and `replay/cams3h/` with `replay/score_cams3h/`
   builds the daily mean of the CAMS forecast from its eight 3-hourly steps and holds the checks of that reading.
+- `monitor_layer/` (version 1.2.0): a second downscaling network that receives the monitors of the day before as an input,
+  and the reforecast of the 48 issue days that tests it at held-out monitors (its own README).
 
-**Stations and monitors are evaluation data only** in every result of the paper. `cdffm_aq/train_aq.py` and
-`realtime_1km/infer.py` also carry options for experiments made after the system of the paper was frozen (28 October 2026);
-their modules are not part of this release and the options are off by default.
+**Stations and monitors are evaluation data only** in every result of the paper, with one stated exception: the layer fed by
+the monitors (`monitor_layer/`, version 1.2.0) receives the measurements of the day before as an input; no monitor is a
+target or selects it, and it is scored at monitors held out by place. `cdffm_aq/train_aq.py` and `realtime_1km/infer.py`
+also carry options for experiments made after the system of the paper was frozen (28 October 2026); the options are off by
+default and their modules are not part of `cdffm_aq/` or `realtime_1km/` (the copy of the package used by the layer,
+`monitor_layer/cdffm_aq_m/`, holds `stations.py`, which the layer needs).
 
 The scripts are the working files of the study, as they ran on the LUMI supercomputer: they carry the paths of our project space and the Slurm settings of that machine, like the rest of this repository. Data, trained weights, logs and outputs are not in the repository (see *Data availability* and *Code availability* in the paper).
 
@@ -67,7 +72,7 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 ### `scripts/` and `jobs/`
 | File | What it does (first line of its own header) |
 |---|---|
-| `backfill_2025_2026.py` | backfill_2025_2026.py -- the inputs of the 1 km analysis from 2025-01-01 to the last complete day (user order 2026-11-02, "aspire tout jusqu'a ce jour"), with the SAME code paths as the 2017-2024 stores (functions imported from bu … |
+| `backfill_2025_2026.py` | backfill_2025_2026.py -- the inputs of the 1 km analysis from 2025-01-01 to the last complete day, with the SAME code paths as the 2017-2024 stores (functions imported from bu … |
 | `build_ghap.py` | GHAP V1 store of the CAMS -> GHAP 1 km downscaler (PROTOCOL.md Amendment A2) in data/processed/ghap/. Source (read only): eccv/data/world/global1km/ghap1km_global.npy (2,191 days 2017-01-01 .. 2022-12-31, 14,400 x 36,000 float16;  … |
 | `build_global_cellmeans.py` | z cell-mean table of the global store for the hcf variant (cdffm_aq_x), = data_x.build_cellmeans on the global store, parallel over days (fork pool; the store and its per-pixel arrays are shared copy-on-write) |
 | `build_global_coarse.py` | Global coarse inputs of the CAMS -> LGHAP v2 downscaling (PLAN.md 2.1, 2.6, 2.7 items 1-3) into data/processed/global/coarse/: met_2023_2024.npy (731, 37, 576, 1440) float16 ERA5 37 channels of 2023-01-01 .. 2024-12-31, row = (dat … |
@@ -76,13 +81,13 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 | `check_flexgreen_pm.py` | Non-regression of transport/flexgreen_pm.py (--max-lead 1, --out-root, --fires-new) against the Foehn ERA5 store: lead index 0 of the origins and fire terms of the given start days (year, doys) must be bit-identical |
 | `check_injh_store.py` | GlobalStore(fires=injh) check (global-prep): channels 0-1 identical to mami, channel 2 = injh, real batch finite. |
 | `dl_era5_B_arco.py` | ERA5 3-D FLEXGREEN driving fields (PLAN.md 2.7 item 4) from ARCO-ERA5 (the WeatherBench2 ERA5 archive stops on 2023-01-10), in the exact format of Foehn's dl_wb2.py era5(): wb2/era5_B_<year>_<month>.npy (days, 4, 53, 181, 360) flo … |
-| `dl_era5_daily_arco.py` | ERA5 daily stores of 2026 (and any later year) from ARCO-ERA5, in the format of the archives the met builder reads (build_global_coarse.met_day): backfill of the 1 km analysis inputs (user order 2026-11-02) |
-| `dl_gfas_injh.py` | GFAS injection height 'injh' (IS4FIRES) 2017-2024 and the injh version of the global fires store (RT1KM task 1) |
+| `dl_era5_daily_arco.py` | ERA5 daily stores of 2026 (and any later year) from ARCO-ERA5, in the format of the archives the met builder reads (build_global_coarse.met_day): backfill of the 1 km analysis inputs |
+| `dl_gfas_injh.py` | GFAS injection height 'injh' (IS4FIRES) 2017-2024 and the injh version of the global fires store (the fires input of the 1 km model used in real time) |
 | `env_check.py` | env_check.py -- checks of the cdffm environment (inside the SIF, after `source env.sh`; jobs/env_check_job.sh) |
 | `era5_2026_repair.py` | Repair of the ERA5 2026 stores after the parallel array 23422009 (2026-11-03): 10 tasks opened the same yearly zarr at once -> 8 died on the create race (mode 'w' on an existing path), and the survivors overwrote attrs done_days/d … |
 | `measure_noise_beta.py` | Fit of the power-law noise prior on LGHAP z-fields of TRAINING days (PLAN.md 4.2 "Noise-prior fitting"; smoke) |
 | `north_fill.py` | North of the LGHAP domain (60 N): there is no 1 km truth, so no CD-FFM. Fill = CAMS (or RT, its emulator) corrected by a boreal quantile mapping (BQM): per calendar month, the quantiles of log1p CAMS day-0 at 0.25 deg land cells a … |
-| `test_global_hcf.py` | CPU checks of the HCF variant ON THE GLOBAL STORE (global-train agent, 2026-10-26; PROTOCOL.md Amendment A1) |
+| `test_global_hcf.py` | CPU checks of the HCF variant ON THE GLOBAL STORE (2026-10-26; PROTOCOL.md Amendment A1) |
 | `test_global_loader.py` | CPU dataloader test of the global store (cdffm_aq.store_global.GlobalStore + data_aq.BatchStream, unchanged): 1 |
 | `test_global_wiring.py` | CPU checks of the --store global wiring (global-prep, 2026-10-26) |
 | `test_store_backfill.py` | Unit test of the 2025-2026 backfill in GlobalStore / GhapStore (backfill 2026-11-02): for the reference days of backfill/refs.npz (3 per year, rows recomputed from the sources by scripts/backfill_2025_2026.py refs) raw_inputs(d) m … |
@@ -102,7 +107,7 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 | `bf_test.sh` | Backfill: reference rows from the sources (world venv) -> GlobalStore/GhapStore unit test (container) -> coverage json. |
 | `env_check_job.sh` | Checks the cdffm environment on 2 GCDs of a dev-g node (<= 0.33 GPU-h; random data, writes nothing but this log): 1 |
 | `flexgreen_check.sh` | flexgreen_pm.py lead 1 on two 2021 start days (doy 100, 364) vs the Foehn green/era5 store (bit equality), timing. |
-| `gfas_injh.sh` | RT1KM task 1: GFAS injh 2017-2024 (ADS, monthly) -> coarse/fires_injh_{2017_2022,2023_2024}.npy -> checks. |
+| `gfas_injh.sh` | The fires input of the 1 km model used in real time: GFAS injh 2017-2024 (ADS, monthly) -> coarse/fires_injh_{2017_2022,2023_2024}.npy -> checks. |
 | `global_bcsd.sh` | B2 BCSD baseline (PROTOCOL.md 3), fitted on the 1,270 split-A training days only -> lghap_clim/bcsd_A.npz, + check. |
 | `global_cellmeans.sh` | hcf z cell-mean table of the global store (training + validation days only), then the direct-recompute check. |
 | `global_coarse.sh` | Global coarse inputs (PLAN.md 2.7 items 1-3): met/fires 2023-2024, CAMS 0.25 deg 2017-2024, non-regression, days.npz. |
@@ -144,10 +149,10 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 | `pmG_cal/code/job_screen.sh` | PROTOCOL.md A6(f) stage 2: eval_x at every 8th mask pixel (24 SEL days) + the regime-box spectra, then the gates |
 | `pmG_cal/code/job_smoke.sh` | PROTOCOL.md A6(j) smoke test: time per step and memory of a velocity-net arm and of the all-weights arm (30 steps each, weights discarded, nothing scored), the validation on the frozen weights (8 SEL days), the eval_x wrapper on 8 … |
 | `pmG_cal/code/job_train.sh` | PROTOCOL.md A6(b): one fine-tuning arm |
-| `pmG_cal/replay_code/assemble_cal.py` | A6 mandate (b), CPU: realtime_1km/replay/points_cal/<d>.npz = the downscaled members of the CALIBRATED sampler at the monitors, in the format of replay/points/<d>.npz (replay/README.md) for the arrays of the downscaler: id, lat, l … |
-| `pmG_cal/replay_code/compare_points.py` | A6 mandate (b), proof: the copy infer_points_cal.py run with the frozen settings (tau 1) against the existing replay files of the frozen system: replay/km/<d>.npz (downscaler part), replay/raw/<d>.npy (members at every evaluated p … |
+| `pmG_cal/replay_code/assemble_cal.py` | A6(b), CPU: realtime_1km/replay/points_cal/<d>.npz = the downscaled members of the CALIBRATED sampler at the monitors, in the format of replay/points/<d>.npz (replay/README.md) for the arrays of the downscaler: id, lat, l … |
+| `pmG_cal/replay_code/compare_points.py` | A6(b), proof: the copy infer_points_cal.py run with the frozen settings (tau 1) against the existing replay files of the frozen system: replay/km/<d>.npz (downscaler part), replay/raw/<d>.npy (members at every evaluated p … |
 | `pmG_cal/replay_code/infer_points_cal.py` | COPY of realtime_1km/replay/code/infer_points.py for PROTOCOL.md A6 (runs_ghap/pmG_cal/replay_code/infer_points_cal.py; the original is not edited) |
-| `pmG_cal/replay_code/points_cal_job.sh` | PROTOCOL.md A6, mandate (b): the reforecasts in real-time mode at the monitor pixels with the calibrated sampler |
+| `pmG_cal/replay_code/points_cal_job.sh` | PROTOCOL.md A6(b): the reforecasts in real-time mode at the monitor pixels with the calibrated sampler |
 | `pmG_cal/replay_code/points_rank.sh` | One srun task per GCD, INSIDE the container (started by points_cal_job.sh): the issue days of this rank, one process per day as realtime_1km/replay/code/km_rank.py does (children see one rank and device 0 of the visible set) |
 | `pmG_seed1/a8/a8_lib.sh` | a8_lib.sh -- sourced by the A8 job scripts (host side of a Slurm job on ONE LUMI-G node, 8 GCDs) |
 | `pmG_seed1/a8/compare_seeds.py` | A8(f)-(g): seeds 0 (frozen system, files read as they are), 1 and 2 side by side on the 24 selection days of 2021 |
@@ -230,12 +235,12 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 | `replay/cams3h/code/fetch3h_job.sh` | cams3h step 1 on a CPU node: the 3-hourly CAMS forecast steps of the 53 cycles (see fetch3h.py) |
 | `replay/cams3h/code/safe_io.py` | Safe writes for the cams3h work (the file system dropped a write on 2026-11-19): every file is written to a temporary name in the same directory, flushed, fsynced, read back and compared, then renamed with os.replace |
 | `replay/code/assemble.py` | WP1a step D (CPU): the per-day deliverable replay/points/<d>.npz = the downscaled members of replay/km/<d>.npz plus the station-free baselines at the monitors, with the definitions of realtime_1km/rc/coupling_live.py (its function … |
-| `replay/code/cams_points.py` | WP1a, instance B: the baseline 'cams' at the catalogue monitors, exactly as realtime_1km/rc/coupling_live.py (and live_baselines.py) define it: for issue day d and lead day L = 1..5 (valid day d + L - 1), the daily mean of the CAM … |
-| `replay/code/camsfc2_job.sh` | WP1a, decision A of the coordinator, second version: ONE request for all the cycles that lack the ten leads of the CAMS forecast (camsfc_fetch2.py; a request already queued, running or done is re-attached, never sent twice) |
-| `replay/code/camsfc_fetch.py` | WP1a, decision A of the coordinator (2026-11-19): the ten leads 12, 24, ..., 120 h of the CAMS operational PM2.5 forecast (00 UTC cycle) for the issue days whose realtime/data/<d>/cams_fc.npz holds only the leads 24 and 120 h (202 … |
-| `replay/code/camsfc_fetch2.py` | WP1a, decision A of the coordinator (2026-11-19), second version of the fetch (camsfc_fetch.py asked one cycle per request): the ten leads 12, 24, ..., 120 h of the CAMS operational PM2.5 forecast (00 UTC cycle) for the issue days … |
-| `replay/code/camsfc_job.sh` | WP1a, decision A of the coordinator: the ten leads of the CAMS operational forecast for the cycles that only have 24 h and 120 h, into replay/camsfc/<d>/ (one request after the other; the chain's own request and client) |
-| `replay/code/camsfill_job.sh` | WP1a, instance B, after the CAMS forecast fetch (rp_camsfc): 'cams' at the monitors for every issue day that has the ten leads (camsfc/points/<d>.npz), then the safety net: fill 'cams' in the FINISHED points/<d>.npz files where a  … |
+| `replay/code/cams_points.py` | WP1a: the baseline 'cams' at the catalogue monitors, exactly as realtime_1km/rc/coupling_live.py (and live_baselines.py) define it: for issue day d and lead day L = 1..5 (valid day d + L - 1), the daily mean of the CAM … |
+| `replay/code/camsfc2_job.sh` | WP1a, second version: ONE request for all the cycles that lack the ten leads of the CAMS forecast (camsfc_fetch2.py; a request already queued, running or done is re-attached, never sent twice) |
+| `replay/code/camsfc_fetch.py` | WP1a (2026-11-19): the ten leads 12, 24, ..., 120 h of the CAMS operational PM2.5 forecast (00 UTC cycle) for the issue days whose realtime/data/<d>/cams_fc.npz holds only the leads 24 and 120 h (202 … |
+| `replay/code/camsfc_fetch2.py` | WP1a (2026-11-19), second version of the fetch (camsfc_fetch.py asked one cycle per request): the ten leads 12, 24, ..., 120 h of the CAMS operational PM2.5 forecast (00 UTC cycle) for the issue days … |
+| `replay/code/camsfc_job.sh` | WP1a: the ten leads of the CAMS operational forecast for the cycles that only have 24 h and 120 h, into replay/camsfc/<d>/ (one request after the other; the chain's own request and client) |
+| `replay/code/camsfill_job.sh` | WP1a, after the CAMS forecast fetch (rp_camsfc): 'cams' at the monitors for every issue day that has the ten leads (camsfc/points/<d>.npz), then the safety net: fill 'cams' in the FINISHED points/<d>.npz files where a  … |
 | `replay/code/channels_replay.py` | WP1a step B2: realtime_1km/channels.py for a past issue day, with its work directory redirected to replay/work |
 | `replay/code/check_all.py` | WP1a final checks over all delivered days (CPU; no observation is read) -> replay/check/summary.json and a table |
 | `replay/code/check_coarse.py` | WP1a check of step A: a replayed coarse forecast against the archived production forecast of the same day |

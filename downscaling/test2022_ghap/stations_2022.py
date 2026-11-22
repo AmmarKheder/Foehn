@@ -3,7 +3,7 @@
 
 Source: the Foehn evaluation file eccv/data/world/global1km/stations_2022_utc.npz (build_stations_utc.py: UTC-day means,
 >= 12 hourly values, 0-1000 ug m-3, stations with >= 30 valid days on the local day; OpenAQ inside the EEA box and within
-2 km of an official station dropped). Networks kept = the user's list: CNEMC (1), OpenAQ (2), EPA AQS (3), AirKorea (4),
+2 km of an official station dropped). Networks kept: CNEMC (1), OpenAQ (2), EPA AQS (3), AirKorea (4),
 Japan NIES (5), India CAAQMS (6); EEA (0) is not in the list and is left out (so Europe has no OpenAQ either).
 Rules here: >= 30 valid UTC days in 2022; pixel = the GHAP 1 km lattice pixel containing the monitor
 (r = floor((84 - lat) / 0.01), c = floor((lon + 180) / 0.01)); monitors whose pixel is not in the GHAP mask (sea,

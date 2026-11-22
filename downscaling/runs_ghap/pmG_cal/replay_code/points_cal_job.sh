@@ -10,9 +10,9 @@
 #SBATCH --exclusive
 #SBATCH --time=00:40:00
 #SBATCH --output=/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/runs_ghap/pmG_cal/logs/%x_%j.out
-# PROTOCOL.md A6, mandate (b): the reforecasts in real-time mode at the monitor pixels with the calibrated sampler.
+# PROTOCOL.md A6(b): the reforecasts in real-time mode at the monitor pixels with the calibrated sampler.
 # Reads realtime_1km/replay/{work,positions*.npz,points,km,raw,code} (never written), writes runs_ghap/pmG_cal/replay_out/ and,
-# in mode run, realtime_1km/replay/points_cal/<d>.npz (the directory given by the lead). No observation is opened.
+# in mode run, realtime_1km/replay/points_cal/<d>.npz (the directory of the calibrated reforecasts). No observation is opened.
 #   sbatch points_cal_job.sh proof <list>     the copy with the frozen settings (tau 1) on the days of the list ->
 #                                             replay_out/proof, compared bit for bit with replay/km, replay/raw and
 #                                             replay/points; then ONE day with TAU/KNEE as a smoke test (replay_out/smoke_$TAG)

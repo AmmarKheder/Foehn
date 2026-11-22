@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Who is warned, real forecast against real forecast (2022). Extends figures/figdata_hidden_warned.py (not modified) to the
-systems a referee needs, on the same pixels, days and definitions:
+systems a comparison needs, on the same pixels, days and definitions:
 
   truth     the 1 km estimates (GHAP) of the target day at the 8.1 M populated 1 km pixels (>= 100 residents, 94 % of the
             world's residents; eval_pop_crps_e01/pop_ghap_*.npy) and their mean over 40 x 40-pixel cells (cell40_*.npy[:, 1]).
@@ -49,14 +49,15 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from regions import BOXES, GROUP_NAMES, pixel_groups  # noqa: E402
 
-FIGS = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
-RUN = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/global1km/runs/"
-           "green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4")
-EVP, EVF = RUN / "eval_pop_crps_e01", RUN / "eval_final_crps_e01"
+FIGS = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
+RUN = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/global1km/runs/"
+           "green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4"))
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+EVP, EVF = RUN / f"eval_pop_crps_e01{SFX}", RUN / f"eval_final_crps_e01{SFX}"
 EXTRA = [RUN / q if "/" not in q else Path(q) for q in os.environ.get("EVP_EXTRA", "").split(":") if q]
 AURD = FIGS.parent / "benchmark" / "aurora"
-CAMS = "/scratch/project_462001804/ammar/eccv/data/world/cams_forecast_daily/2022.zarr"
+CAMS = (os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr")
 GW = 36000
 THR = (15.0, 25.0, 37.5, 50.0, 75.0)
 MARGIN = 0.10
@@ -228,7 +229,7 @@ def main():
     K = np.array([(k[0], k[1], t) for k, t, *_ in res])
     T1 = np.stack([r[2] for r in res])
     t2 = [(r[1], r[3]) for r in res if r[3] is not None]
-    out = HERE / "data" / ("hidden_systems_pop_test2.npz" if only else "hidden_systems_pop_leads.npz" if EXTRA else "hidden_systems_pop.npz")
+    out = HERE / f"data{SFX}" / ("hidden_systems_pop_test2.npz" if only else "hidden_systems_pop_leads.npz" if EXTRA else "hidden_systems_pop.npz")
     if out.name == "hidden_systems_pop.npz" and out.exists():
         out = out.with_name("hidden_systems_pop_rerun.npz")                    # the file of job 23864988 is never overwritten
     np.savez(out, keys=K, T1=T1, targets2=np.array([t for t, _ in t2]), T2=np.stack([x for _, x in t2]),

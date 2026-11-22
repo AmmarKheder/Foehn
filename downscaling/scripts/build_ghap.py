@@ -255,7 +255,7 @@ ICE_CLASS, ICE_PCT = 220, 50
 def cmd_ice(a):
     """share (%) of ESA CCI / C3S land cover 2020 (300 m) cells of class 220 'permanent snow and ice' whose centres fall
     in each GHAP 1 km lattice pixel -> grid/ice_pct_lattice.npy (14400, 36000) uint8 (255 = no land-cover cell).
-    PROTOCOL.md A2(a) (coordinator's finding: GHAP ~10 ug m-3 on the Greenland ice sheet where CAMS gives 0.4)."""
+    PROTOCOL.md A2(a) (GHAP ~10 ug m-3 on the Greenland ice sheet where CAMS gives 0.4)."""
     import zipfile
     import netCDF4
     t0 = time.time()

@@ -13,6 +13,8 @@ import os
 EXP = Path(__file__).resolve().parents[1]
 NATURE = os.environ.get("NATURE", "0") == "1"      # NATURE=1: Nature Extended Data style (nature_style.py), paper/nature/figs
 OUT = Path(__file__).resolve().parents[2] / "paper" / ("nature/figs" if NATURE else "aistats2027/figures")
+if os.environ.get("FOEHN_DESIGN"):                 # A16 rebuild: renders of a noise design go to natcomms/rebuild/figs_<D>
+    OUT = Path(__file__).resolve().parents[2] / "paper" / "natcomms" / "rebuild" / f"figs_{os.environ['FOEHN_DESIGN']}"
 OUT.mkdir(parents=True, exist_ok=True)
 COL1, COL2 = (89 / 25.4, 183 / 25.4) if NATURE else (3.25, 6.75)   # Nature single / double column, AISTATS column / full
 

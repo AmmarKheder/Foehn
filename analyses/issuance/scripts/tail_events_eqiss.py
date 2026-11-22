@@ -24,12 +24,13 @@ from pathlib import Path
 
 import numpy as np
 
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
-RUNS = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/global1km/runs")
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
+RUNS = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/global1km/runs"))
 AURD = FIG.parent / "benchmark" / "aurora"
 THR = G / "clim" / "tail_thresholds_2017_2020.npy"
-OUT = Path(__file__).resolve().parent.parent / "data"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+OUT = Path(__file__).resolve().parent.parent / f"data{SFX}"
 ISS = os.environ.get("ISSUANCE", "d1"); assert ISS in ("d", "d1")
 HB = 4 if ISS == "d" else 5                                           # last lead with the baselines
 DUMP = os.environ.get("DUMP", "0") == "1"
@@ -68,7 +69,7 @@ def evaluate(args):
     common = sorted(set.intersection(*[set(r[1]) for r in runs]))
     print("issuance:", ISS, "| common forecasts:", len(common), flush=True)
     thr = np.load(THR, mmap_mode="r")
-    cams = zarr.open("/scratch/project_462001804/ammar/eccv/data/world/cams_forecast_daily/2022.zarr", mode="r")
+    cams = zarr.open((os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr"), mode="r")
     aur = {}
     if ISS == "d":                                                    # as submitted: analyses of day d (out_global)
         for p in glob.glob(str(AURD / "out_global" / "part_*.npz")):

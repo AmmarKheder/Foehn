@@ -19,15 +19,17 @@ g_one). k = 0 is the station pixel itself.
 
     python extract_rings.py     -> ../data/rings.npz
 """
+import os
 from pathlib import Path
 
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-OUT = HERE.parent / "data"
-EXP = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments")
-RUN = EXP / "global1km/runs/green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4/eval_pop_crps_e01"
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+OUT = HERE.parent / f"data{SFX}"
+EXP = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments"))
+RUN = EXP / f"global1km/runs/green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4/eval_pop_crps_e01{SFX}"
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 GH, GW, FH, FW = 14400, 36000, 4192, 6992
 KMAX, NK = 12, 13
 import os  # noqa: E402

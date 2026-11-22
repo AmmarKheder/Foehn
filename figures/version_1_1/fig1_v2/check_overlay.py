@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Overlay check of fig_gc1_schematic_rt2 (version 2 of the lower band): are panels a, b, c the Nature figure, pixel for pixel?
 
-A. Render of the original against the new figure (the proof asked for). fig_gc1_schematic.main() is run as it is (only
+A. Render of the original against the new figure (the proof). fig_gc1_schematic.main() is run as it is (only
    its save() is redirected to check/, the Nature folder is never written) and saved as a whole page, 183 x 136 mm at
    300 dpi, without tight crop: check/orig_full_300.png. The new figure, built by fig_gc1_schematic_rt2.build(), is saved
    the same way: check/new_full_300.png. The lower band adds 234 pt = 975 pixels under the old page, so a, b, c must sit on the

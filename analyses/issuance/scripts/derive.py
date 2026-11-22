@@ -13,6 +13,7 @@ thresholds kept fixed. Reads ../data/{tail_events_<L>_d1,land_freqmatch_<L>,extr
 extremes_stations_matched.py; extremes_stations_own_eqiss_<L>.npz, without the kind 'matched', if it is missing).
     python derive.py [label]   -> ../data/derived.json, printed table"""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -20,7 +21,8 @@ import numpy as np
 
 from common import block_index, boot_counts, ci, rates, sedi
 
-D = Path(__file__).resolve().parent.parent / "data"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+D = Path(__file__).resolve().parent.parent / f"data{SFX}"
 L = sys.argv[1] if len(sys.argv) > 1 else "crps_e01"
 TT = ["P90", "P95", "P99"]
 r3 = lambda a: [None if not np.isfinite(v) else round(float(v), 3) for v in np.atleast_1d(a)]

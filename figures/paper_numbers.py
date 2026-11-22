@@ -60,7 +60,7 @@ for nm, ev in (("2021", FM.SEL21_DIR), ("2022", FM.EVAL_DIR)):
         out.append(f"J+{h} ss {np.sqrt((M + 1) / M * var / n_) / np.sqrt(sse / n_):.2f} CRPS {crps / n_:.2f} RMSE {np.sqrt(sse / n_):.2f}")
     print(f"GHAP {nm}:", " | ".join(out))
 # ---- January case
-cz = glob.glob(str(HERE / "data" / f"case_eastasia_{FM.M['run']}.npz"))
+cz = glob.glob(str(HERE / "data" / f"case_eastasia_{FM.M['run']}{FM.SFX}.npz"))
 if cz:
     z = np.load(cz[0]); W = z["warn"]
     print("January warnings CSI by lead (Foehn/CAMS/Aurora):", [tuple(round(W[h, k, 0] / W[h, k].sum(), 3) if W[h, k].sum() else None for k in range(3)) for h in range(7)])

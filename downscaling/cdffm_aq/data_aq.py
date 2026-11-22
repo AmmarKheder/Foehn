@@ -15,7 +15,7 @@ sigma_p(doy) from the per-pixel harmonic climatology (K = 0 in the smoke), sigma
 sigma_k (store attribute, run argument --sigma-k, PROTOCOL.md A1(e)): 2 = sigma_p(doy) from the K = 2 harmonic fit of
 the residual variance (runs before 2026-10-27); 0 = the annual sigma_p = sqrt(constant term) of that fit, the smoke
 configuration (the seasonal fit collapses to the floor for 9 % of the pixels at some doy, which made the z targets
-heavy-tailed and the members absurd after the exponential back-transform: logs/GLOBAL_PREP_STATUS.md [fable-fix]).
+heavy-tailed and the members absurd after the exponential back-transform: logs/GLOBAL_PREP_STATUS.md [fix]).
 z_to_ug(pmax=...) is the physical cap of the members (A1(e) safety net); the flow state bound is in model_aq.integrate.
 """
 import datetime as dt

@@ -6,6 +6,7 @@ common.block_index, the recipe of compare_fair.py), paired between systems and b
 start days for both terms of a difference); thresholds are kept fixed in the resamples.
     python summarise.py [label]"""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -13,8 +14,9 @@ import numpy as np
 
 from common import block_index, boot_counts, ci, rates, sedi
 
-D = Path(__file__).resolve().parent.parent / "data"
-FIGD = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures/data")
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+D = Path(__file__).resolve().parent.parent / f"data{SFX}"
+FIGD = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures/data"))
 L = sys.argv[1] if len(sys.argv) > 1 else "crps_e01"
 R = {}
 f2 = lambda a: [None if not np.isfinite(v) else round(float(v), 3) for v in np.atleast_1d(a)]

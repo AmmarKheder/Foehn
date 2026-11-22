@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use Foehn or FLEXGREEN, please cite the paper below."
 title: "Foehn: global kilometre-scale probabilistic forecasts of fine particulate matter"
 type: software
-version: "1.1.0"
-date-released: "2026-11-20"
+version: "1.2.0"
+date-released: "2026-11-22"
 license: MIT
 repository-code: "https://github.com/AmmarKheder/Foehn"
 url: "https://ammarkheder.com/Foehn/"

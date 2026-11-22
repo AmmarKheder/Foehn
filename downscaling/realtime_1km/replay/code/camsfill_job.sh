@@ -8,7 +8,7 @@
 #SBATCH --mem=16G
 #SBATCH --time=00:30:00
 #SBATCH --output=/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/realtime_1km/replay/logs/%x_%j.out
-# WP1a, instance B, after the CAMS forecast fetch (rp_camsfc): 'cams' at the monitors for every issue day that has the
+# WP1a, after the CAMS forecast fetch (rp_camsfc): 'cams' at the monitors for every issue day that has the
 # ten leads (camsfc/points/<d>.npz), then the safety net: fill 'cams' in the FINISHED points/<d>.npz files where a lead
 # day is all-NaN and can now be computed (atomic rewrite, other arrays untouched, provenance updated, report in
 # camsfc/fill_report.json). Points files assembled after the fetch already hold 'cams' (assemble.py reads camsfc/ first).

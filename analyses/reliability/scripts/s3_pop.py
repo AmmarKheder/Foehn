@@ -17,9 +17,9 @@ from multiprocessing import Pool
 
 import numpy as np
 
-from rel_common import DATA, FINAL, G, THR
+from rel_common import DATA, FINAL, G, SFX, THR
 
-EV = FINAL / "eval_pop_crps_e01"
+EV = FINAL / f"eval_pop_crps_e01{SFX}"
 REGIONS = {"Europe": (72, 35, -25, 45), "North America": (72, 15, -170, -50), "South America": (15, -56, -95, -30),
            "Africa": (37, -35, -20, 52), "Middle East": (42, 12, 35, 63), "South Asia": (37, 5, 60, 97),
            "East Asia": (54, 18, 97, 146), "Southeast Asia": (18, -11, 92, 142), "Oceania": (-10, -48, 110, 180)}

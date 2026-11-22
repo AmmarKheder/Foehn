@@ -253,7 +253,7 @@ def main(preview):
     fig.legend(hs, ["above, warned", "above, missed", "below, warned (false alert)"], loc="lower right", ncol=3, fontsize=5.2, frameon=False,
                bbox_to_anchor=(fx(MM_W - 1.0), fy(y_row(nr + 1) - 5.5)), handlelength=1.0, columnspacing=1.0, handletextpad=0.4)
     if preview:
-        fig.savefig("/tmp/claude-10026109/-pfs-lustrep1-scratch-project-462001140-ammar/876cd2f9-d218-4ea1-acb1-e871a631f22d/scratchpad/teaser_v4_preview.png", dpi=300)
+        fig.savefig("/tmp/teaser_v4_preview.png", dpi=300)
     else:
         save(fig, "fig1_teaser_v4")
 

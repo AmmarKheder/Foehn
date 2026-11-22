@@ -1,19 +1,26 @@
-# Analyses added in version 1.1.0
+# Analyses
 
-The analyses made for the revised version of the paper, one folder each.
+The analyses added in versions 1.1.0 and 1.2.0, one folder each.
 
 | Folder | In the paper |
 |---|---|
 | `issuance/` | every comparison of the global model with the CAMS forecast and Aurora at equal issuance time, over land and at the stations; detection of local extremes (section *Extreme pollution episodes*, Supplementary Note *Detection of local extremes*) |
-| `hidden/` | the people hidden by a 40 km grid and the warnings (section *Hidden exposure and public health*, Fig. 2f, Supplementary Note *Hidden exposure and warnings*); `hidden/v2/` adds the two references that see the 1 km estimates (bias-corrected CAMS forecast, with and without the climatological 1 km pattern) |
+| `hidden/` | the people hidden by a 40 km grid and the warnings (section *Hidden exposure and public health*, Fig. 2f, Supplementary Note *Hidden exposure and warnings*); `hidden/v2/` adds the two references that see the 1 km estimates (bias-corrected CAMS forecast, with and without the climatological 1 km pattern); `hidden/v3/` (version 1.2.0) holds the warnings as in the submitted manuscript (a further reference, exact warning factors, centred blocks) |
 | `reliability/` | reliability of the ensembles against the 1 km estimates and at the stations (Supplementary Note *Reliability of the ensembles*) |
 | `circularity/` | the three tests of the dependence between the stations and the 1 km estimates: forecast read away from the station pixel, stations matched or not by the estimates, model trained without 1 km data (section *Kilometre-scale forecasts*, Supplementary Note *The stations and the 1 km estimates*) |
-| `emissions/` | effect of the emission inputs against a control that received the same additional training (section *Transport and emissions*, Supplementary Note *Transport and emissions*) |
+| `emissions/` | effect of the emission inputs against a control that received the same additional training (section *Transport and emissions*, Supplementary Note *Transport and emissions by region*) |
 | `si_models/` | checks behind the Supplementary Table of the models and the Supplementary Note on the European benchmark |
+| `noise_design/` | version 1.2.0: the noise design of the ensemble (noise drawn anew at every start day, autoregressive between lead days), its choice and confirmation on 2021, the runs of 2022 and the chain that recomputes the analyses of the 1 km model (Supplementary Note *Noise design of the ensemble*) |
+| `ensemble_size/` | version 1.2.0: scores for eight and for infinitely many members, warnings with eight members (Supplementary Table *Scores by ensemble size*) |
+| `opposite_pairs/` | version 1.2.0: members run from the negated noise, validated on 2021 and tested on 2022 at the stations (Supplementary Note *Order in the noise: opposite pairs and the noise-aware mean*) |
+| `noise_aware_mean/` | version 1.2.0: the mean corrected with each member's own noise, validated on 2021 and tested on 2022 at the stations (same Supplementary Note) |
 
 The scripts are the working files of the study, as they ran on the LUMI supercomputer: they carry the paths of our project space and the Slurm settings of that machine, like the rest of this repository. Data, trained weights, logs and outputs are not in the repository (see *Data availability* and *Code availability* in the paper).
 
 ## Files
+
+The folders added in version 1.2.0 (`noise_design/`, `ensemble_size/`, `opposite_pairs/`, `noise_aware_mean/`, `hidden/v3/`) list their files in their own READMEs.
+
 | File | What it does (first line of its own header) |
 |---|---|
 | `circularity/scripts/analyse.py` | The defence against circularity, in numbers (test year 2022, final model crps_e01) |
@@ -33,14 +40,14 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 | `hidden/job_sys.sh` | people exposed / hidden / warned at the populated 1 km pixels, 2022: Foehn, Foehn at 40 km, CAMS forecast, Aurora (figdata_hidden_systems.py, 32 forked workers) -> data/hidden_systems_pop.npz |
 | `hidden/job_test.sh` | smoke tests of the two data scripts (nothing kept except data/pop_pos.npz and data/hidden_systems_pop_test.npz) |
 | `hidden/job_test2.sh` | check that figdata_hidden_systems.py with the EVP_EXTRA option (unset) still gives the file of job 23864988 on 4 forecasts |
-| `hidden/lead5_PREPARED_not_submitted.sh` | PREPARED, NOT SUBMITTED (a GPU job is not in the mandate of analyses/hidden; the lead decides) |
+| `hidden/lead5_PREPARED_not_submitted.sh` | PREPARED, NOT SUBMITTED (a GPU job outside the scope of analyses/hidden) |
 | `hidden/main_numbers.py` | The numbers that the text carries, one per line, each with its 95 % interval and its key in results/numbers.json (written by tables.py; nothing is computed here) |
 | `hidden/make_si.py` | LaTeX tables for the Supplementary Information, written from results/numbers.json (tables.py); no number is typed by hand |
 | `hidden/regions.py` | Regions of the hidden-exposure analyses (written 2026-11-19 for the Nature Communications version) |
 | `hidden/tables.py` | Numbers of the hidden-population analysis, with intervals over days -> results/numbers.json, results/tables.txt Inputs (nothing is recomputed from the fields here) data/hidden_systems_pop.npz figdata_hidden_systems.py: residents b … |
 | `hidden/v2/check_identity.py` | The systems recomputed by figdata_hidden_bc.py (foehn_p50, foehn_mean, foehn_40km, cams) must equal those of ../data/hidden_systems_pop.npz (job 23864988) on every forecast, region, threshold and code: the proof that the new syste … |
 | `hidden/v2/check_text_numbers_v2.py` | Every number of the version 2 texts against results/numbers_v2.json |
-| `hidden/v2/fig_hidden_warned_v2.py` | Who is warned, version 2 (after the author's feedback) |
+| `hidden/v2/fig_hidden_warned_v2.py` | Who is warned, version 2 |
 | `hidden/v2/figdata_hidden_bc.py` | Who is warned, version 2: two more reference forecasts that see the 1 km estimates as Foehn does (2022) |
 | `hidden/v2/job_bc.sh` | people warned by the bias-corrected CAMS forecast (quantile map 2017-2020 of the downscaling project; cell value and climatological 1 km pattern) at the populated 1 km pixels, 358 forecasts of 2022 (v2/figdata_hidden_bc.py, 32 for … |
 | `hidden/v2/job_bc_test.sh` | smoke test of v2/figdata_hidden_bc.py on 4 forecasts (start days 0 and 64, leads 1 and 3) + identity check of the recomputed systems against ../data/hidden_systems_pop.npz (job 23864988) |
@@ -58,11 +65,11 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 | `issuance/scripts/fig_sedi_definitions.py` | NEW figure (Supplementary): detection of local extremes under every definition of the threshold, at equal issuance |
 | `issuance/scripts/job.sh` | usage: sbatch --job-name=<name> [--export=ALL,ISSUANCE=d1,DUMP=1] job.sh <script.py> [args] |
 | `issuance/scripts/land_freqmatch.py` | Detection of local extremes over land against the 1 km estimates (GHAP 0.25 deg block means, 2022) with thresholds matched in frequency, at equal issuance |
-| `issuance/scripts/make_table.py` | Supplementary table from ../data/derived.json: SEDI by lead with 95 % intervals for every definition, tier and system, and the lead up to which Foehn's ensemble mean matches the CAMS forecast and Aurora of 1 day |
+| `issuance/scripts/make_table.py` | Table, not printed in the submitted manuscript, from ../data/derived.json: SEDI by lead with 95 % intervals for every definition, tier and system, and the lead up to which Foehn's ensemble mean matches the CAMS forecast and Aurora of 1 day |
 | `issuance/scripts/summarise.py` | Tables of the issuance analysis, from the files of ../data (nothing else is read except the submitted result files of experiments/figures/data, for the reproduction checks) |
 | `issuance/scripts/tail_events_eqiss.py` | COPY of experiments/figures/tail_events.py (its 'evaluate' part), with the issuance of the baselines as a switch |
 | `reliability/scripts/fig_reliability.py` | Figure (Supplementary Information or main text): reliability of Foehn's ensemble, 2022, against the 1 km estimates and against the measurements of the 6,324 official stations (panel style of experiments/figures/figED_fair.py) |
-| `reliability/scripts/rel_common.py` | Common paths and helpers of the calibration analysis (helper "reliability", 2026-11-19) |
+| `reliability/scripts/rel_common.py` | Common paths and helpers of the calibration analysis (2026-11-19) |
 | `reliability/scripts/run_small.sh` | CPU job of the calibration analysis (world venv, no GPU): sbatch --job-name=<name> run_small.sh <script.py> [args] |
 | `reliability/scripts/s1_assemble.py` | Step 1: gather, at the station pixels, every stored ensemble member of the 2022 evaluation and the references |
 | `reliability/scripts/s2_station.py` | Step 2 (supersedes s2_station_sums.py, which was never run): sums at the station pixels from which every station score and its interval follow (s2b_station_scores.py) |

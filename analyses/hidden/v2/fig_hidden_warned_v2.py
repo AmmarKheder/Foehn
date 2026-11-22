@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Who is warned, version 2 (after the author's feedback). Written from a copy of ../fig_hidden_warned.py (house style,
+"""Who is warned, version 2. Written from a copy of ../fig_hidden_warned.py (house style,
 fonts, colours of the systems, bars, whiskers, panel letters unchanged; that script is not modified). No field is read
 here: every number comes from results/numbers_v2.json (tables_v2.py).
 

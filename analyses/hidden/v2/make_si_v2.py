@@ -12,10 +12,13 @@ number is typed by hand. From a copy of ../make_si.py (function warned(); that s
                                             as Foehn: reach, correct warnings, hidden people warned, and Foehn minus them
     python make_si_v2.py"""
 import json
+import os
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-N = json.loads((HERE / "results" / "numbers_v2.json").read_text())
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE / f"results{SFX}"
+N = json.loads((RES / "numbers_v2.json").read_text())
 MU = r"\,\textmu g\,m$^{-3}$"
 
 
@@ -55,7 +58,7 @@ def warned(systems, name, note=""):
                                         "--" if dash else ci(d["false_per_hidden_warned"], 1)]) + r" \\")
     head = ("\\begin{tabular}{lrrrrrrrrrr}\n\\hline\n & Warned & Rightly warned & Wrongly warned & Reach (\\%) & Correct (\\%) & Hidden warned & "
             "Hidden warned (\\%) & With 10\\% margin (\\%) & Wrongly warned where the 40\\,km mean is below & per hidden person warned \\\\\n\\hline\n")
-    (HERE / "results" / name).write_text(
+    (RES / name).write_text(
         "% Supplementary Table: who is warned, version 2 (v2/make_si_v2.py from v2/results/numbers_v2.json). People a day in millions; 95 % intervals over\n"
         "% target days (moving-block bootstrap, blocks of 7 days, 10,000 resamples). Bias-corrected: quantile mapping of the CAMS forecast towards the 1 km\n"
         "% estimates per 0.25 degree cell and calendar month, fitted on 2017-2020; every resident of a cell receives the cell value, or the cell value\n"
@@ -77,7 +80,7 @@ def new_rows():
                 rows.append(" & ".join([label, num(d["warned_M"][0]), ci(d["right_M"]), ci(d["false_M"]), ci(d["reach_pct"], 1), ci(d["correct_pct"], 1),
                                         ci(d["hidden_warned_M"], 1), ci(d["hidden_warned_pct"], 1), ci(d["hidden_margin_warned_pct"], 1),
                                         ci(d["false_pct_in_silent40"], 1)]) + r" \\")
-    (HERE / "results" / "si_table_warned_v2_new_rows.tex").write_text(
+    (RES / "si_table_warned_v2_new_rows.tex").write_text(
         "% Rows of the two new reference systems in the ten columns of ../results/si_table_warned.tex (v2/make_si_v2.py from v2/results/numbers_v2.json):\n"
         "% Warned & Rightly warned & Wrongly warned & Reach (%) & Correct (%) & Hidden warned & Hidden warned (%) & With 10% margin (%) &\n"
         "% Wrong where the 40 km mean is below (%). People a day in millions; 95 % intervals over target days.\n" + "\n".join(rows) + "\n")
@@ -100,7 +103,7 @@ def matched():
                                         ci(q["foehn_p50_minus_reach_pct"], 1), ci(q["foehn_p50_minus_correct_pct"], 1), ci(q["foehn_p50_minus_hidden_warned_M"], 1)]) + r" \\")
     head = ("\\begin{tabular}{lrrrrrrr}\n\\hline\n & Factor on the threshold & Reach (\\%) & Correct (\\%) & Hidden warned & \\model{} minus reference: reach (points) & "
             "correct (points) & hidden warned \\\\\n\\hline\n")
-    (HERE / "results" / "si_table_matched_v2.tex").write_text(
+    (RES / "si_table_matched_v2.tex").write_text(
         "% Supplementary Table: the reference forecasts at the number of people warned by Foehn (v2/make_si_v2.py from v2/results/numbers_v2.json,\n"
         "% keys systems/thr*/lead*/World/equal_number_warned). The reference warns a resident when its value is above the factor times the threshold;\n"
         "% the factor is the one for which it warns as many people a day as Foehn (linear interpolation between factors 0.5, 0.6, ..., 2).\n"

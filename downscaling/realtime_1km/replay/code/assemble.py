@@ -14,7 +14,7 @@ daily mean = max(1/4 x(a) + 1/2 x(b) + 1/4 x(c), 0), the 0 h instant being the C
                    member mean in linear space, plus the climatological pattern (ghap_clim/bcsd_G.npz, 2017-2020)
   an    (5, M, n)  ANALYSIS-mode downscaled members of the valid day at the monitor pixel
                    (hindcast/2026/preds_st/pmG/<v>.npz, positions of hindcast/2026/st_ring_2026.npz), NaN when absent
-Extras (not in the task list, same definitions): bcsd_m (5, M, n) the same arm per member (no member mean);
+Extras (same definitions): bcsd_m (5, M, n) the same arm per member (no member mean);
 qm_cell (5, M, n) QM_c(log1p x_c,m) in log1p units (the cell level of the 'cons' coupling); mu_cell (5, n) mubar_c.
     python -I assemble.py 2026-09-01 [2026-09-02 ...] | --list days_all.txt   [--check-pairs]"""
 import argparse

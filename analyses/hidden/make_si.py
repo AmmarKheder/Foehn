@@ -7,10 +7,13 @@
   results/si_table_regions.tex       hidden people and warnings by region (country groups, a partition of the world)
     python make_si.py"""
 import json
+import os
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-N = json.loads((HERE / "results" / "numbers.json").read_text())
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE / f"results{SFX}"
+N = json.loads((RES / "numbers.json").read_text())
 MU = r"\,\textmu g\,m$^{-3}$"
 
 
@@ -54,7 +57,7 @@ def sensitivity():
     add("Hidden", lambda t: ci(P[f"thr{t}"]["lead1"]["World"]["foehn_p50"]["hidden_M"]))
     add("Hidden with $\\delta$ = 10\\% of the threshold", lambda t: ci(P[f"thr{t}"]["lead1"]["World"]["foehn_p50"]["hidden_margin_M"]))
     head = ("\\begin{tabular}{lrrrrr}\n\\hline\nThreshold (" + MU.replace("\\,", "", 1) + ") & 15 & 25 & 37.5 & 50 & 75 \\\\\n\\hline\n")
-    (HERE / "results" / "si_table_sensitivity.tex").write_text(
+    (RES / "si_table_sensitivity.tex").write_text(
         "% Supplementary Table: sensitivity of the count of people hidden by a 40 km grid (make_si.py from results/numbers.json)\n"
         "% People a day, millions; mean over the 365 days of 2022 with 95 % intervals (moving-block bootstrap over days, blocks of 7 days);\n"
         "% last block: mean over 179 target days (every second day), blocks of 4 forecasts.\n" + head + "\n".join(rows) + "\n\\hline\n\\end{tabular}\n")
@@ -79,7 +82,7 @@ def warned():
                                         "0" if dash else ci(d["hidden_margin_warned_pct"], 1), "--" if dash else ci(d["false_pct_in_silent40"], 1)]) + r" \\")
     head = ("\\begin{tabular}{lrrrrrrrrr}\n\\hline\n & Warned & Rightly warned & Wrongly warned & Reach (\\%) & Correct (\\%) & Hidden warned & "
             "Hidden warned (\\%) & With 10\\% margin (\\%) & Wrong where the 40\\,km mean is below (\\%) \\\\\n\\hline\n")
-    (HERE / "results" / "si_table_warned.tex").write_text(
+    (RES / "si_table_warned.tex").write_text(
         "% Supplementary Table: who is warned (make_si.py from results/numbers.json). People a day in millions; 95 % intervals over target days.\n"
         + head + "\n".join(rows) + "\n\\hline\n\\end{tabular}\n")
 
@@ -98,7 +101,7 @@ def regions():
     head = ("\\begin{tabular}{lrrrrrrrrrr}\n\\hline\nRegion & Hidden (millions a day) & Share of the world's hidden (\\%) & Share of the region's exposed (\\%) & "
             "10\\,km blocks & 10\\% margin & Warned by \\model{}, 1 day (\\%) & 3 days (\\%) & By the CAMS forecast, 1 day (\\%) & Reach, \\model{} / CAMS (\\%) & "
             "Correct, \\model{} / CAMS (\\%) \\\\\n\\hline\n")
-    (HERE / "results" / "si_table_regions.tex").write_text(
+    (RES / "si_table_regions.tex").write_text(
         "% Supplementary Table: hidden people by region, above 37.5 ug m-3 (make_si.py from results/numbers.json). Regions: countries grouped as in\n"
         "% regions.py (a partition of the world). Columns 2-6: all pixels with residents, 365 days; columns 7-11: pixels with at least 100 residents, 179 target days.\n"
         + head + "\n".join(rows) + "\n\\hline\n\\end{tabular}\n")

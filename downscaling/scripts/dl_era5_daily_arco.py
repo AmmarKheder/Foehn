@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ERA5 daily stores of 2026 (and any later year) from ARCO-ERA5, in the format of the archives the met builder reads
-(build_global_coarse.met_day): backfill of the 1 km analysis inputs (user order 2026-11-02).
+(build_global_coarse.met_day): backfill of the 1 km analysis inputs.
 
   daily <year>  eccv/data/zarr/era5_global_daily/<year>.zarr  (days, 30, 721, 1440) float32: the 30 channels of
                 aria/scripts/download_era5_2025.py (u10, v10, t2m, msl, sp, then t/u/v/q/z at 1000/925/850/700/500 hPa),

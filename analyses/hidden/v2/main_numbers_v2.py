@@ -3,10 +3,13 @@
 with its 95 % interval and its key in results/numbers_v2.json (written by tables_v2.py; nothing is computed here).
     python main_numbers_v2.py  ->  results/main_numbers_v2.txt"""
 import json
+import os
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-N = json.loads((HERE / "results" / "numbers_v2.json").read_text())
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE / f"results{SFX}"
+N = json.loads((RES / "numbers_v2.json").read_text())
 L = []
 NAMES = {"foehn_p50": "Foehn (2 of 4 members)", "foehn_mean": "Foehn (ensemble mean)", "foehn_40km": "Foehn on 40 km cells", "cams": "CAMS forecast",
          "aurora": "Aurora", "cams_qm": "CAMS forecast, bias-corrected", "cams_bcsd": "CAMS forecast, bias-corrected + 1 km pattern",
@@ -116,8 +119,8 @@ def main():
             line(f"{g}: {NAMES[s]}, hidden warned", f"{b}/{s}/hidden_warned_pct", 1, " %")
         line(f"{g}: Foehn minus bias-corrected + pattern, rightly warned", f"{b}/foehn_p50-cams_bcsd/right_M", 1, " M")
         line(f"{g}: Foehn minus bias-corrected + pattern, critical success index", f"{b}/foehn_p50-cams_bcsd/csi", 3)
-    (HERE / "results" / "main_numbers_v2.txt").write_text("\n".join(L) + "\n")
-    print(len(L), "lines ->", HERE / "results" / "main_numbers_v2.txt")
+    (RES / "main_numbers_v2.txt").write_text("\n".join(L) + "\n")
+    print(len(L), "lines ->", RES / "main_numbers_v2.txt")
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@
 #SBATCH --mem=64G
 #SBATCH --time=06:00:00
 #SBATCH --output=/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/logs/gfas_injh_%j.out
-# RT1KM task 1: GFAS injh 2017-2024 (ADS, monthly) -> coarse/fires_injh_{2017_2022,2023_2024}.npy -> checks.
+# The fires input of the 1 km model used in real time: GFAS injh 2017-2024 (ADS, monthly) -> coarse/fires_injh_{2017_2022,2023_2024}.npy -> checks.
 set -euo pipefail
 W=/scratch/project_462001804/ammar/global_model_forecasting_air_pollution
 S=$W/logs/RT1KM_STATUS.md

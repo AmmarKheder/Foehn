@@ -26,14 +26,15 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parents[1]
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
 sys.path.insert(0, str(FIG))
 from nature_style import DOUBLE, MM, plt  # noqa: E402  (rcParams of the paper; nothing is saved through nature_style)
 import gc_style as GC  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 
-RES = HERE / "results"
-S = json.load(open(RES / "station_scores_final.json")); SB = json.load(open(RES / "station_scores_before.json"))
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE / f"results{SFX}"
+S = json.load(open(RES / "station_scores_final.json")); SB = json.load(open(HERE / "results" / "station_scores_before.json"))   # 'before' (e02): stored
 EST = json.load(open(RES / "estimates_scores.json")); M16 = json.load(open(RES / "members16_noise.json"))
 A, PP, NINE = "All official networks", "All populated pixels", "Nine regions pooled"
 BLUE, LBLUE, INK, GREY = GC.FOEHN, "#8FB2DD", "#111111", "#999999"
@@ -204,7 +205,7 @@ def main():
         fig.canvas.draw()
         for t, letter in TITLES:
             GC.letter_before(fig, t, letter)
-    out = HERE / "figs"; out.mkdir(exist_ok=True)
+    out = HERE.parents[1] / "rebuild" / f"figs{SFX}" if SFX else HERE / "figs"; out.mkdir(exist_ok=True)
     name = "fig_reliability" if LETTERS == "fair" else "fig_reliability_letters8pt"
     fig.savefig(out / f"{name}.pdf"); fig.savefig(out / f"{name}.png", dpi=300)
     json.dump(PROV, open(out / "fig_reliability_data.json", "w"), indent=1)

@@ -6,12 +6,14 @@ a = absolute value, n = sign reversed, t = thousands separator). The fragment fi
 in the file. The script also counts the words of the legend.
     python check_text_numbers_v2.py"""
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-N = json.loads((HERE / "results" / "numbers_v2.json").read_text())
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+N = json.loads((HERE / f"results{SFX}" / "numbers_v2.json").read_text())   # the hand-written texts below stay the stored ones
 TXT = {"si": (HERE / "results" / "text_methods_si_v2.tex").read_text(), "main": (HERE / "results" / "replacement_text_v2.tex").read_text()}
 
 

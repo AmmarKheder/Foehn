@@ -1,19 +1,21 @@
-"""Common paths and helpers of the calibration analysis (helper "reliability", 2026-11-19). Read-only on the project;
+"""Common paths and helpers of the calibration analysis (2026-11-19). Read-only on the project;
 every output goes under analyses/reliability/."""
+import os
 from pathlib import Path
 
 import numpy as np
 
-ROOT = Path("/scratch/project_462001804/ammar/eccv/cran-pm")
+ROOT = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm"))
 HERE = ROOT / "paper" / "natcomms" / "analyses" / "reliability"
-DATA, FIGS = HERE / "data", HERE / "figs"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+DATA, FIGS = HERE / f"data{SFX}", HERE / "figs"         # design: data_<D>; results_<D> in the scripts; 'before' (e02) files stay stored
 FIG = ROOT / "experiments" / "figures"                       # house style modules (imported read-only, python -B)
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 RUNS = ROOT / "experiments" / "global1km" / "runs"
 FINAL = RUNS / "green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4"
 BEFORE = RUNS / "green_flow_shift25_global_L7_noant_whres_ghres_ftemis12"      # the same model before the CRPS training
 AURD = ROOT / "experiments" / "benchmark" / "aurora"
-CAMS_ZARR = "/scratch/project_462001804/ammar/eccv/data/world/cams_forecast_daily/2022.zarr"
+CAMS_ZARR = (os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr")
 
 NETS = {0: "Europe (EEA)", 1: "China (CNEMC)", 3: "USA (EPA)", 4: "Korea (AirKorea)", 5: "Japan (NIES)", 6: "India (CPCB)"}
 NET_SHORT = {0: "EEA", 1: "CNEMC", 3: "EPA", 4: "AirKorea", 5: "NIES", 6: "CPCB"}

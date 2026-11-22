@@ -12,6 +12,7 @@ RMSE, bias and correlation of the ensemble mean / deterministic forecast; leads 
 Two persistences: the station's own measurement of day d (information Foehn never sees) and GHAP of day d at the station
 pixel (the information Foehn has; from the GHAP values stored with the first run's forecasts, target day d).
     python compare_fair.py <label>=<run>[:<eval dir>] ...   -> data/compare_fair_<first label>.npz"""
+import os  # FOEHN_WORK, FOEHN_ENVS: roots of the working trees and of the environments
 import glob
 import sys
 from pathlib import Path
@@ -20,8 +21,8 @@ import numpy as np
 import zarr
 
 HERE = Path(__file__).resolve().parent
-RUNS = Path("/scratch/project_462001140/ammar/eccv/cran-pm/experiments/global1km/runs")
-G = Path("/scratch/project_462001140/ammar/eccv/data/world/global1km")
+RUNS = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/global1km/runs"))
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 AURD = HERE.parent / "benchmark" / "aurora"
 NETS = {0: "Europe (EEA)", 1: "China (CNEMC)", 3: "USA (EPA)", 4: "Korea (AirKorea)", 5: "Japan (NIES)", 6: "India (CPCB)"}
 
@@ -33,11 +34,26 @@ print("station file:", STATIONS, flush=True)
 lat, lon, src, obs = st["lat"], st["lon"], st["source"], st["daily"].astype(np.float32)
 NS = len(lat)
 official = np.isin(src, list(NETS))
-key = lambda la, lo: np.round(la, 4) * 1e6 + np.round(lo, 4)
-ref = {v: i for i, v in enumerate(key(lat, lon))}
+# keyfix 2026-11-20: the station files are matched to the reference file by exact float64 coordinates AND by the order
+# of the stations (the k-th station at a coordinate pair -> the k-th station of the reference file at that pair), so that
+# co-located stations remain separate stations. This replaces the float32 key round(lat, 4) * 1e6 + round(lon, 4), which
+# collided and left 183 official stations without a forecast (backup of the script: <name>.bak_20261120_key.py).
+def match_stations(la_, lo_):
+    pos, seen, out_ = {}, {}, np.full(len(la_), -1)
+    for i_, c_ in enumerate(zip(np.asarray(lat, np.float64).tolist(), np.asarray(lon, np.float64).tolist())):
+        pos.setdefault(c_, []).append(i_)
+    for j_, c_ in enumerate(zip(np.asarray(la_, np.float64).tolist(), np.asarray(lo_, np.float64).tolist())):
+        k_ = seen.get(c_, 0); seen[c_] = k_ + 1
+        if k_ < len(pos.get(c_, ())):
+            out_[j_] = pos[c_][k_]
+    return out_
+
+
 sets = {}
 for f in sorted(G.glob("stations_2022*.npz")):
-    z = np.load(f); sets[len(z["lat"])] = np.array([ref.get(v, -1) for v in key(z["lat"], z["lon"])])
+    z = np.load(f); sets[len(z["lat"])] = match_stations(z["lat"], z["lon"])
+_with_data = np.flatnonzero(np.isin(src, list(NETS)) & np.isfinite(obs).any(1))     # keyfix: every official station with data kept, once
+assert np.isin(_with_data, sets[NS]).all() and np.array_equal(sets[NS], np.arange(NS)), "keyfix: station mapping"
 
 
 def bil(field, lat0, dlat, lon0, dlon):
@@ -68,7 +84,7 @@ for arg in sys.argv[1:]:
     runs.append((label, index, ens))
     print(f"{label}: {run}/{ev}, {len(index)} forecasts", flush=True)
 common = sorted(set.intersection(*[set(r[1]) for r in runs]))
-cams = zarr.open("/scratch/project_462001140/ammar/eccv/data/world/cams_forecast_daily/2022.zarr", mode="r")
+cams = zarr.open((os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr"), mode="r")
 aur_d, aur_e = {}, {}
 for p in glob.glob(str(AURD / "out_global" / "part_*.npz")):              # as compare_baselines.py (analyses of day d)
     z = np.load(p); la_, lo_ = z["lat"], z["lon"]

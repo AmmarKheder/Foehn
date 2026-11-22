@@ -4,10 +4,11 @@ apart from the positions) with ONE small panel added, f: share of the people exp
 (numbers: analyses/hidden/v2/results/numbers_v2.json, keys systems/thr*/lead*/World/<system>/reach_pct and correct_pct).
     python fig_hidden_v4.py   -> fig_hidden_v4.pdf, .png (this folder)"""
 import json
+import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, "/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
+sys.path.insert(0, (os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np
@@ -19,7 +20,9 @@ from nature_style import DOUBLE, HERE, MM, PM_BOUNDS, plt, save
 
 PINK = ["#FBE3EC", "#F29BBD", "#E0457F", "#C2185B", "#5C0A2C"]
 OUTDIR = Path(__file__).resolve().parent
-V2 = OUTDIR.parents[1] / "analyses" / "hidden" / "v2" / "results" / "numbers_v2.json"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label
+V2 = OUTDIR.parents[1] / "analyses" / "hidden" / "v2" / f"results{SFX}" / "numbers_v2.json"
+FIGOUT = OUTDIR.parents[1] / "rebuild" / f"figs{SFX}" if SFX else OUTDIR
 D = 12                                                              # mm added below panels a-d for the taller bottom row
 PINK3 = ["#F29BBD", "#C2185B", "#5C0A2C"]                          # > 15, 37.5, 75 (as the Extended Data figure)
 
@@ -79,7 +82,7 @@ def main():
     # warned, and share of the warnings that are correct, above 37.5 and 75 ug m-3)
     N = json.loads(V2.read_text())["systems"]
     af = fig.add_axes([fx(134), fy(10), fx(47), fy(34)])
-    # panel f only: softer tints of the house colours (Foehn blue in front; the two references lighter), asked by the author 2026-11-19
+    # panel f only: softer tints of the house colours (Foehn blue in front; the two references lighter)
     SYS = (("foehn_p50", "Foehn", "#2F6FB7"), ("cams", "CAMS forecast", "#A9B1BC"), ("aurora", "Aurora", "#F2B27A"))
     groups = (("37.5", "reach_pct", "reached"), ("37.5", "correct_pct", "correct"), ("75", "reach_pct", "reached"), ("75", "correct_pct", "correct"))
     xg = [0, 1, 2.25, 3.25]
@@ -102,8 +105,8 @@ def main():
     for t, s_ in marks:
         letter_before(fig, t, s_)
     for ext in ("pdf", "png"):
-        fig.savefig(OUTDIR / f"fig_hidden_v4.{ext}")
-    print("saved", OUTDIR / "fig_hidden_v4.pdf")
+        fig.savefig(FIGOUT / f"fig_hidden_v4.{ext}")
+    print("saved", FIGOUT / "fig_hidden_v4.pdf")
     tot = ex["res"][:, XR.index("World"), 2, k375].sum() / nd
     print(f"hidden {tot / 1e6:.0f} M/day; Beijing seen {n_seen:.1f} M, hidden {n_hid:.1f} M")
 

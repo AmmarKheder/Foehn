@@ -4,10 +4,12 @@ No data is read here other than that result file.
     python -I report_tables.py [--selftest]"""
 import argparse
 import json
+import os
 import time
 from pathlib import Path
 
-O = Path("/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/test2022_official")
+O = Path((os.environ["FOEHN_WORK"] + "/global_model_forecasting_air_pollution/test2022_official"))
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
 ALL = "All six networks"
 LAB = {"ds_sameday": "downscaler, same-day inputs", "cams0_bil": "CAMS first-day field, bilinear", "bcsd": "BCSD of the CAMS first-day field",
        "clim_ens": "climatology ensemble (8 draws)", "clim_med": "climatology median of the downscaler", "clim_paper": "climatology (paper's definition)",
@@ -74,7 +76,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
-    src = O / "results" / ("selftest_scores.json" if a.selftest else "scores_official_2022.json")
+    src = O / f"results{SFX}" / ("selftest_scores.json" if a.selftest else "scores_official_2022.json")
     R = json.loads(src.read_text())
     groups = R["groups"]
     P = R["tables"]["pixel"]
@@ -274,7 +276,7 @@ def main():
             for g in groups:
                 out.append(f"| {g} | " + " | ".join(pct(R["tables"][w]["S_pixel_vs_ring"]["contrasts"][f"{n}@pixel - {n}@ring"][g].get("sameday")) for w in rings) + " |")
             out.append("")
-    dst = O / "results" / ("selftest_tables.md" if a.selftest else "tables_official_2022.md")
+    dst = O / f"results{SFX}" / ("selftest_tables.md" if a.selftest else "tables_official_2022.md")
     dst.write_text("\n".join(out) + "\n")
     print(f"wrote {dst} ({len(out)} lines)", flush=True)
 

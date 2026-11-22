@@ -40,7 +40,7 @@ e    Downscaling to 1 km (functional flow matching), for member 1 of that foreca
      random stream. OUTPUT_LENS = "mean" draws the stored operational mean in the lens instead.
 Time strip: the clock of that issue day (UTC), to scale between 10:15 and 11:03, as in version 1.
 
-    PY=/projappl/project_462001804/envs/world/bin/python      (world venv; -B: nothing is written beside the originals)
+    PY=$FOEHN_ENVS/world/bin/python      (world venv; -B: nothing is written beside the originals)
     unset PYTHONPATH; MPLCONFIGDIR=<writable dir> $PY -B fig_gc1_schematic_rt2.py           # .pdf and .png (300 dpi)
     ... fig_gc1_schematic_rt2.py --prepare        # only (re)build data/rt_fields_2026-11-11.npz from the real-time outputs
     ... fig_gc1_schematic_rt2.py --full FILE.png  # whole page at 300 dpi, no tight crop
@@ -51,12 +51,14 @@ Reads only; writes only beside this file (data/lic_<day>.npz is a cache of the l
 import argparse
 import json
 import math
+import os
 import sys
 import types
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
+FIGOUT = HERE.parents[1] / "rebuild" / f"figs_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else HERE   # A16 rebuild
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
 sys.path.insert(0, str(FIG))
 
 import nature_style                                            # noqa: E402  rcParams, fonts, Natural Earth cache
@@ -89,9 +91,9 @@ import fig_gc1_schematic as F                                  # noqa: E402  the
 # ------------------------------------------------------------------ the issue day and its sources
 DAY, LEAD, CITY = "2026-11-11", 1, "Lahore"
 CITY_LL = (74.34, 31.55)                                       # lon, lat of Lahore: the pixel that carries the ring in panel e
-RT = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/global1km/realtime")              # 0.4 deg chain
-O1K = Path("/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/realtime_1km/out")       # 1 km chain
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
+RT = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/global1km/realtime"))              # 0.4 deg chain
+O1K = Path((os.environ["FOEHN_WORK"] + "/global_model_forecasting_air_pollution/realtime_1km/out"))       # 1 km chain
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 TAG, TILE, RES, LON0 = "pmG_final_P3T3", 1000, 0.01, -179.995
 CACHE = HERE / "data" / f"rt_fields_{DAY}.npz"                 # copied from figures_new/fig1/data (version 1)
 DS_CACHE = HERE / "data" / f"ds_fields_{DAY}.npz"              # prep_downscaler_fields.py
@@ -662,9 +664,9 @@ def main():
         with plt.rc_context({"savefig.bbox": "standard"}):
             fig.savefig(a.full, dpi=300)
         return print("saved", a.full)
-    fig.savefig(HERE / "fig_gc1_schematic_rt2.pdf")                              # rcParams of nature_style: tight, 600 dpi rasters, TrueType
-    fig.savefig(HERE / "fig_gc1_schematic_rt2.png", dpi=300)
-    print("saved", HERE / "fig_gc1_schematic_rt2", json.dumps(fig.band_info))
+    fig.savefig(FIGOUT / "fig_gc1_schematic_rt2.pdf")                            # rcParams of nature_style: tight, 600 dpi rasters, TrueType
+    fig.savefig(FIGOUT / "fig_gc1_schematic_rt2.png", dpi=300)
+    print("saved", FIGOUT / "fig_gc1_schematic_rt2", json.dumps(fig.band_info))
 
 
 if __name__ == "__main__":

@@ -16,21 +16,24 @@ Bands: 95 % intervals, moving-block bootstrap over start days (7-day blocks, 10,
 Dotted line: the CAMS forecast 1 day ahead. Numbers and intervals are read from ../data/derived.json (derive.py).
     python -B fig_sedi_definitions.py [P99|P95|P90]   -> ../figs/fig_sedi_definitions_<tier>.{pdf,png}"""
 import json
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
 
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
 sys.path.append(str(FIG))
 HERE = Path(__file__).resolve().parent.parent
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+FIGD = HERE.parents[1] / "rebuild" / f"figs{SFX}" if SFX else HERE / "figs"   # renders of a design: natcomms/rebuild/figs_<D>
 TIER = sys.argv[1] if len(sys.argv) > 1 else "P99"
 
 from gc_style import AURORA, CAMS, FOEHN, clean, letter_before  # noqa: E402
 from nature_style import DOUBLE, MM, plt  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 
-R = json.loads((HERE / "data" / "derived.json").read_text())
+R = json.loads((HERE / f"data{SFX}" / "derived.json").read_text())
 COLS = ["Local climate, same threshold", "Local climate, matched frequency", "Year 2022, same threshold", "Year 2022, matched frequency"]
 ROWS = [("land", "Global", ["ghap", "matched", "truth2022", "own"], "SEDI against the 1 km\nestimates, all land"),
         ("stations", "all", ["ghap", "matched", "station", "own"], "SEDI against the measure-\nments at the stations")]
@@ -77,5 +80,5 @@ fig.canvas.draw()
 for ax_, s_ in zip(axs, "abcdefgh"):
     letter_before(fig, ax_._left_title, s_)
 for ext in ("pdf", "png"):
-    fig.savefig(HERE / "figs" / f"fig_sedi_definitions_{TIER}.{ext}")
-print("saved", HERE / "figs" / f"fig_sedi_definitions_{TIER}")
+    fig.savefig(FIGD / f"fig_sedi_definitions_{TIER}.{ext}")
+print("saved", FIGD / f"fig_sedi_definitions_{TIER}")

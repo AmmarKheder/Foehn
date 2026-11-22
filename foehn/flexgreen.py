@@ -36,6 +36,7 @@ float32, emis_<year>.npy (days, nL, 6, 288, 720) float32 (nL = 7 daily leads, or
 <store>/<src>/done_<year>/<doy> marks finished days (store: green = 32 particles, green256 = 256 particles + --emis).
     python flexgreen.py run --src hres --days 0 1 2 ... [--year 2022] [--particles 256 --store green256 --emis --chunk 40000]"""
 import argparse
+import json
 import math
 import os
 import time
@@ -45,7 +46,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-G = Path("/scratch/project_462001140/ammar/eccv/data/world/global1km")
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 WB = G / "wb2"
 L8 = [1000, 925, 850, 700, 600, 500, 400, 300]
 IU, IV, IW, IT, IQ, IZ, IU10, IV10, IT2, ISP, ITP = 0, 8, 16, 24, 32, 40, 48, 49, 50, 51, 52
@@ -370,8 +371,11 @@ def npy_write_block(path, i, block):
         os.close(fd)
 
 
-def load_run(src, year, doy):
-    """(33, 53, 181, 360) float32 fields of the run of day doy: HRES steps 0..192 h, or ERA5 at the same times."""
+def load_run(src, year, doy, rt=None):
+    """(33, 53, 181, 360) float32 fields of the run of day doy: HRES steps 0..192 h, or ERA5 at the same times.
+    rt: a real-time day directory (realtime/build.py): its hres_B.npy, the same block for the run of that day."""
+    if rt is not None:
+        return np.load(Path(rt) / "hres_B.npy").astype(np.float32)
     d0 = np.datetime64(f"{year}-01-01") + np.timedelta64(int(doy), "D")
     if src == "hres":
         m = int(str(d0)[5:7])
@@ -384,12 +388,16 @@ def load_run(src, year, doy):
     return np.concatenate(out)[:33]
 
 
-def fire_sampler(day_index, dev):
-    """GFAS fires of the start day on the model's 0.25 deg grid (84 N .. 59.75 S), sampled bilinearly (0 outside)."""
-    with open(G / "fires.npy", "rb") as fh:
-        np.lib.format.read_magic(fh); sh, _, dt = np.lib.format.read_array_header_1_0(fh); hdr = fh.tell()
-    n = int(np.prod(sh[1:]))
-    a = np.fromfile(G / "fires.npy", dtype=dt, count=n, offset=hdr + day_index * n * np.dtype(dt).itemsize).reshape(sh[1:])
+def fire_sampler(day_index, dev, path=None):
+    """GFAS fires of the start day on the model's 0.25 deg grid (84 N .. 59.75 S), sampled bilinearly (0 outside).
+    path: a (3, 576, 1440) file of one day in the format of fires.npy (realtime/build.py) instead of fires.npy[day_index]."""
+    if path is not None:
+        a = np.load(path)
+    else:
+        with open(G / "fires.npy", "rb") as fh:
+            np.lib.format.read_magic(fh); sh, _, dt = np.lib.format.read_array_header_1_0(fh); hdr = fh.tell()
+        n = int(np.prod(sh[1:]))
+        a = np.fromfile(G / "fires.npy", dtype=dt, count=n, offset=hdr + day_index * n * np.dtype(dt).itemsize).reshape(sh[1:])
     x = torch.tensor(np.nan_to_num(a.astype(np.float32), nan=-30.0), device=dev)        # (3, 576, 1440), build_transport.py
     f = torch.stack([(10 ** (x[0] - 13.5) - 1e-14).clamp(min=0),                          # particulate matter, kg m-2 s-1
                      (10 ** (x[1] - 5.5) - 1e-6).clamp(min=0),                            # radiative power, W m-2
@@ -405,7 +413,7 @@ def fire_sampler(day_index, dev):
     return sample
 
 
-def emis_sampler(year, doy, dev):
+def emis_sampler(year, doy, dev, fallback=False):
     """CAMS-GLOB-ANT v6.2 total anthropogenic fluxes (kg m-2 s-1) of the month of the start day on the model's 0.25 deg
     grid (84 N .. 59.75 S), sampled bilinearly (0 outside); emis_ant_fixed.npy holds log10(flux + 1e-14), standardised."""
     k = 12 * (int(year) - 2017) + int((np.datetime64(f"{year}-01-01") + np.timedelta64(int(doy), "D")).astype("datetime64[M]").astype(int) % 12)
@@ -413,6 +421,11 @@ def emis_sampler(year, doy, dev):
     with open(G / "emis_ant_fixed.npy", "rb") as fh:
         np.lib.format.read_magic(fh); sh, _, dt = np.lib.format.read_array_header_1_0(fh); hdr = fh.tell()
     n = int(np.prod(sh[1:]))
+    if fallback and k >= sh[0]:                     # --emis-fallback: the same month of the last year of the store
+        k_last = 12 * (sh[0] // 12 - 1) + k % 12
+        print(f"emissions: CAMS-GLOB-ANT of {year} not in emis_ant_fixed.npy ({sh[0]} months from 2017); using month "
+              f"{k % 12 + 1} of {2017 + k_last // 12}", flush=True)
+        k = k_last
     a = np.fromfile(G / "emis_ant_fixed.npy", dtype=dt, count=n, offset=hdr + k * n * np.dtype(dt).itemsize).reshape(sh[1:])
     x = torch.tensor(a.astype(np.float32), device=dev) * torch.tensor(st["std"], device=dev)[:, None, None] \
         + torch.tensor(st["mean"], device=dev)[:, None, None]
@@ -434,7 +447,10 @@ def run(a):
     torch.cuda.set_device(dev)
     rank, world = int(os.environ.get("SLURM_PROCID", 0)), int(os.environ.get("SLURM_NTASKS", 1))
     zs, z0 = static(dev)
-    out = G / a.store / a.src
+    if a.rt_dir:                                    # one real-time day: realtime/data/<date>/ (inputs and outputs)
+        m_ = json.loads((Path(a.rt_dir) / "meta.json").read_text())
+        a.year, a.days = int(m_["year"]), [int(m_["doy"])]
+    out = Path(a.rt_dir) / "green" if a.rt_dir else G / a.store / a.src
     out.mkdir(parents=True, exist_ok=True)
     meta = np.load(G / "meta.npz"); years, doys_all = meta["year"], meta["doy"]
     days = (list(a.days)[::-1] if a.reverse else list(a.days))[rank::world]   # --reverse: a second job from the end
@@ -455,7 +471,7 @@ def run(a):
     nL = len(LEADS_H)
     if rank == 0:
         print(f"{len(REC)} receptors of {NR * NC} ({len(REC) / (NR * NC):.0%})", flush=True)
-    nd = 366 if a.year % 4 == 0 else 365
+    nd = 1 if a.rt_dir else (366 if a.year % 4 == 0 else 365)
     fo, ff, fe = out / f"origins_{a.year}.npy", out / f"fire_{a.year}.npy", out / f"emis_{a.year}.npy"  # raw stores: partial reads
     stores = [(fo, (nd, nL, NR, NC, a.particles, 4), np.float16), (ff, (nd, nL, 3, NR, NC), np.float32)]
     if a.emis:
@@ -477,19 +493,22 @@ def run(a):
             continue
         run_day = np.datetime64(f"{a.year}-01-01") + np.timedelta64(int(doy) - a.lag, "D")    # --lag j: the run of day d - j
         ry, rdoy = int(str(run_day)[:4]), int((run_day - np.datetime64(str(run_day)[:4] + "-01-01")).astype(int))
-        if a.src == "hres":                         # only complete months (the doy list is written at the end of a month)
+        if a.src == "hres" and not a.rt_dir:        # only complete months (the doy list is written at the end of a month)
             m_ = int(str(run_day)[5:7])
             if not (WB / f"hres_B_{ry}_{m_:02d}_doy.npy").exists():
                 print(f"rank {rank}: {a.year} day {doy}: HRES month {m_} not downloaded yet, skipped", flush=True)
                 continue
         t0 = time.time()
         gen.manual_seed(int(a.year) * 100000 + int(doy) * 100 + int(a.seed) * 7 + (0 if a.src == "hres" else 50) + 13 * a.lag)
-        Bt = torch.tensor(load_run(a.src, ry, rdoy), device=dev)
+        Bt = torch.tensor(load_run(a.src, ry, rdoy, rt=a.rt_dir), device=dev)
         fld = Field(derive(Bt, zs, z0)); del Bt
-        di = int(np.where((years == a.year) & (doys_all == doy))[0][0])
-        fire = fire_sampler(di - 1 if a.instant else di, dev)   # --instant (t0 = 00 UTC of d): GFAS of day d-1, the last
+        if a.rt_dir:                                # the day directory holds the fires of d - 1 (realtime/build.py)
+            fire = fire_sampler(None, dev, path=Path(a.rt_dir) / "fires.npy")
+        else:
+            di = int(np.where((years == a.year) & (doys_all == doy))[0][0])
+            fire = fire_sampler(di - 1 if a.instant else di, dev)   # --instant (t0 = 00 UTC of d): GFAS of day d-1, the last
                                                                # complete day at t0, persisted (as the CAMS forecasts do)
-        emis = emis_sampler(a.year, doy, dev) if a.emis else None
+        emis = emis_sampler(a.year, doy, dev, fallback=a.emis_fallback) if a.emis else None
         org = np.zeros((nL, NR * NC, a.particles, 4), np.float16)
         fs = np.zeros((nL, 3, NR * NC), np.float32)
         es = np.zeros((nL, len(SPECIES), NR * NC), np.float32)
@@ -516,9 +535,10 @@ def run(a):
                     es[li][:, ri] = (esn.view(len(SPECIES), len(rc), a.particles).mean(-1) * 1e9).cpu().numpy()
             if a.verbose:
                 print(f"   lead {L:.0f} h: {time.time() - th:.0f}s", flush=True)
-        npy_write_block(fo, doy, org.reshape(nL, NR, NC, a.particles, 4)); npy_write_block(ff, doy, fs.reshape(nL, 3, NR, NC))
+        wi = 0 if a.rt_dir else doy
+        npy_write_block(fo, wi, org.reshape(nL, NR, NC, a.particles, 4)); npy_write_block(ff, wi, fs.reshape(nL, 3, NR, NC))
         if a.emis:
-            npy_write_block(fe, doy, es.reshape(nL, len(SPECIES), NR, NC))
+            npy_write_block(fe, wi, es.reshape(nL, len(SPECIES), NR, NC))
         (done / f"{doy:03d}").touch()
         print(f"rank {rank}: {a.src} {a.year} day {doy} {time.time() - t0:.0f}s", flush=True)
 
@@ -540,5 +560,9 @@ if __name__ == "__main__":
     ap.add_argument("--lag", type=int, default=0, help="drive the transport of start day d with the HRES run of day d - lag "
                     "(lagged weather ensemble); leads beyond the run's 192 h stay empty")
     ap.add_argument("--overwrite", action="store_true")
+    ap.add_argument("--rt-dir", default=None, help="real-time day directory (realtime/build.py): read its hres_B.npy and "
+                    "fires.npy, write green/ there; --year and --days come from its meta.json")
+    ap.add_argument("--emis-fallback", action="store_true", help="--emis beyond the months of emis_ant_fixed.npy: the same "
+                    "month of its last year")
     ap.add_argument("--verbose", action="store_true")
     run(ap.parse_args())

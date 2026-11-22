@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A6 mandate (b), CPU: realtime_1km/replay/points_cal/<d>.npz = the downscaled members of the CALIBRATED sampler at the
+"""A6(b), CPU: realtime_1km/replay/points_cal/<d>.npz = the downscaled members of the CALIBRATED sampler at the
 monitors, in the format of replay/points/<d>.npz (replay/README.md) for the arrays of the downscaler:
   id, lat, lon, issue, valid, km, km_ring1, km_ring3, km_ring10, km_cell (log1p units), km_cell_lin, ring1_n, ring3_n,
   ring10_n, cell_n, provenance (JSON).

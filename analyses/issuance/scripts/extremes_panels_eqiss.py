@@ -12,9 +12,10 @@ from pathlib import Path
 
 import numpy as np
 
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
 sys.path.append(str(FIG))                                   # the paper's style modules, read only (run with python -B)
-DATA = Path(__file__).resolve().parent.parent / "data"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+DATA = Path(__file__).resolve().parent.parent / f"data{SFX}"
 ISS = os.environ.get("TE_ISSUANCE", "d1")
 
 import final_model as FM  # noqa: E402

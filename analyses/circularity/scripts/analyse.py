@@ -27,15 +27,20 @@ resamples 2-degree cells instead (space instead of time).
     python analyse.py [R]      R = number of resamples (default 10000)   -> ../results/numbers.json, ../results/tables.txt
 """
 import json
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-DATA, OUT = HERE.parent / "data", HERE.parent / "results"
-REF = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures/data/compare_fair_crps_e01.npz")
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+DATA, OUT = HERE.parent / f"data{SFX}", HERE.parent / f"results{SFX}"
+REF = Path((os.environ["FOEHN_WORK"] + f"/eccv/cran-pm/experiments/figures/data/compare_fair_crps_e01{SFX}.npz"))
 R = int(sys.argv[1]) if len(sys.argv) > 1 else 10000
+# 2026-11-21 option (backup analyse.py.bak_20261121_fix): '--stations-by-lead' as a second argument adds, in C/groups/<g>/leads/<h>,
+# 'stations_at_lead' = stations with at least one station-day at that lead in the ring sample; without it nothing changes.
+BYLEAD = "--stations-by-lead" in sys.argv[2:]
 B = 7
 NETS = {0: "Europe", 1: "China", 3: "USA", 4: "Korea", 5: "Japan", 6: "India"}
 NCODE = list(NETS)                                              # source codes in the order of REF's networks
@@ -308,6 +313,8 @@ for sn, sm in CSUB.items():
         c_ = {k: cell_sums(E2r[k][used_d, j], m) for k in FCOLS}
         d = {"station_days": int(m.sum()), "rmse": {k: rmse(a[k]) for k in a}, "rmse_estimates_same_day": {k: rmse(g[k]) for k in g},
              "station_days_estimates": int(mg.sum())}
+        if BYLEAD:
+            d["stations_at_lead"] = int(m.any(0).sum())
         for k in ("foehn", "one3", "ring3", "one10", "ring10", "foehn025", "foehn05"):
             d[f"gain_{k}_vs_cams"] = gain(a[k], a["cams1"], IDX); d[f"gain_{k}_vs_aurora"] = gain(a[k], a["aur1"], IDX)
             d[f"gain_{k}_vs_cams_cells"] = gain(c_[k], c_["cams1"], CIDX); d[f"gain_{k}_vs_aurora_cells"] = gain(c_[k], c_["aur1"], CIDX)
@@ -387,7 +394,7 @@ for sn in ("all six networks", "China", "USA", "Europe", "Korea", "Japan", "Indi
 # =====================================================================================================================
 # D. the model of Aurora's protocol at the stations
 # =====================================================================================================================
-fc = np.load(DATA / "foehn_cams_station_day.npz")
+fc = np.load(HERE.parent / "data" / "foehn_cams_station_day.npz")   # the 0.4 deg model (class d): always the stored file
 pm, fsrc, fobs = fc["paper"], fc["src"], fc["obs"]
 ndf = pm.shape[0]
 IDXF = block_index(ndf)

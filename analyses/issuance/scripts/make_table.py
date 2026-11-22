@@ -3,9 +3,11 @@
 and the lead up to which Foehn's ensemble mean matches the CAMS forecast and Aurora of 1 day.
     python make_table.py   -> ../data/table_sedi_definitions.tsv"""
 import json
+import os
 from pathlib import Path
 
-D = Path(__file__).resolve().parent.parent / "data"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+D = Path(__file__).resolve().parent.parent / f"data{SFX}"
 R = json.loads((D / "derived.json").read_text())
 ROWS = [("land", "Global", "1 km estimates, all land", [("ghap", "local climate 2017-2020, calendar day", "same threshold"),
                                                           ("matched", "local climate 2017-2020, calendar day", "matched frequency"),

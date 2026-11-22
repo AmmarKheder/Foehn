@@ -9,10 +9,10 @@ import json
 
 import numpy as np
 
-from rel_common import DATA, HERE, NETS, stations
+from rel_common import DATA, HERE, NETS, SFX, stations
 
-RES = HERE / "results"
-S = json.load(open(RES / "station_scores_final.json")); SB = json.load(open(RES / "station_scores_before.json"))
+RES = HERE / f"results{SFX}"
+S = json.load(open(RES / "station_scores_final.json")); SB = json.load(open(HERE / "results" / "station_scores_before.json"))   # 'before' (e02): stored
 EST = json.load(open(RES / "estimates_scores.json")); M16 = json.load(open(RES / "members16_noise.json"))
 A, PP, NINE = "All official networks", "All populated pixels", "Nine regions pooled"
 THR = S["thresholds"]

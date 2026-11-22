@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+"""Detection of local extremes at the stations with thresholds of each system's own (official networks, 2022).
+Same forecasts and station-days as extremes_stations_mean.py (Foehn's ensemble mean, the CAMS forecast of 00 UTC d+1 and
+Aurora initialised at 00 UTC d+1, issued at the same time as Foehn, and the persistence of day d; leads 1-4), scored as
+yes/no forecasts by the SEDI with three kinds of thresholds:
+  'ghap':    GHAP 2017-2020 local percentiles at the station pixel, the same for every system (as the paper);
+  'station': the station's own 2022 percentiles, the same for every system (as the paper);
+  'own':     every system and the observations have their own percentiles at each station, over the same station-days of
+             the lead time: the observed event is above the station's percentile, the forecast says yes above the
+             system's percentile, so that every system warns as often as the event occurs (frequency-matched, the
+             calibration for which the SEDI was designed; Ferro and Stephenson 2011). Bias no longer matters, only
+             the ranking of the days.
+Counts by kind, tier (P90, P95, P99), lead, system and network -> data/extremes_stations_own_<label>.npz (new file; the
+inputs and the other result files are only read).
+    python extremes_stations_own.py <label>=<run>[:<eval dir>]"""
+import glob
+import os
+import sys
+from pathlib import Path
+
+import numpy as np
+import zarr
+
+HERE = Path(__file__).resolve().parent
+RUNS = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/global1km/runs"))
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
+AURD = HERE.parent / "benchmark" / "aurora"
+NETS = {0: "EEA", 1: "CNEMC", 3: "EPA", 4: "AirKorea", 5: "NIES", 6: "CPCB"}
+NETL = list(NETS) + [-1]                                                     # -1: all official stations
+PCTS, WINDOW, MIN_DAYS = (90, 95, 99), 15, 100
+SYS = ["Foehn (mean)", "CAMS", "Aurora", "persistence"]
+
+st = np.load(G / os.environ.get("STATIONS", "stations_2022.npz"))
+lat, lon, src, obs = st["lat"], st["lon"], st["source"], st["daily"].astype(np.float32)
+NS = len(lat)
+official = np.isin(src, list(NETS))
+# keyfix 2026-11-20: the station files are matched to the reference file by exact float64 coordinates AND by the order
+# of the stations (the k-th station at a coordinate pair -> the k-th station of the reference file at that pair), so that
+# co-located stations remain separate stations. This replaces the float32 key round(lat, 4) * 1e6 + round(lon, 4), which
+# collided and left 183 official stations without a forecast (backup of the script: <name>.bak_20261120_key.py).
+def match_stations(la_, lo_):
+    pos, seen, out_ = {}, {}, np.full(len(la_), -1)
+    for i_, c_ in enumerate(zip(np.asarray(lat, np.float64).tolist(), np.asarray(lon, np.float64).tolist())):
+        pos.setdefault(c_, []).append(i_)
+    for j_, c_ in enumerate(zip(np.asarray(la_, np.float64).tolist(), np.asarray(lo_, np.float64).tolist())):
+        k_ = seen.get(c_, 0); seen[c_] = k_ + 1
+        if k_ < len(pos.get(c_, ())):
+            out_[j_] = pos[c_][k_]
+    return out_
+
+
+sets = {}
+for f in sorted(G.glob("stations_2022*.npz")):
+    z = np.load(f); sets[len(z["lat"])] = match_stations(z["lat"], z["lon"])
+_with_data = np.flatnonzero(np.isin(src, list(NETS)) & np.isfinite(obs).any(1))     # keyfix: every official station with data kept, once
+assert np.isin(_with_data, sets[NS]).all() and np.array_equal(sets[NS], np.arange(NS)), "keyfix: station mapping"
+
+
+def nanpct(x, qs):
+    """np.nanpercentile(x, qs, axis=0), vectorised (as extremes_stations_mean.py)"""
+    xs = np.sort(x, axis=0); n = np.isfinite(x).sum(0); out = []
+    for q in qs:
+        pos = q / 100.0 * np.maximum(n - 1, 0); lo = np.floor(pos).astype(np.int64); hi = np.minimum(lo + 1, np.maximum(n - 1, 0))
+        w = (pos - lo).astype(np.float32)
+        out.append(np.take_along_axis(xs, lo[None], 0)[0] * (1 - w) + np.take_along_axis(xs, hi[None], 0)[0] * w)
+    res = np.stack(out); res[:, n == 0] = np.nan
+    return res
+
+
+def bil(field, lat0, dlat, lon0, dlon):
+    nlat, nlon = field.shape
+    fi = (lat0 - lat) / dlat; fj = ((lon - lon0) % 360.0) / dlon
+    i0 = np.clip(np.floor(fi).astype(int), 0, nlat - 2); j0 = np.floor(fj).astype(int) % nlon; j1 = (j0 + 1) % nlon
+    wi, wj = np.clip(fi - i0, 0, 1), fj - np.floor(fj)
+    return ((1 - wi) * ((1 - wj) * field[i0, j0] + wj * field[i0, j1]) + wi * ((1 - wj) * field[i0 + 1, j0] + wj * field[i0 + 1, j1])).astype(np.float32)
+
+
+def sedi(c):
+    """c (..., 4) = hits, misses, false alarms, correct negatives (as fig_gc4_extremes.sedi)"""
+    h, m, f, n = np.moveaxis(np.asarray(c, np.float64), -1, 0)
+    with np.errstate(all="ignore"):
+        H = np.clip(h / (h + m), 1e-6, 1 - 1e-6); F = np.clip(f / (f + n), 1e-6, 1 - 1e-6)
+        return (np.log(F) - np.log(H) - np.log(1 - F) + np.log(1 - H)) / (np.log(F) + np.log(H) + np.log(1 - F) + np.log(1 - H))
+
+
+# ---- the thresholds of the paper (same for every system)
+HIST = np.load(G / "clim" / "st_ghap_2017_2020.npy").astype(np.float32)          # (1461, NS) GHAP at the station pixel
+hdoy = np.load(G / "meta.npz")["doy"][:1461]
+THR_G = np.full((365, 3, NS), np.nan, np.float32)
+for t in range(365):
+    dd = np.abs(hdoy - t); dd = np.minimum(dd, 365 - dd)
+    x = HIST[dd <= WINDOW]; x = np.where(x > 0, x, np.nan)
+    q = nanpct(x, PCTS); q[:, np.isfinite(x).sum(0) < 60] = np.nan
+    THR_G[t] = q
+THR_S = nanpct(np.where(obs.T > 0, obs.T, np.nan), PCTS)                          # (3, NS) annual, station record
+THR_S[:, np.isfinite(obs).sum(1) < 200] = np.nan
+
+# ---- forecasts at the stations (as extremes_stations_mean.py)
+label, spec = sys.argv[1].split("=")
+run, ev = (spec.split(":") + ["eval_global"])[:2]
+ens = {}
+for p in sorted(glob.glob(str(RUNS / run / ev / "part_*.npz"))):
+    z = np.load(p); e = z["st_ens"]; idx = sets[e.shape[1]]
+    for n, (d, h, t) in enumerate(z["keys"]):
+        full = np.full((NS, e.shape[2]), np.nan, np.float32); full[idx[idx >= 0]] = e[n, idx >= 0].astype(np.float32)
+        ens[(int(d), int(h))] = full
+print(label, len(ens), "forecasts", flush=True)
+cams = zarr.open((os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr"), mode="r")
+aur_e = {}
+for p in glob.glob(str(AURD / "out_12h_all" / "part_*.npz")):
+    z = np.load(p); la_, lo_ = z["lat"], z["lon"]
+    for d, pr in zip(z["days"], z["pred"]):
+        aur_e[int(d)] = np.stack([bil(pr[k].astype(np.float32), float(la_[0]), float(la_[0] - la_[1]), float(lo_[0]), float(lo_[1] - lo_[0]))
+                                  for k in range(pr.shape[0])])
+an0 = {}
+
+
+def analysis00(d):
+    if d not in an0:
+        z = np.load(AURD / "raw" / f"{d:03d}.npz")
+        an0[d] = bil(z["surf"][0, 5] * 1e9, float(z["lat"][0]), float(z["lat"][0] - z["lat"][1]), float(z["lon"][0]), float(z["lon"][1] - z["lon"][0]))
+    return an0[d]
+
+
+# rows per lead: (target day, obs, Foehn mean, CAMS, Aurora, persistence), NaN outside the common station-days
+rows = {h: [] for h in range(1, 5)}
+for (d, h) in sorted(ens):
+    if h > 4 or d + h >= 365 or (d + 1) not in aur_e:
+        continue
+    t = d + h; y = obs[:, t]
+    A = aur_e[d + 1]; k0 = 2 * (h - 1)
+    aur = 0.25 * (analysis00(d + 1) if h == 1 else A[k0 - 1]) + 0.5 * A[k0] + 0.25 * A[k0 + 1]
+    cam = bil(np.asarray(cams[d + 1, 0, h - 1], np.float32), 90.0, 0.4, 0.0, 0.4)
+    fo = ens[(d, h)]
+    ok = official & np.isfinite(y) & np.isfinite(aur) & np.isfinite(cam) & np.isfinite(obs[:, d]) & np.isfinite(fo).all(1)
+    X = np.stack([y, fo.mean(1), cam, aur, obs[:, d]]).astype(np.float32)
+    X[:, ~ok] = np.nan
+    rows[h].append((t, X))
+print("forecasts per lead:", {h: len(v) for h, v in rows.items()}, flush=True)
+
+# ---- counts[kind, tier, lead, system, network, (hits, misses, false alarms, correct negatives)]
+C = np.zeros((3, 3, 4, len(SYS), len(NETL), 4))
+netmask = [src == n if n >= 0 else official for n in NETL]
+for h in range(1, 5):
+    T = np.array([t for t, _ in rows[h]]); X = np.stack([x for _, x in rows[h]])          # (days, 5, NS)
+    Y = X[:, 0]
+    # own thresholds: per station, over the same station-days, for the observations and for every system
+    ownY = nanpct(Y, PCTS)                                                                   # (3, NS)
+    ownF = [nanpct(X[:, 1 + s], PCTS) for s in range(len(SYS))]
+    few = np.isfinite(Y).sum(0) < MIN_DAYS
+    ownY[:, few] = np.nan
+    for kind in range(3):
+        for tier in range(3):
+            for s in range(len(SYS)):
+                F = X[:, 1 + s]
+                if kind == 0:
+                    ty = tf = THR_G[T, tier]                                                 # (days, NS)
+                elif kind == 1:
+                    ty = tf = np.broadcast_to(THR_S[tier], Y.shape)
+                else:
+                    ty, tf = np.broadcast_to(ownY[tier], Y.shape), np.broadcast_to(ownF[s][tier], Y.shape)
+                m = np.isfinite(Y) & np.isfinite(F) & np.isfinite(ty) & np.isfinite(tf)
+                e_, g_ = (Y > ty) & m, (F > tf) & m
+                for k, nm in enumerate(netmask):
+                    mm = m & nm[None]
+                    C[kind, tier, h - 1, s, k] = [(e_ & g_ & mm).sum(), (e_ & ~g_ & mm).sum(), (~e_ & g_ & mm).sum(), (~e_ & ~g_ & mm).sum()]
+np.savez(HERE / "data" / f"extremes_stations_own_{label}.npz", C=C, systems=np.array(SYS), tiers=np.array(["P90", "P95", "P99"]),
+         kinds=np.array(["ghap", "station", "own"]), nets=np.array([NETS.get(n, "all") for n in NETL]))
+print("saved", HERE / "data" / f"extremes_stations_own_{label}.npz")
+for kind, kn in enumerate(("GHAP 2017-2020 local percentiles (same for all)", "station's own 2022 percentiles (same for all)",
+                           "each system's own percentiles (frequency-matched)")):
+    for tier in (1, 2):
+        print(f"\n=== {kn} | above P{PCTS[tier]}: SEDI, all official stations, leads 1-4")
+        for s, nm in enumerate(SYS):
+            print(f"  {nm:14s} " + " ".join(f"{sedi(C[kind, tier, h, s, -1]):.2f}" for h in range(4)))
+print("\n=== frequency-matched, above P99, SEDI one day ahead by network")
+for k, n in enumerate(NETL):
+    print(f"  {NETS.get(n, 'all'):9s} " + " ".join(f"{nm.split()[0]} {sedi(C[2, 2, 0, s, k]):.2f}" for s, nm in enumerate(SYS)))

@@ -4,7 +4,7 @@
 |---|---|
 | `fig1_v2/` (and `fig1/`, its first version) | Fig. 1, the schematic with the real-time system (d) and the downscaling (e) |
 | `fig2_v3/fig_hidden_v4.py` | Fig. 2, hidden exposure, with the warnings panel f |
-| `fig_rt_day/` | Fig. 8, the real-time forecast of 11 November 2026 (Lahore, Delhi, Karachi) |
+| `fig_rt_day/` | Fig. 8, the two real-time cases chosen by rule (Lahore and Delhi, 11 November 2026; Karachi, 10 November 2026) |
 | `fig_rt_skill/figS_rt_proof.py` | Supplementary figure of the real-time verification at the monitors (RMSE by lead day); `rt_skill_data.py` reads the scorer's tables |
 | `source_data/build_source_data.py` | the Source Data workbook (one sheet per graph panel) |
 
@@ -15,9 +15,9 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 ## Files
 | File | What it does (first line of its own header) |
 |---|---|
-| `fig1/check_overlay.py` | Overlay check of fig_gc1_schematic_rt: are panels a, b, c the Nature figure, pixel for pixel? A. Render of the original against the new figure (the proof asked for) |
+| `fig1/check_overlay.py` | Overlay check of fig_gc1_schematic_rt: are panels a, b, c the Nature figure, pixel for pixel? A. Render of the original against the new figure (the proof) |
 | `fig1/fig_gc1_schematic_rt.py` | Fig |
-| `fig1_v2/check_overlay.py` | Overlay check of fig_gc1_schematic_rt2 (version 2 of the lower band): are panels a, b, c the Nature figure, pixel for pixel? A. Render of the original against the new figure (the proof asked for) |
+| `fig1_v2/check_overlay.py` | Overlay check of fig_gc1_schematic_rt2 (version 2 of the lower band): are panels a, b, c the Nature figure, pixel for pixel? A. Render of the original against the new figure (the proof) |
 | `fig1_v2/fig_gc1_schematic_rt2.py` | Fig |
 | `fig1_v2/prep_downscaler_fields.py` | Fields of panel e of the new Fig |
 | `fig2_v3/fig_hidden_v4.py` | Fig |
@@ -27,10 +27,10 @@ The scripts are the working files of the study, as they ran on the LUMI supercom
 | `fig_rt_day/rt_day_data.py` | Data of the figure 'a real-time forecast at 1 km': the two case rules, the fields of every panel, the numbers a legend may quote |
 | `fig_rt_day/rt_loaders.py` | Read-only loaders of the real-time forecasts for the figure 'a real-time forecast at 1 km' (after Appendix A of facts/figures.md; the arithmetic of the monitor comparison is that of the live verification script live_baselines.py) |
 | `fig_rt_day/rt_safe_io.py` | Safe writes for the files of this figure folder (the file system dropped writes on 2026-11-19): every file is written under a temporary name in the same directory, flushed, fsynced, read back and compared, then renamed with os.rep … |
-| `fig_rt_skill/check_ensemble_cams.py` | Task 2: does any quantity drawn or quoted for the ensemble figure (figS_rt_ensemble.py, numbers_cal.json, key f_ensemble) depend on the CAMS arm? Method: (1) the station-day tables of score_cal (CAMS = three instants) and of score … |
+| `fig_rt_skill/check_ensemble_cams.py` | Does any quantity drawn or quoted for the ensemble figure (figS_rt_ensemble.py, numbers_cal.json, key f_ensemble) depend on the CAMS arm? Method: (1) the station-day tables of score_cal (CAMS = three instants) and of score … |
 | `fig_rt_skill/check_plain_numpy.py` | Independent check of the rebuilt figure data with plain numpy (no scorer code): from the station-day table of score_cams3h, recompute the per-cell RMSE and the share of cells of panel a, the per-issue-day changes of panel e, the R … |
-| `fig_rt_skill/figS_rt_ensemble.py` | Supplementary figure: the eight members of the real-time 1 km forecast at the monitors, as issued and with the calibrated noise (the panel f of fig_rt_skill.py, drawn alone; same numbers: numbers_cal.json, key f_ensemble, made by  … |
-| `fig_rt_skill/figS_rt_proof.py` | The real-time forecasts verified at the monitors, ONE small panel (asked by the author on 2026-11-20: "just prove the real time"): RMSE by lead day of the real-time 1 km forecast, of its 0.4 degree input, of the CAMS forecast of t … |
+| `fig_rt_skill/figS_rt_ensemble.py` | Figure not in the submitted manuscript: the eight members of the real-time 1 km forecast at the monitors, as issued and with the calibrated noise (the panel f of fig_rt_skill.py, drawn alone; same numbers: numbers_cal.json, key f_ensemble, made by  … |
+| `fig_rt_skill/figS_rt_proof.py` | The real-time forecasts verified at the monitors, ONE small panel: RMSE by lead day of the real-time 1 km forecast, of its 0.4 degree input, of the CAMS forecast of t … |
 | `fig_rt_skill/fig_rt_skill.py` | Main figure: the real-time 1 km forecasts verified at the monitors (house style of the paper; companion of fig_rt_day) |
 | `fig_rt_skill/fig_rt_skill_main.py` | Main figure: the real-time 1 km forecasts verified at the monitors (house style of the paper; companion of fig_rt_day) |
 | `fig_rt_skill/legend_check.py` | Numbers of the legends of fig_rt_skill against numbers.json, in both directions (reads only; writes nothing) |

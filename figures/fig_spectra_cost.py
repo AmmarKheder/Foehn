@@ -165,8 +165,8 @@ axc.text(3.0, 5.86, "probabilistic", rotation=7, color="#a8a8a8", fontsize=7, ha
 if "foehn" in pts and "aurora" in pts:
     (s1, r1, _), (s2, r2, _) = pts["foehn"], pts["aurora"]
     axc.annotate("", xy=(s2 * 0.8, r2 - 0.15), xytext=(s1 * 1.3, r1 + 0.1), arrowprops=dict(arrowstyle="<->", color="#555555", lw=1.4))
-    axc.text(np.sqrt(s1 * s2) * 1.25, (r1 + r2) / 2 - 0.12, f"{s2 / s1:.0f}× faster,\n{100 * (1 - r1 / r2):.0f}% lower RMSE",
-             fontsize=6.2, color="#444444", ha="left")
+    axc.text(np.sqrt(s1 * s2) * 1.25, (r1 + r2) / 2, f"{100 * (1 - r1 / r2):.0f}% lower RMSE\n(mean of 8 members);\none member {s1:.2f} s,\nAurora {s2:.1f} s per lead day",
+             fontsize=6.0, color="#444444", ha="left", va="center", linespacing=1.15)
 axc.set_xscale("log"); axc.set_xlim(2e-3, 60); axc.set_ylim(5.2, 8.9)
 axc.set_xlabel("Inference time (seconds per member per forecast)"); axc.set_ylabel("RMSE at 1 km (4-day avg., µg m$^{-3}$)")
 axc.set_title("(c) Forecast skill vs. inference speed")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GFAS injection height 'injh' (IS4FIRES) 2017-2024 and the injh version of the global fires store (RT1KM task 1).
+"""GFAS injection height 'injh' (IS4FIRES) 2017-2024 and the injh version of the global fires store (the fires input of the 1 km model used in real time).
 
 Why: GFAS v1.4.2 (the real-time product since 2026-01-01) no longer serves 'mami' (mean altitude of maximum injection,
 encoder channel 40 = fires channel 2); RT already uses 'injh' in its place. A global CD-FFM trained on the injh

@@ -17,14 +17,16 @@ Four kinds of thresholds, three tiers (P90, P95, P99), leads 1-7 (CAMS and Auror
 Counts per start day are kept (thresholds fixed) for the moving-block bootstrap.
     python land_freqmatch.py <label> <lead>     -> ../data/land_freqmatch_<label>_h<lead>.npz   (one job per lead)
     python land_freqmatch.py <label> merge      -> ../data/land_freqmatch_<label>.npz"""
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
 
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 THR = G / "clim" / "tail_thresholds_2017_2020.npy"
-OUT = Path(__file__).resolve().parent.parent / "data"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+OUT = Path(__file__).resolve().parent.parent / f"data{SFX}"
 LABEL = sys.argv[1] if len(sys.argv) > 1 else "crps_e01"
 MODE = sys.argv[2] if len(sys.argv) > 2 else "merge"
 NR, NC = 576, 1440

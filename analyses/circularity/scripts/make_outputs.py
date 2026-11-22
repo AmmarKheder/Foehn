@@ -9,13 +9,20 @@ formatted here from the unrounded result, never typed by hand.
                                 ../results/key_numbers.txt            each number used, unrounded, with its place in numbers.json
 """
 import json
+import os
+import sys
 from pathlib import Path
 
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-RES = HERE.parent / "results"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE.parent / f"results{SFX}"
 J = json.load(open(RES / "numbers.json"))
+# 2026-11-21 option (backup make_outputs.py.bak_20261121_fix): '--stations-at-1-day' prints in the Stations column of panel a the
+# stations with station-days 1 day ahead (numbers.json C/groups/<g>/leads/1/stations_at_lead, written by analyse.py with
+# --stations-by-lead) instead of the stations scored 1 or 3 days ahead (C/groups/<g>/stations); without it nothing changes.
+ST1D = "--stations-at-1-day" in sys.argv[1:]
 REF = Path(J["A"]["file"])
 KEY = []
 
@@ -210,7 +217,8 @@ Network & Stations & pixel / 3\,km / 10\,km & \model{}: pixel / 3\,km / 10\,km &
 \midrule""")
 for n_ in rows:
     d = get(f"{C}/{n_}/leads/1"); r_ = d["rmse"]; w_ = d["estimates_share_within_0.5"]
-    L.append(f"{disp[n_]} & {get(f'{C}/{n_}/stations'):,} & {w_['ghapt']:.0f} / {w_['g_one3']:.0f} / {w_['g_one10']:.0f} & {r_['foehn']:.1f} / {r_['ring3']:.1f} / {r_['ring10']:.1f} & "
+    nst = d["stations_at_lead"] if ST1D else get(f"{C}/{n_}/stations")
+    L.append(f"{disp[n_]} & {nst:,} & {w_['ghapt']:.0f} / {w_['g_one3']:.0f} / {w_['g_one10']:.0f} & {r_['foehn']:.1f} / {r_['ring3']:.1f} / {r_['ring10']:.1f} & "
              f"{r_['cams1']:.1f} & {r_['aur1']:.1f} & {t1(d['gain_foehn_vs_cams'])} & {t1(d['gain_ring10_vs_cams'])} \\\\")
 L.append(r"""\midrule
  & & & \multicolumn{3}{c}{Gain over Aurora (\%)} & \multicolumn{2}{c}{Gain over the CAMS forecast, 3 days ahead (\%)} \\
@@ -277,7 +285,7 @@ On the station-days of the comparison, the 1\\,km estimates of the target day ha
 The forecast is closer than the estimates at the Japanese network, by {pi(x['fe_Japan'][2])}; at the European, Korean and Indian networks the difference is {pct(x['fe_Europe'][2])}, {pct(x['fe_Korea'][2])} and {pct(x['fe_India'][2])}, with intervals that include zero.
 At the European network the estimates are {pi(get(f'{fe}/Europe/1/gain_estimates_vs_climatology'))} more accurate than their own climatology ({x['fe_Europe'][1]:.1f} against {x['fe_Europe'][3]:.1f}).
 
-% --- the model of Aurora's protocol at the stations (Methods, "Comparison in Aurora's protocol")
+% --- the model of Aurora's protocol at the stations (Methods, "Comparison in the Aurora protocol")
 At the stations (ensemble mean of eight members; 214 initialisations at 00\\,UTC from 1 May to 30 November 2022; daily means from the three instants of each day, as for Aurora; identical station-days), the RMSE of Foehn-CAMS from 1 to 4 days ahead is {', '.join(pct(g) for g in dc)} below that of the CAMS forecast of the same run and {', '.join(pct(g) for g in da)} below that of Aurora; every interval excludes zero (1 day ahead: {iv(dc[0])} and {iv(da[0])}).
 By network, the gain over the CAMS forecast from 1 to 4 days is {'--'.join(str(v) for v in sorted({min(r0(get(f'{D}/China/leads/{h}/gain_vs_cams')[0]) for h in '1234'), max(r0(get(f'{D}/China/leads/{h}/gain_vs_cams')[0]) for h in '1234')}))}\\% in China, {'--'.join(str(v) for v in sorted({min(r0(get(f'{D}/USA/leads/{h}/gain_vs_cams')[0]) for h in '1234'), max(r0(get(f'{D}/USA/leads/{h}/gain_vs_cams')[0]) for h in '1234')}))}\\% in the USA and {'--'.join(str(v) for v in sorted({min(r0(get(f'{D}/India/leads/{h}/gain_vs_cams')[0]) for h in '1234'), max(r0(get(f'{D}/India/leads/{h}/gain_vs_cams')[0]) for h in '1234')}))}\\% in India (intervals exclude zero), {'--'.join(str(v) for v in sorted({min(r0(get(f'{D}/Korea/leads/{h}/gain_vs_cams')[0]) for h in '1234'), max(r0(get(f'{D}/Korea/leads/{h}/gain_vs_cams')[0]) for h in '1234')}))}\\% in Korea (the interval excludes zero 4 days ahead) and {'--'.join(str(v) for v in sorted({min(r0(get(f'{D}/Japan/leads/{h}/gain_vs_cams')[0]) for h in '1234'), max(r0(get(f'{D}/Japan/leads/{h}/gain_vs_cams')[0]) for h in '1234')}))}\\% in Japan (intervals include zero); in Europe the three systems are equal (within 0.4\\%).
 At the Korean, Japanese and Indian networks together, it is {', '.join(pct(g) for g in dnc)} below the CAMS forecast and {', '.join(pct(g) for g in dna)} below Aurora (intervals exclude zero).
@@ -286,7 +294,7 @@ A single member, compared with the two single forecasts, is {', '.join(pct(get(f
 fa = lambda n_: x[f"fe_{n_}"]
 b_est_in = None
 X = []
-X.append(f"""% Further replacement sentences made necessary by the checks of this task (same sources).
+X.append(f"""% Further replacement sentences made necessary by these checks (same sources).
 
 % (1) sections/methods.tex, "Read at the station pixel on the same day, GHAP itself has an RMSE ... 11.0 over the six networks."
 %     (ref lines 144-145, work lines 185-186): the old values are over every station and day of each network; at the European network

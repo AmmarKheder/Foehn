@@ -14,6 +14,7 @@ Case: Kano, arrival 16 May 2022, chosen by a rule fixed before any forecast was 
 African cities, the arrival day with the largest rise of PM2.5 explained by the air, min(PM2.5 at the origins two days before,
 PM2.5 on arrival) - PM2.5 two days before).
     python fig_transport.py"""
+import os  # FOEHN_WORK, FOEHN_ENVS: roots of the working trees and of the environments
 import matplotlib.patheffects as pe
 import numpy as np
 
@@ -82,7 +83,7 @@ def main():
     pn = BoundaryNorm(np.linspace(0, 1, 11), 10)
     thr = CASE["thr"]
     for k, h in enumerate((3, 2, 1)):
-        z_ = np.load(FM.RUN_DIR / CASE["crop"] / f"crop0_d{T - h}_h{h}.npz")
+        z_ = np.load(FM.RUN_DIR / FM.ev(CASE["crop"]) / f"crop0_d{T - h}_h{h}.npz")
         assert int(z_["rows"][0]) == R0 and int(z_["cols"][0]) == C0, (z_["rows"], z_["cols"])
         m = z_["members"].astype(np.float32)
         pr = np.where(land1 > 0, (m > thr).mean(0), np.nan)
@@ -122,13 +123,13 @@ def main():
     ah.set_xlim(1, 7); ah.set_ylim(0, 100); ah.set_xticks(L)
     ah.set_xlabel("Lead time (days)", fontsize=6, labelpad=1)
     ah.set_ylabel("Arriving air (%)", fontsize=6)
-    ah.legend(handles=[Patch(color="#1F5AA6", alpha=0.85, label="near the ground on the start day"),
+    ah.legend(handles=[Patch(color="#1F5AA6", alpha=0.85, label="in the mixed layer on the start day"),
                        Patch(color="#F5BFD3", label="higher up, or farther back")],
               loc="lower left", bbox_to_anchor=(0.0, 1.0), ncol=1, fontsize=5.2, frameon=False, handlelength=1.4,
               borderaxespad=0.2, labelspacing=0.25)
     import cartopy.crs as ccrs
     from gc_style import map_axes, world_coords
-    land05 = np.load("/scratch/project_462001140/ammar/eccv/data/world/global1km/meta.npz")["land"].astype(bool).reshape(288, 2, 720, 2).any((1, 3))
+    land05 = np.load((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km/meta.npz"))["land"].astype(bool).reshape(288, 2, 720, 2).any((1, 3))
     near_map = np.where(land05, 100 - 100 * z["aloft_map"][2], np.nan)             # three days ahead
     lat_e = 84.125 - 0.5 * np.arange(289); lon_e = -180.125 + 0.5 * np.arange(721)
     ai.remove()
@@ -138,7 +139,7 @@ def main():
     cax_ = fig.add_axes([fx(74), fy(8.2), fx(34), fy(1.4)])
     cb_ = fig.colorbar(pm_, cax=cax_, orientation="horizontal", ticks=[20, 30, 40, 50, 60, 70], extend="both"); cb_.outline.set_linewidth(0.4)
     cb_.ax.tick_params(labelsize=4.8, length=1.5, pad=1)
-    cb_.set_label("Arriving air near the ground on the start day,\n3 days ahead (%)", fontsize=5.2, labelpad=1.5)
+    cb_.set_label("Arriving air in the mixed layer on the start day,\n3 days ahead (%)", fontsize=5.2, labelpad=1.5)
     print("map 3 d: land percentiles", np.nanpercentile(near_map, [5, 25, 50, 75, 95]).round(0))
     # j: the gain per start day, coloured violins (tails trimmed at the 2nd-98th percentiles), point and 95% interval
     ga = GR.index("All regions"); gain, lo, hi = tg["gain"][ga, :, 0], tg["gain"][ga, :, 1], tg["gain"][ga, :, 2]

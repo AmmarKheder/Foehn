@@ -2,13 +2,14 @@
 """The systems recomputed by figdata_hidden_bc.py (foehn_p50, foehn_mean, foehn_40km, cams) must equal those of
 ../data/hidden_systems_pop.npz (job 23864988) on every forecast, region, threshold and code: the proof that the new systems
 are counted on the same pixels, days and valid residents.   python check_identity.py data/hidden_bc_pop.npz"""
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-a = np.load(HERE / sys.argv[1]); b = np.load(HERE.parent / "data" / "hidden_systems_pop.npz")
+a = np.load(HERE / sys.argv[1]); b = np.load(HERE.parent / (f"data_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else "data") / "hidden_systems_pop.npz")
 K = b["keys"]; sa, sb = list(a["sys1"]), list(b["sys1"])
 assert list(a["regions"]) == list(b["regions"]) and np.array_equal(a["thr"], b["thr"]) and float(a["margin"]) == float(b["margin"])
 rows = [int(np.flatnonzero((K[:, 0] == d) & (K[:, 1] == h))[0]) for d, h, t in a["keys"]]

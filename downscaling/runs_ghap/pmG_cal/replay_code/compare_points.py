@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A6 mandate (b), proof: the copy infer_points_cal.py run with the frozen settings (tau 1) against the existing replay files
+"""A6(b), proof: the copy infer_points_cal.py run with the frozen settings (tau 1) against the existing replay files
 of the frozen system: replay/km/<d>.npz (downscaler part), replay/raw/<d>.npy (members at every evaluated position) and
 replay/points/<d>.npz (the deliverable). Bitwise comparison (NaN = NaN), CPU, numpy only; no observation is opened.
   python compare_points.py --mine runs_ghap/pmG_cal/replay_out/proof --list days.txt --out results/replay_proof.json"""

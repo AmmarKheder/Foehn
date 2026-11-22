@@ -8,6 +8,7 @@ i-p, the same five days ahead;
 q-t, probability of PM2.5 above 75 ug m-3 (WHO 24-h interim target 1) from Foehn's 16 members, issued 7, 5, 3 and 1 days
      ahead; black contour: 75 ug m-3 in GHAP on that day.
     python fig_gc2_realism.py <run> <eval dir>"""
+import os  # FOEHN_WORK, FOEHN_ENVS: roots of the working trees and of the environments
 import sys
 from pathlib import Path
 
@@ -87,14 +88,14 @@ def mapax(fig, rect, title=None, left=False, bottom=False):
 
 
 def main():
-    Z = np.load(HERE / "data" / f"case_eastasia_{RUN}.npz")
+    Z = np.load(HERE / "data" / f"case_eastasia_{RUN}{FM.SFX}.npz")
     peak = int(Z["peak"]); day = (np.datetime64("2022-01-01") + np.timedelta64(peak, "D")).astype("datetime64[D]").astype(object)
     cmap, norm = pm_cmap()
     c0 = np.load(D / f"crop0_d{peak - 1}_h1.npz"); box = c0["box"]; (r0, r1), (cc0, cc1) = c0["rows"], c0["cols"]
     n, s, w, e = SUB
     sr0, sr1 = int(round((box[0] - n) * 100)), int(round((box[0] - s) * 100)); sc0, sc1 = int(round((w - box[2]) * 100)), int(round((e - box[2]) * 100))
     gh = ghap_box(1826 + peak, int(r0), int(r1), int(cc0), int(cc1))[sr0:sr1, sc0:sc1]; land = gh > 0; gh = np.where(land, gh, np.nan)
-    cams = zarr.open("/scratch/project_462001140/ammar/eccv/data/world/cams_forecast_daily/2022.zarr", mode="r")
+    cams = zarr.open((os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr"), mode="r")
     aur = aurora_all()
     W, H = DOUBLE, 127 * MM
     fig = plt.figure(figsize=(W, H))
@@ -155,7 +156,7 @@ def main():
     # u: the forecasts track the observed peaks at the stations (12 CNEMC monitors of central Beijing, January 2022)
     import glob
     import zarr as _zarr
-    st = np.load("/scratch/project_462001140/ammar/eccv/data/world/global1km/stations_2022.npz")
+    st = np.load((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km/stations_2022.npz"))
     sel = (st["source"] == 1) & (np.abs(st["lat"] - 39.9) < 0.3) & (np.abs(st["lon"] - 116.4) < 0.4)
     obs = np.nanmean(st["daily"][sel].astype(np.float32), 0)
     parts = [np.load(q) for q in sorted(glob.glob(str(FM.CASE_DIR / "part_*.npz")))]
@@ -164,7 +165,7 @@ def main():
     for n_, (d_, h_, t_) in enumerate(kk):
         E[(int(d_), int(h_))] = np.nanmean(ee[n_, sel].astype(np.float32), 0)          # member means over the stations (16,)
         GH[int(t_)] = float(np.nanmean(gg[n_, sel].astype(np.float32)))
-    cz = _zarr.open("/scratch/project_462001140/ammar/eccv/data/world/cams_forecast_daily/2022.zarr", mode="r")
+    cz = _zarr.open((os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr"), mode="r")
     la_, lo_ = st["lat"][sel], st["lon"][sel]
     fi = (90.0 - la_) / 0.4; fj = (lo_ % 360.0) / 0.4
     i0_ = np.floor(fi).astype(int); j0_ = np.floor(fj).astype(int) % 900; wi = fi - i0_; wj = fj - np.floor(fj)

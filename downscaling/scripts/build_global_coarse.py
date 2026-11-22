@@ -239,7 +239,7 @@ def cmd_build(kind, procs):
 
 
 def cmd_nonreg(_a):
-    """bit equality of this code's rows with the Foehn met.npy / fires.npy rows (the reviewer's open issue)"""
+    """bit equality of this code's rows with the Foehn met.npy / fires.npy rows (an open check)"""
     res = {}
     ok = True
     for d in (dt.date(2022, 12, 31), dt.date(2017, 1, 1), dt.date(2020, 6, 15)):

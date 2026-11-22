@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""WP1a, instance B: the baseline 'cams' at the catalogue monitors, exactly as realtime_1km/rc/coupling_live.py (and
+"""WP1a: the baseline 'cams' at the catalogue monitors, exactly as realtime_1km/rc/coupling_live.py (and
 live_baselines.py) define it: for issue day d and lead day L = 1..5 (valid day d + L - 1), the daily mean of the CAMS
 operational forecast of the 00 UTC cycle of d = max(1/4 x(24(L-1)) + 1/2 x(24L-12) + 1/4 x(24L), 0), where x(0) is the
 CAMS analysis of t0 (realtime/data/<d>/cams.npy, rows 84 N .. 60 S placed at rows 15..375 of the 90 N .. 90 S grid, NaN
@@ -7,7 +7,7 @@ elsewhere) and x(h > 0) the forecast at + h hours; longitudes rolled to -180 .. 
 the monitor (coupling_live.bilinear, imported). No observation is read here; nothing is scored.
 
 The ten-lead forecast file of day d is realtime/data/<d>/cams_fc.npz when it has ten leads, otherwise
-<replay>/camsfc/<d>/cams_fc.npz (decision A of the coordinator, fetched by camsfc_fetch.py); no file with ten leads ->
+<replay>/camsfc/<d>/cams_fc.npz (fetched by camsfc_fetch.py); no file with ten leads ->
 the day is skipped (its 'cams' stays NaN; no lead is interpolated).
 
   points      -> <replay>/camsfc/points/<d>.npz: cams (5, n) float32 in catalogue order, id, source (which file)

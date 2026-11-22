@@ -22,11 +22,12 @@ from pathlib import Path
 import numpy as np
 import zarr
 
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
-RUNS = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/global1km/runs")
-G = Path("/scratch/project_462001804/ammar/eccv/data/world/global1km")
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
+RUNS = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/global1km/runs"))
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 AURD = FIG.parent / "benchmark" / "aurora"
-OUT = Path(__file__).resolve().parent.parent / "data"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+OUT = Path(__file__).resolve().parent.parent / f"data{SFX}"
 NETS = {0: "EEA", 1: "CNEMC", 3: "EPA", 4: "AirKorea", 5: "NIES", 6: "CPCB"}
 NETL = list(NETS) + [-1]                                                     # -1: all official stations
 PCTS, WINDOW, MIN_DAYS = (90, 95, 99), 15, 100
@@ -37,11 +38,26 @@ st = np.load(G / os.environ.get("STATIONS", "stations_2022.npz"))
 lat, lon, src, obs = st["lat"], st["lon"], st["source"], st["daily"].astype(np.float32)
 NS = len(lat)
 official = np.isin(src, list(NETS))
-key = lambda la, lo: np.round(la, 4) * 1e6 + np.round(lo, 4)
-ref = {v: i for i, v in enumerate(key(lat, lon))}
+# keyfix 2026-11-20: the station files are matched to the reference file by exact float64 coordinates AND by the order
+# of the stations (the k-th station at a coordinate pair -> the k-th station of the reference file at that pair), so that
+# co-located stations remain separate stations. This replaces the float32 key round(lat, 4) * 1e6 + round(lon, 4), which
+# collided and left 183 official stations without a forecast (backup of the script: <name>.bak_20261120_key.py).
+def match_stations(la_, lo_):
+    pos, seen, out_ = {}, {}, np.full(len(la_), -1)
+    for i_, c_ in enumerate(zip(np.asarray(lat, np.float64).tolist(), np.asarray(lon, np.float64).tolist())):
+        pos.setdefault(c_, []).append(i_)
+    for j_, c_ in enumerate(zip(np.asarray(la_, np.float64).tolist(), np.asarray(lo_, np.float64).tolist())):
+        k_ = seen.get(c_, 0); seen[c_] = k_ + 1
+        if k_ < len(pos.get(c_, ())):
+            out_[j_] = pos[c_][k_]
+    return out_
+
+
 sets = {}
 for f in sorted(G.glob("stations_2022*.npz")):
-    z = np.load(f); sets[len(z["lat"])] = np.array([ref.get(v, -1) for v in key(z["lat"], z["lon"])])
+    z = np.load(f); sets[len(z["lat"])] = match_stations(z["lat"], z["lon"])
+_with_data = np.flatnonzero(np.isin(src, list(NETS)) & np.isfinite(obs).any(1))     # keyfix: every official station with data kept, once
+assert np.isin(_with_data, sets[NS]).all() and np.array_equal(sets[NS], np.arange(NS)), "keyfix: station mapping"
 
 
 def nanpct(x, qs):
@@ -85,7 +101,7 @@ for p in sorted(glob.glob(str(RUNS / run / ev / "part_*.npz"))):
         full = np.full((NS, e.shape[2]), np.nan, np.float32); full[idx[idx >= 0]] = e[n, idx >= 0].astype(np.float32)
         ens[(int(d), int(h))] = full
 print(label, len(ens), "forecasts", flush=True)
-cams = zarr.open("/scratch/project_462001804/ammar/eccv/data/world/cams_forecast_daily/2022.zarr", mode="r")
+cams = zarr.open((os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr"), mode="r")
 aur_e = {}
 for p in glob.glob(str(AURD / "out_12h_all" / "part_*.npz")):
     z = np.load(p); la_, lo_ = z["lat"], z["lon"]

@@ -35,6 +35,8 @@ plt.rcParams.update({
     "figure.dpi": 150, "image.interpolation": "nearest",
 })
 OUT = HERE.parents[1] / "paper" / "nature" / "figs"
+if __import__("os").environ.get("FOEHN_DESIGN"):         # A16 rebuild: renders of a noise design go to natcomms/rebuild/figs_<D>
+    OUT = HERE.parents[1] / "paper" / "natcomms" / "rebuild" / f"figs_{__import__('os').environ['FOEHN_DESIGN']}"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # curves (MOSAIC-like palette): this work brick red (ensemble mean) / salmon (one member), Aurora copper, CAMS dark grey
@@ -69,7 +71,7 @@ def ryb(n, lo=0.02, hi=0.98):
 
 
 PM_COLORS_CREAM = ["#fffbe9", "#fde8a7", "#fcc566", "#f89d3c", "#ec6a2a", "#d33a24", "#ab1a2e", "#7e1239", "#55103f", "#2e0a3b"]
-# the paper's PM2.5 palette (user, 2026-10-08): RdYlBu_r, blue = clean, yellow = middle, red = polluted, 10 classes
+# the paper's PM2.5 palette: RdYlBu_r, blue = clean, yellow = middle, red = polluted, 10 classes
 PM_COLORS = ["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"]
 PM_OVER = "#5c0019"
 

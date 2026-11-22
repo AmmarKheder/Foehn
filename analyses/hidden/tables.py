@@ -27,8 +27,9 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
-RES = HERE / "results"
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE / f"results{SFX}"
 B = 10000
 c16 = np.arange(16)
 E, C, HM, WN = (c16 & 1) > 0, (c16 & 2) > 0, (c16 & 4) > 0, (c16 & 8) > 0
@@ -142,7 +143,7 @@ DIFFM = ("warned_M", "right_M", "false_M", "reach_pct", "correct_pct", "hidden_w
 
 
 def systems(N):
-    z = np.load(HERE / "data" / os.environ.get("HID_FILE", "hidden_systems_pop.npz"))   # HID_FILE=hidden_systems_pop_leads.npz: more leads
+    z = np.load(HERE / f"data{SFX}" / os.environ.get("HID_FILE", "hidden_systems_pop.npz"))   # HID_FILE=hidden_systems_pop_leads.npz: more leads
     LEADS = sorted(int(h) for h in set(z["keys"][:, 1]))
     K, T1, sys1, thr, reg = z["keys"], z["T1"], list(z["sys1"]), [float(t) for t in z["thr"]], [str(r) for r in z["regions"]]
     mult = [float(m) for m in z["mult"]]

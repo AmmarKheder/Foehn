@@ -10,6 +10,7 @@ f,   GHAP daily PM2.5 at the reserve (20 km box around it), 8-26 July;
 g,   Foehn's probability of exceeding 25 ug m-3 at the reserve (ensemble members averaged over the same box), by target
      day, for the forecasts issued one, three, five and seven days before.
     python fig_smoke.py"""
+import os  # FOEHN_WORK, FOEHN_ENVS: roots of the working trees and of the environments
 import matplotlib.patheffects as pe
 import numpy as np
 from matplotlib.colors import BoundaryNorm, LinearSegmentedColormap
@@ -20,8 +21,8 @@ from fig_exposure_zoom import ghap_box
 from gc_style import clean, geo_ticks, label, letter_left_of
 from nature_style import DOUBLE, MM, PM_BOUNDS, plt, pm_cmap, save
 
-G = "/scratch/project_462001140/ammar/eccv/data/world/global1km"
-SHORT, LONG = FM.RUN_DIR / "eval_case_gironde_crps_e01", FM.RUN_DIR / "eval_case_gironde_long_crps_e01"
+G = (os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km")
+SHORT, LONG = FM.RUN_DIR / FM.ev("eval_case_gironde_crps_e01"), FM.RUN_DIR / FM.ev("eval_case_gironde_long_crps_e01")
 N_, S_, W_, E_ = 46.0, 43.4, -2.6, 1.0                        # display box (the evaluated crop is 47-43 N, -3-1 E)
 CR0, CC0 = 3700, 17700                                        # first row and column of the stored crop on the 1 km grid
 R0, R1 = int((84 - N_) * 100), int((84 - S_) * 100); C0, C1 = int((W_ + 180) * 100), int((E_ + 180) * 100)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 2: does any quantity drawn or quoted for the ensemble figure (figS_rt_ensemble.py, numbers_cal.json, key f_ensemble)
+"""Does any quantity drawn or quoted for the ensemble figure (figS_rt_ensemble.py, numbers_cal.json, key f_ensemble)
 depend on the CAMS arm?
 
 Method: (1) the station-day tables of score_cal (CAMS = three instants) and of score_cams3h (CAMS = 3-hourly mean) are

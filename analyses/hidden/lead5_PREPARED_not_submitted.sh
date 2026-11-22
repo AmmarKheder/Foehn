@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREPARED, NOT SUBMITTED (a GPU job is not in the mandate of analyses/hidden; the lead decides).
+# PREPARED, NOT SUBMITTED (a GPU job outside the scope of analyses/hidden).
 # What is missing: Foehn's members at the residents' pixels 5 days ahead (stored for leads 1 and 3 only), so the share of the
 # hidden people warned 5 days ahead by the 1 km forecast cannot be given. Cost of the run that would give it: the run of
 # leads 1 and 3 (job 22867011, 15 Oct 2026) took 8 nodes of standard-g for 42 min 35 s for 358 forecasts (about 469 s per

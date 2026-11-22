@@ -152,7 +152,7 @@ if __name__ == "__main__" and len(__import__("sys").argv) > 1 and __import__("sy
 
 
 def fit_north_clim_smooth(sector_deg=10, smooth_deg=30):
-    """v2 for display (2026-10-28, user: 'améliore la visualisation sur le nord'): the same edge-band climatology on 10 deg
+    """v2 for display (2026-10-28, smoother northern edge): the same edge-band climatology on 10 deg
     sectors, circularly smoothed in longitude (Gaussian, sigma smooth_deg) -> no sector steps; a function of (month, lon)"""
     cm = np.load(G / "lghap_clim/cellmean_train_A.npz")
     cells, lg = cm["cells"].astype(np.int64), cm["mean"]

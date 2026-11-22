@@ -8,7 +8,7 @@
 #SBATCH --mem=12G
 #SBATCH --time=08:00:00
 #SBATCH --output=/scratch/project_462001804/ammar/global_model_forecasting_air_pollution/realtime_1km/replay/logs/%x_%j.out
-# WP1a, decision A of the coordinator: the ten leads of the CAMS operational forecast for the cycles that only have 24 h
+# WP1a: the ten leads of the CAMS operational forecast for the cycles that only have 24 h
 # and 120 h, into replay/camsfc/<d>/ (one request after the other; the chain's own request and client). CPU, internet.
 #   sbatch camsfc_job.sh            (check on 2026-10-12, then every target day with < 10 stored leads)
 set -uo pipefail

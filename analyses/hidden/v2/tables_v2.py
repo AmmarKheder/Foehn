@@ -18,6 +18,7 @@ a number and per hidden person warned; the comparisons at an equal share of corr
 people warned for the new references.
     python tables_v2.py"""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -27,8 +28,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 from tables import DIFFM, Tab, f, mbb, tri  # noqa: E402  (../tables.py, unchanged)
 
-RES = HERE / "results"
-OLDF, NEWF = HERE.parent / "data" / "hidden_systems_pop.npz", HERE / "data" / "hidden_bc_pop.npz"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE / f"results{SFX}"
+OLDF, NEWF = HERE.parent / f"data{SFX}" / "hidden_systems_pop.npz", HERE / f"data{SFX}" / "hidden_bc_pop.npz"
 SRC = {"old": "../data/hidden_systems_pop.npz (job 23864988, ../figdata_hidden_systems.py)",
        "new": "data/hidden_bc_pop.npz (v2/figdata_hidden_bc.py)"}
 NAMES = {"foehn_p50": "Foehn, 2 of 4 members", "foehn_mean": "Foehn, ensemble mean", "foehn_40km": "Foehn mean on 40 km cells",
@@ -103,7 +105,7 @@ def main():
                          "false_per_hidden_warned": "false_in_silent40 / hidden people warned"},
          "identity_of_recomputed_systems": ident}
     S = N["systems"] = {}
-    old = json.loads((HERE.parent / "results" / "numbers.json").read_text())["systems"]
+    old = json.loads((HERE.parent / f"results{SFX}" / "numbers.json").read_text())["systems"]
     worst = 0.0
     for t in (37.5, 15.0, 75.0, 25.0, 50.0):
         for h in LEADS:

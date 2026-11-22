@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""backfill_2025_2026.py -- the inputs of the 1 km analysis from 2025-01-01 to the last complete day (user order
-2026-11-02, "aspire tout jusqu'a ce jour"), with the SAME code paths as the 2017-2024 stores (functions imported from
+"""backfill_2025_2026.py -- the inputs of the 1 km analysis from 2025-01-01 to the last complete day,
+with the SAME code paths as the 2017-2024 stores (functions imported from
 build_global_coarse.py and dl_gfas_injh.py), into data/processed/global/coarse/, row = date - 2025-01-01 (730 rows,
 2025-01-01 .. 2026-12-31; rows beyond the last complete day are NaN):
   cams_pm25_025_2025_2026.npy  (730, 576, 1440) f16   build_global_coarse.regrid of the 00 UTC day-0 mean

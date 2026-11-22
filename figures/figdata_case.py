@@ -12,6 +12,7 @@ evaluation (eval_global_fp.py --crop-only, 16 members, start days 0-27, leads 1-
   false alarms of Foehn P >= 0.5 and of CAMS / Aurora (> 75), by lead.
     python figdata_case.py <run> [<eval dir name>]   -> data/case_eastasia_<run>.npz"""
 import glob
+import os
 import sys
 from pathlib import Path
 
@@ -22,7 +23,7 @@ RUN = sys.argv[1] if len(sys.argv) > 1 else "fp_flow_shift25_global_L7_fix"
 EV = sys.argv[2] if len(sys.argv) > 2 else "eval_case_eastasia_q8"
 HERE = Path(__file__).resolve().parent
 D = HERE.parent / "global1km" / "runs" / RUN / EV
-G = Path("/scratch/project_462001140/ammar/eccv/data/world/global1km")
+G = Path((os.environ["FOEHN_WORK"] + "/eccv/data/world/global1km"))
 AUR = HERE.parent / "benchmark/aurora/out_12h_all"               # Aurora initialised at 00 UTC of day d+1 (equal issuance)
 AURD = HERE.parent / "benchmark/aurora"
 TH = 75.0
@@ -35,7 +36,7 @@ parts = [np.load(p) for p in sorted(glob.glob(str(D / "part_*.npz")))]
 keys = np.concatenate([p["keys"] for p in parts]); ens = np.concatenate([p["st_ens"] for p in parts]).astype(np.float32)
 gh = np.concatenate([p["st_ghap"] for p in parts]).astype(np.float32)
 kidx = {(int(d), int(h)): n for n, (d, h, t) in enumerate(keys)}
-cams = zarr.open("/scratch/project_462001140/ammar/eccv/data/world/cams_forecast_daily/2022.zarr", mode="r")
+cams = zarr.open((os.environ["FOEHN_WORK"] + "/eccv/data/world/cams_forecast_daily/2022.zarr"), mode="r")
 aur = {}
 for p in glob.glob(str(AUR / "part_*.npz")):
     z = np.load(p); alat, alon = z["lat"], z["lon"]
@@ -174,5 +175,6 @@ for h in range(1, 8):
             warn[h - 1, k] += [(pop * (wv & y & ok)).sum(), (pop * (~wv & y & ok)).sum(), (pop * (wv & ~y & ok)).sum()]
     print("lead", h, "Foehn hits/misses/false (M people-days):", (warn[h - 1, 0] / 1e6).round(1), "| CAMS", (warn[h - 1, 1] / 1e6).round(1))
 out["warn"] = warn
-np.savez_compressed(HERE / "data" / f"case_eastasia_{RUN}.npz", **out)
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label in the file name
+np.savez_compressed(HERE / "data" / f"case_eastasia_{RUN}{SFX}.npz", **out)
 print("saved")

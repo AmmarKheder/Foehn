@@ -24,14 +24,16 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path("/scratch/project_462001804/ammar/global_model_forecasting_air_pollution")
+ROOT = Path((os.environ["FOEHN_WORK"] + "/global_model_forecasting_air_pollution"))
 O = ROOT / "test2022_official"
-E = Path("/scratch/project_462001804/ammar/eccv")
+E = Path((os.environ["FOEHN_WORK"] + "/eccv"))
 G = E / "data/world/global1km"
 FIG = E / "cran-pm/experiments/figures"
 G1 = E / "cran-pm/experiments/global1km"
 AURD = E / "cran-pm/experiments/benchmark/aurora"
-FOEHN_EVAL = G1 / "runs/green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4/eval_final_crps_e01"
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+FOEHN_EVAL = G1 / f"runs/green_flow_shift25_global_L7_noant_whres_ghres_ftemis12_crps4/eval_final_crps_e01{SFX}"
+RESD, UNSEAL = O / f"results{SFX}", O / f"UNSEALING_A7{SFX}.md"   # design: results_<D>/ and its own reading log; the downscaler arms are read as stored
 PRED04 = G1 / "runs/cams04_flow_shift2.6_emis/cams12h"
 CAMS_ZARR = str(E / "data/world/cams_forecast_daily/2022.zarr")
 NETS = {0: "Europe (EEA)", 1: "China (CNEMC)", 3: "USA (EPA)", 4: "Korea (AirKorea)", 5: "Japan (NIES)", 6: "India (CPCB)"}
@@ -288,7 +290,7 @@ class Data:
 def paper_check(D):
     """A7(g)-1: compare_fair.py recomputed with these loaders (Foehn 1 km, CAMS and Aurora at equal issuance, leads 1-4) on
     the paper's own start days and mask (its ten systems finite, with its coordinate-key station mapping)."""
-    ref = np.load(FIG / "data" / "compare_fair_crps_e01.npz")
+    ref = np.load(FIG / "data" / f"compare_fair_crps_e01{SFX}.npz")
     key = lambda la, lo: np.round(la, 4) * 1e6 + np.round(lo, 4)                # noqa: E731
     refk = {v: i for i, v in enumerate(key(D.LAT, D.LON))}
     sets = {}
@@ -345,7 +347,7 @@ def paper_check(D):
             for g in range(len(NETS) + 1):
                 m = ok & ((gid == g) if g < len(NETS) else True)
                 acc[g, h - 1, j] += [m.sum(), e[m].sum(), (e[m] ** 2).sum()]
-    out = {"file": str(FIG / "data" / "compare_fair_crps_e01.npz"), "systems": ["Foehn (1 km)", "CAMS (run d+1, equal issuance)",
+    out = {"file": str(FIG / "data" / f"compare_fair_crps_e01{SFX}.npz"), "systems": ["Foehn (1 km)", "CAMS (run d+1, equal issuance)",
            "Aurora (00 UTC d+1, equal issuance)"], "rows": [], "max_abs_rmse_diff": 0.0, "n_equal": True,
            "official_stations_without_foehn_value_in_the_paper_mapping": int((official & (np.isfinite(D.OBS).sum(1) >= 30)
                                                                                & ~np.isin(np.arange(NS), idx[idx >= 0])).sum())}
@@ -453,7 +455,7 @@ def main():
     P = Path(a.preds)
     D = Data(a)
     if a.only_paper_checks:
-        with open(O / "UNSEALING_A7.md", "a") as f:
+        with open(UNSEAL, "a") as f:
             f.write(f"- {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (Helsinki), job {os.environ.get('SLURM_JOB_ID', '-')}: [A7] "
                     f"score_official.py --only-paper-checks reads the 2022 observations ({G / 'stations_2022.npz'}) with the paper's own "
                     f"systems only (Foehn 1 km, CAMS forecast, Aurora, the 0.4 deg model) to recompute the paper's stored station numbers "
@@ -461,14 +463,14 @@ def main():
         D.load_aurora()
         D.load_foehn()
         out = {"paper_compare_fair": paper_check(D), "paper_cams12h_stations": cams12h_check(D)}
-        (O / "results").mkdir(exist_ok=True)
-        (O / "results/paper_checks.json").write_text(json.dumps(out, indent=1))
-        log(f"wrote {O / 'results/paper_checks.json'}")
+        RESD.mkdir(exist_ok=True)
+        (RESD / "paper_checks.json").write_text(json.dumps(out, indent=1))
+        log(f"wrote {RESD / 'paper_checks.json'}")
         return
     done_s, done_c = np.load(P / "done_sameday.npy").astype(bool), np.load(P / "done_chain.npy").astype(bool)
     if not a.selftest:
         assert done_s.all() and done_c.all(), "predictions incomplete: no scoring"
-        with open(O / "UNSEALING_A7.md", "a") as f:
+        with open(UNSEAL, "a") as f:
             f.write(f"- {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (Helsinki), job {os.environ.get('SLURM_JOB_ID', '-')}: [A7] "
                     f"score_official.py reads the 2022 observations of the six official networks ({G / 'stations_2022.npz'}) and "
                     f"test2022_official/truth/ghap_official_2022.npy to score the frozen runs_ghap/pmG_final (same-day and "
@@ -507,8 +509,8 @@ def main():
                                                                            ("sameday_ds", "sameday_cams0", "sameday_bcsd")})
     bad = [k for k, c in res["checks"].items() if not c["pass"]]
     if bad and not a.force:
-        (O / "results").mkdir(exist_ok=True)
-        (O / "results/failed_checks.json").write_text(json.dumps({k: res["checks"][k] for k in bad}, indent=1))
+        RESD.mkdir(exist_ok=True)
+        (RESD / "failed_checks.json").write_text(json.dumps({k: res["checks"][k] for k in bad}, indent=1))
         raise SystemExit(f"A7(g): failed checks {bad} (results/failed_checks.json): no score is computed until they are understood")
     obs_v = D.obs[D.vidx]                                                      # (NI, NL, S)
     days_s = np.where(done_s)[0]
@@ -626,9 +628,9 @@ def main():
             f"{rC['n_stations']} stations, {rC['n_start_dates']} start dates" + (f" | F: {out['F']['n_station_days']:,}, "
             f"{out['F']['n_start_dates']} start dates" if w == 0 else ""))
     tag = "selftest_scores" if a.selftest else "scores_official_2022"
-    (O / "results").mkdir(exist_ok=True)
-    (O / "results" / f"{tag}.json").write_text(json.dumps(res, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o)))
-    log(f"wrote {O / 'results' / (tag + '.json')}")
+    RESD.mkdir(exist_ok=True)
+    (RESD / f"{tag}.json").write_text(json.dumps(res, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o)))
+    log(f"wrote {RESD / (tag + '.json')}")
 
 
 if __name__ == "__main__":

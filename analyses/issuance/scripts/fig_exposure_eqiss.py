@@ -10,9 +10,11 @@ import os
 import sys
 from pathlib import Path
 
-FIG = Path("/scratch/project_462001804/ammar/eccv/cran-pm/experiments/figures")
+FIG = Path((os.environ["FOEHN_WORK"] + "/eccv/cran-pm/experiments/figures"))
 sys.path.append(str(FIG))
 OUTD = Path(__file__).resolve().parent.parent / "figs"
+if os.environ.get("FOEHN_DESIGN"):   # A16 rebuild: renders of a noise design go to natcomms/rebuild/figs_<D>
+    OUTD = Path(__file__).resolve().parents[3] / "rebuild" / f"figs_{os.environ['FOEHN_DESIGN']}"
 ISS = os.environ.get("TE_ISSUANCE", "d1")
 
 from extremes_panels_eqiss import extremes_row  # noqa: E402

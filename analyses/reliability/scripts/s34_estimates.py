@@ -12,9 +12,9 @@ import json
 
 import numpy as np
 
-from rel_common import BEFORE, DATA, FINAL, HERE, block_weights
+from rel_common import BEFORE, DATA, FINAL, HERE, SFX, block_weights
 
-RES = HERE / "results"; RES.mkdir(exist_ok=True)
+RES = HERE / f"results{SFX}"; RES.mkdir(exist_ok=True)
 M = 4; F = (M + 1) / M
 OUT = {}
 lines = []
@@ -129,7 +129,7 @@ for h in LEADS:
 P("")
 P("== L. Land pixels of the nine regions (recs; the ratio of the manuscript = all nine regions pooled, a pixel in two boxes counted twice)")
 OUT["land"] = {}
-for tag, ev in (("2022 final", FINAL / "eval_final_crps_e01"), ("2021 final (validation year)", FINAL / "eval2021_sel_crps_e01"),
+for tag, ev in (("2022 final", FINAL / f"eval_final_crps_e01{SFX}"), ("2021 final (validation year)", FINAL / f"eval2021_sel_crps_e01{SFX}"),
                 ("2022 before CRPS training", BEFORE / "eval_final_e02"), ("2021 before CRPS training", BEFORE / "eval2021_sel_e02")):
     parts = sorted(glob.glob(str(ev / "part_*.npz")))
     if not parts:

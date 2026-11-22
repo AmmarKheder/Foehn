@@ -191,7 +191,7 @@ def cmd_truth(a):
         chk21[str(d)] = bool(np.array_equal(mine, ref))
     print("2021 extraction check:", chk21, flush=True)
     assert all(chk21.values()), chk21
-    S.log_unseal(f"[ghap] OPENING GHAP V1 2022 for the A2(d) single pass (user order 2026-10-28 ~13:40). File: "
+    S.log_unseal(f"[ghap] OPENING GHAP V1 2022 for the A2(d) single pass. File: "
                  f"{SRC} rows 1826..2190 (365 days, whole-day reads). Outputs: {TRUTH.relative_to(ROOT)} ({ND} x {n:,} float16, "
                  f"every 8th GHAP mask pixel, native values, NaN = hole) and {TRUTH_ST.relative_to(ROOT)} ({st.size} station "
                  f"pixels). System scored: {sysj['system']} ({sysj['system_dir']}), frozen {sysj.get('frozen_utc')}; "

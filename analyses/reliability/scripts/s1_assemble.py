@@ -13,13 +13,13 @@ import sys
 
 import numpy as np
 
-from rel_common import AURD, BEFORE, CAMS_ZARR, DATA, FINAL, stations
+from rel_common import AURD, BEFORE, CAMS_ZARR, DATA, FINAL, SFX, stations
 
 ST = stations()
 LAT, LON = ST["lat"], ST["lon"]
-SETS = {"final": FINAL / "eval_final_crps_e01", "before": BEFORE / "eval_final_e02", "ea16": FINAL / "eval_case_eastasia_crps_e01",
-        "gir16": FINAL / "eval_case_gironde_crps_e01", "girlong16": FINAL / "eval_case_gironde_long_crps_e01",
-        "kano16": FINAL / "eval_case_kano_crps_e01"}
+SETS = {"final": FINAL / f"eval_final_crps_e01{SFX}", "before": BEFORE / "eval_final_e02", "ea16": FINAL / f"eval_case_eastasia_crps_e01{SFX}",
+        "gir16": FINAL / f"eval_case_gironde_crps_e01{SFX}", "girlong16": FINAL / f"eval_case_gironde_long_crps_e01{SFX}",
+        "kano16": FINAL / f"eval_case_kano_crps_e01{SFX}"}
 
 
 def bil(m, lat0, dlat, lon0, dlon):

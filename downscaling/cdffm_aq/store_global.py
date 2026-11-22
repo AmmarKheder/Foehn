@@ -26,7 +26,7 @@ normalisation (files *_A, no refit); train_dates = A's 1,270 days + the 2023 hol
 (so the SEL indices name the same days); 2024 and 2017-01-01 .. 2019-07-10 stay sealed. Split A is unchanged.
 raw_inputs(d) reads only the input stores (CAMS, met, fires, T6), never LGHAP: it serves any day of 2017-2024 (the 2024
 predictions of the unsealing pass are made by a model process under the firewall).
-Backfill 2025-2026 (user order 2026-11-02, scripts/backfill_2025_2026.py): days >= 2025-01-01 come from
+Backfill 2025-2026 (scripts/backfill_2025_2026.py): days >= 2025-01-01 come from
 coarse/{cams_pm25_025,met,fires_injh}_2025_2026.npy (row = d - 2025-01-01) and transport/t6_2025|2026.npy (row = doy),
 through Backfill2025: a day is served only up to the last complete day of EVERY input (COVERAGE_2025_2026.json), beyond
 it raw_inputs raises KeyError (those days belong to the real-time chain). The 2017-2024 path is unchanged."""

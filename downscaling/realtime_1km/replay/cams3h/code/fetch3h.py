@@ -7,7 +7,7 @@ dataset cams-global-atmospheric-composition-forecasts, type forecast, time 00:00
 netCDF in a zip; ONLY the list of lead hours changes (0, 3, ..., 120 instead of 12, 24, ..., 120) and the dates are given
 as ranges. 53 x 41 = 2,173 fields in a few requests (one per group of GROUPS).
 
-The client is the chain's (realtime/fetch.py ads(): cdsapi with the user's account); the key is never read, printed or
+The client is the chain's (realtime/fetch.py ads(): cdsapi with the account of the chain); the key is never read, printed or
 logged here. A request of the account with the same content that is queued, running or successful is RE-ATTACHED instead
 of being sent again. No new request is sent between 09:30 and 11:45 UTC (the daily production chain uses the account
 then), and at --deadline (UTC) the requests of this script that are not finished are DELETED from the queue.

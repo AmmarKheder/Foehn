@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""WP1a, decision A of the coordinator (2026-11-19), second version of the fetch (camsfc_fetch.py asked one cycle per
+"""WP1a (2026-11-19), second version of the fetch (camsfc_fetch.py asked one cycle per
 request): the ten leads 12, 24, ..., 120 h of the CAMS operational PM2.5 forecast (00 UTC cycle) for the issue days whose
 realtime/data/<d>/cams_fc.npz holds only the leads 24 and 120 h (2026-09-01..09-20 and 2026-10-10).
 
@@ -12,7 +12,7 @@ TWO requests, one after the other:
      request, with the list of date ranges instead of one date (210 fields; the dataset's limit is 10,000).
 A request of this account with the same content that is already queued, running or successful is RE-ATTACHED instead of
 being sent again (so a restarted job never duplicates a request). No request is sent between 09:30 and 11:45 UTC (the
-daily production chain uses the same ADS account then). The client is the chain's (realtime/fetch.py ads(): the user's
+daily production chain uses the same ADS account then). The client is the chain's (realtime/fetch.py ads(): the same
 account; the key is never printed).
 
 Written ONLY under <replay>/camsfc/: <d>/cams_fc.npz in the format of the chain (pm25 (10, 451, 900) float16 ug m-3,

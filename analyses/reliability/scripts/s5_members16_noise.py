@@ -2,7 +2,7 @@
 """Step 5: (A) the 16-member evaluations at the stations (case-study runs of the final model: East Asia, 28 start days of
 January 2022, leads 1-7; Europe window of the Gironde case, 12 start days of July 2022 at leads 1-3 and 15 at leads 4-7):
 member range against its expected value (M - 1) / (M + 1) for 4 and for 16 members, spread-to-error, rank histogram,
-reliability with 17 probability values; (B) the reuse of the same noise fields for every forecast (ml review, finding 3):
+reliability with 17 probability values; (B) the reuse of the same noise fields for every forecast:
 how fixed the order of the members is at a station, and what the choice of the noise fields changes for the pooled scores
 (every quartet of the 16 noise fields as a four-member ensemble).
 Sample of (A): official stations with >= 30 valid days, all members finite (the station lies in a window that was run),
@@ -13,9 +13,9 @@ import json
 
 import numpy as np
 
-from rel_common import DATA, HERE, NETS, THR, block_weights, fair_crps, stations
+from rel_common import DATA, HERE, NETS, SFX, THR, block_weights, fair_crps, stations
 
-RES = HERE / "results"; RES.mkdir(exist_ok=True)
+RES = HERE / f"results{SFX}"; RES.mkdir(exist_ok=True)
 ST = stations(); OBS, KEEP, SRC = ST["obs"], ST["keep"], ST["src"]
 lines = []
 P = lines.append

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """RT 1 km monitors of the verification (evaluation only: the monitors are never an input of RT and are
-never used to train, choose or adjust it). Only RT's own errors are computed (user, 2026-11-06).
+never used to train, choose or adjust it). Only RT's own errors are computed.
 
   catalogue  the OpenAQ monitors of the 2026 station set inside the GHAP mask (hindcast/2026/st_truth_2026.npz, QC of
              PROTOCOL.md A3(b)) minus data/processed/assim/qc_flipped_coords_v1.json, with their 1 km pixel and tile

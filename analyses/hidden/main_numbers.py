@@ -2,10 +2,13 @@
 """The numbers that the text carries, one per line, each with its 95 % interval and its key in results/numbers.json
 (written by tables.py; nothing is computed here).   python main_numbers.py  ->  results/main_numbers.txt"""
 import json
+import os
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-N = json.loads((HERE / "results" / "numbers.json").read_text())
+SFX = f"_{os.environ['FOEHN_DESIGN']}" if os.environ.get("FOEHN_DESIGN") else ""   # A16 rebuild: design label (unset = unchanged)
+RES = HERE / f"results{SFX}"
+N = json.loads((RES / "numbers.json").read_text())
 L = []
 
 
@@ -124,5 +127,5 @@ def income():
 
 if __name__ == "__main__":
     systems(); exposure(); income()
-    (HERE / "results" / "main_numbers.txt").write_text("\n".join(L) + "\n")
-    print(len(L), "lines ->", HERE / "results" / "main_numbers.txt")
+    (RES / "main_numbers.txt").write_text("\n".join(L) + "\n")
+    print(len(L), "lines ->", RES / "main_numbers.txt")

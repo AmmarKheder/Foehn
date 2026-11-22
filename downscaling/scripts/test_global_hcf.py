@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CPU checks of the HCF variant ON THE GLOBAL STORE (global-train agent, 2026-10-26; PROTOCOL.md Amendment A1).
+"""CPU checks of the HCF variant ON THE GLOBAL STORE (2026-10-26; PROTOCOL.md Amendment A1).
 Complements scripts/test_global_wiring.py (global-prep: store, firewall, batch, CLI) and cdffm_aq_x.test_x (toy grid).
 Exit 1 if any check fails. Random-init model (geometry checks, not skill), smoke-default HCF sizes (64 x 3).
 
