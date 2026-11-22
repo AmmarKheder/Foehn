@@ -4,15 +4,20 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Foehn — global kilometre-scale forecasts of PM2.5</title>
-<meta name="description" content="Foehn forecasts daily PM2.5 at 1 km over all inhabited land up to a week ahead, as a calibrated ensemble, with the transport of the air computed by FLEXGREEN. Interactive viewer of the forecasts of the preprint." />
+<meta name="description" content="Foehn forecasts ensembles of daily PM2.5 on a 1 km grid over all inhabited land up to a week ahead, with the transport of the air computed by FLEXGREEN. Retrospective forecasts of 2022 and a daily real-time forecast." />
 <meta property="og:title" content="Foehn — global kilometre-scale forecasts of PM2.5" />
-<meta property="og:description" content="1 km PM2.5 forecasts for the whole planet, one day to a week ahead, with computed transport. Interactive viewer." />
+<meta property="og:description" content="1 km PM2.5 ensemble forecasts for all inhabited land, one day to a week ahead, with computed transport. Interactive viewer." />
 <meta property="og:type" content="website" />
+<meta property="og:url" content="https://ammarkheder.com/Foehn/" />
+<meta property="og:image" content="https://ammarkheder.com/Foehn/figures/web/fig_overview.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="canonical" href="https://ammarkheder.com/Foehn/" />
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "Foehn", "description": "Ensemble forecasts of daily PM2.5 on a 1 km grid over all inhabited land, with the transport of the air computed by FLEXGREEN.", "codeRepository": "https://github.com/AmmarKheder/Foehn", "url": "https://ammarkheder.com/Foehn/", "license": "https://opensource.org/licenses/MIT", "programmingLanguage": "Python", "author": [{"@type": "Person", "name": "Ammar Kheder"}, {"@type": "Person", "name": "Michael Boy"}, {"@type": "Person", "name": "Zhi-Song Liu"}]}</script>
 <link rel="icon" type="image/png" href="assets/logo/favicon.png" />
 <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png" />
 <script>try { const t = localStorage.getItem("foehn-theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="assets/style.css?v=20261119a" />
+<link rel="stylesheet" href="assets/style.css?v=20261122a" />
 </head>
 <body>
 
@@ -22,7 +27,7 @@
     <nav class="nav">
       <a href="#explained">Explained</a>
       <a href="#air">Where was the air?</a>
-      <a href="#abstract">Preprint</a>
+      <a href="#abstract">Paper</a>
       <a href="#how">How it works</a>
       <a href="#viewer">Viewer</a>
       <a href="#realtime">Real time</a>
@@ -48,12 +53,12 @@
       <div class="hero-head">
       <img class="logo-light" src="assets/logo/foehn_logo_light.svg" alt="Foehn" style="width:min(100%,380px);display:block;margin:0 0 12px -6px" />
       <img class="logo-dark" src="assets/logo/foehn_logo_dark.svg" alt="Foehn" style="width:min(100%,380px);margin:0 0 12px -6px" />
-      <p class="tag">Global kilometre-scale forecasts of fine particulate matter</p>
+      <h1 class="tag">Global kilometre-scale forecasts of fine particulate matter</h1>
       </div>
       <div class="hero-body">
       <p class="lede">Daily PM<sub>2.5</sub> from all its sources (traffic, industry, heating, agriculture, desert dust, sea salt
-        and fires) for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as a
-        calibrated ensemble. Foehn learns from the first global 1&nbsp;km record of PM<sub>2.5</sub>, generates whole continents
+        and fires) for every inhabited place on Earth at 1&nbsp;km, from one day to a week ahead, as an
+        ensemble. Foehn learns from GHAP, a global record of daily PM<sub>2.5</sub> at 1&nbsp;km, generates continent-sized windows
         in one pass by flow matching, and <strong>computes rather than learns the transport of the air</strong> with FLEXGREEN,
         a GPU re-implementation of the backward mode of the FLEXPART particle model.</p>
       <div class="cta">
@@ -61,7 +66,7 @@
         <a class="btn btn-ghost" href="#air">Where was the air you breathe?</a>
         <a class="btn btn-ghost" href="#viewer">Explore the forecasts</a>
         <a class="btn btn-ghost" href="#realtime">Today's forecast</a>
-        <a class="btn btn-ghost" href="https://arxiv.org/abs/2610.25941">Preprint on arXiv</a>
+        <a class="btn btn-ghost" href="https://arxiv.org/abs/2610.25941">Earlier preprint on arXiv</a>
         <a class="btn btn-ghost" href="https://github.com/AmmarKheder/Foehn">Code on GitHub</a>
       </div>
       </div>
@@ -75,10 +80,10 @@
       </div>
      </div>
       <div class="stats">
-        <div class="stat"><b>1 km</b><span>resolution, whole globe, no visible seam</span></div>
-        <div class="stat"><b>7 days</b><span>calibrated ensemble, to a week ahead</span></div>
-        <div class="stat"><b>−17 %</b><span>RMSE vs the operational CAMS forecast at 6,324 stations, 1 day ahead</span></div>
-        <div class="stat"><b>75 %</b><span>of the stations with lower error than CAMS</span></div>
+        <div class="stat"><b>1 km</b><span>grid, all inhabited land, 84°&nbsp;N to 60°&nbsp;S</span></div>
+        <div class="stat"><b>7 days</b><span>ensemble forecasts, up to a week ahead</span></div>
+        <div class="stat"><b>−17 %</b><span>RMSE of eight members vs the operational CAMS forecast at more than 6,000 stations, 1 day ahead</span></div>
+        <div class="stat"><b>82 %</b><span>of the people exposed warned 1 day ahead, against 66 % for CAMS</span></div>
       </div>
     </div>
   </div>
@@ -104,7 +109,7 @@
       </video>
       <p class="yt-note" id="yt-note"><b>Watch it in your language:</b> <svg class="gear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.75" stroke-width="5.5"/><circle cx="12" cy="12" r="9.75" stroke-width="2.5" stroke-dasharray="3.83 3.83" transform="rotate(-11.25 12 12)"/></svg> Settings &rsaquo; Audio track (32 languages)</p>
       <nav class="ex-chapters" id="ex-chapters" aria-label="Chapters"></nav>
-      <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the preprint.
+      <figcaption>Real data throughout: the forecast issued on 20 January 2022 for Delhi, five days ahead, and the scores of the arXiv preprint, an earlier version.
         Subtitles with the CC button. Animation and voice &copy; 2026 Ammar Kheder.</figcaption>
     </figure>
   </div>
@@ -114,7 +119,7 @@
   <div class="wrap">
     <h2>Foehn from A to Z, an animated series</h2>
     <p class="sub">Foehn from A to Z is an animated series of twelve episodes and a full film of about 44 minutes that explain how Foehn works, block by block: the problem, the grids, the data, FLEXGREEN, the Green's function and the tracers, the generator, flow matching, training in three stages, the global forecast, the results and the conclusion.</p>
-    <p>The numbers are those of the preprint; the narration is generated by AI from the author's own voice, and the music is generated by AI. Watch the series on YouTube in the <a href="https://www.youtube.com/playlist?list=PLVRzz9roC0QQ">international playlist</a>: English, with dubbed audio tracks in ten languages (French, Chinese, Spanish, Portuguese, German, Russian, Japanese, Arabic, Hindi and Finnish), translated subtitles and titles.</p>
+    <p>The numbers are those of the arXiv preprint (October 2026), an earlier version of the paper; the narration is generated by AI from the author's own voice, and the music is generated by AI. Watch the series on YouTube in the <a href="https://www.youtube.com/playlist?list=PLVRzz9roC0QQ">international playlist</a>: English, with dubbed audio tracks in ten languages (French, Chinese, Spanish, Portuguese, German, Russian, Japanese, Arabic, Hindi and Finnish), translated subtitles and titles.</p>
   </div>
 </section>
 
@@ -139,18 +144,16 @@
 
 <section class="band band-soft" id="abstract">
   <div class="wrap">
-    <h2>Preprint</h2>
-    <p class="sub">Kheder A., Boy M. &amp; Liu Z.-S. <em>Global probabilistic forecasting of air pollution.</em> arXiv:2610.25941, 2026 &mdash; <a href="https://arxiv.org/abs/2610.25941">abstract</a> &middot; <a href="https://arxiv.org/pdf/2610.25941">PDF</a>.</p>
-    <p>About a million deaths a year are attributable to short-term exposure to fine particulate matter (PM<sub>2.5</sub>), whatever its source: traffic, industry, heating, agriculture, desert dust or fires. Yet PM<sub>2.5</sub> varies from street to street, while forecasts use grids tens of
-      kilometres wide. Machine learning has transformed weather forecasting, but two problems keep it from the scale at which
-      air pollution harms. Kilometre-scale fields are too large to forecast in one piece, and the peaks that matter for health
-      are smoothed away by standard training or arrive with distant air. Here we show that both can be solved. Our model,
-      Foehn, learns from the first global record of daily PM<sub>2.5</sub> at kilometre scale, forecasts continent-sized windows
-      in one pass by flow matching, and computes the transport of the air with a particle model driven by the weather forecast.
-      In retrospective forecasts for 2022, it produced calibrated, seamless kilometre-scale ensembles over all inhabited land,
-      up to a week ahead. At thousands of stations not used to train or select it, they were more accurate than the operational
-      forecast issued at the same time, caught local extremes more reliably and reached people whom coarse grids hide.
-      Computing what physics knows, and learning the rest, makes forecasts accurate, inexpensive and interpretable.</p>
+    <h2>Paper</h2>
+    <p class="sub">Kheder A., Boy M. &amp; Liu Z.-S. <em>Global probabilistic forecasting of fine particulate air pollution at the kilometre scale.</em> Manuscript as submitted, November 2026. An earlier version, with different numbers, is the preprint arXiv:2610.25941 (October 2026) &mdash; <a href="https://arxiv.org/abs/2610.25941">abstract</a> &middot; <a href="https://arxiv.org/pdf/2610.25941">PDF</a>.</p>
+    <p>Short-term exposure to fine particulate matter accounts for about a million deaths a year.
+      Global operational forecasts use grid cells about 40&nbsp;km wide, which hide the pollution breathed by 186 million people a day.
+      Here we introduce Foehn, a generative model that computes where the air comes from and forecasts ensembles of daily fine particulate matter on a 1&nbsp;km grid over all inhabited land.
+      In retrospective eight-member forecasts of 2022, its next-day error at more than 6,000 stations is 17&nbsp;% below that of the operational forecast.
+      Foehn's eight-member warnings reach 82&nbsp;% of the people exposed, against 66&nbsp;% for the operational forecast.
+      Such forecasts can be issued in real time: a coarse forecast of the same design and a generative downscaling deliver 1&nbsp;km ensembles every day.
+      At 11,121 monitors, their error is 14&nbsp;% below the operational forecast's.
+      Kilometre-scale forecasts can thus warn people whom coarse maps cannot see.</p>
   </div>
 </section>
 
@@ -171,7 +174,7 @@
             <button type="button" class="anim-step" data-step="3">From noise to forecast</button>
           </div>
           <div class="anim-tools"><button type="button" id="arch-toggle" class="play" aria-label="play the animation">▶</button>
-            <a href="figures/fig_architecture.png?v=5" target="_blank" rel="noopener">Full-resolution figure</a></div>
+            <a href="figures/fig_architecture.png?v=5" target="_blank" rel="noopener">Full-resolution figure</a> <a href="figures/fig_schematic.png" target="_blank" rel="noopener">With the real-time stages</a></div>
         </div>
         <figcaption id="arch-cap" aria-live="polite"><b>a</b>, the forecast wind drives FLEXGREEN, which follows particles backwards in time to where the arriving air was on the start day. <b>b</b>, an encoder turns the start day into tracers, read at the origins of the air. <b>c</b>, a conditional flow-matching network turns a noise field into a 1&nbsp;km forecast, for every lead time; each noise field gives one ensemble member.</figcaption></figure>
     <div class="cols2">
@@ -181,7 +184,7 @@
         air was on the start day, at which height, and how much of its aerosol survived. It has no learned parameter.</p>
       <p><strong>A generative network for what the air carries.</strong> The network reads the start-day fields where the physics
         says the air was, and generates the 1&nbsp;km field of the target day by flow matching; each noise field gives one
-        ensemble member, and whole continents are produced in one pass with no visible seam.</p>
+        ensemble member, and windows of continental size are produced in one pass, then blended at their edges.</p>
     </div>
   </div>
 </section>
@@ -189,10 +192,13 @@
 <section class="band band-soft" id="viewer">
   <div class="wrap">
     <h2>Interactive viewer</h2>
-    <p class="sub">The forecasts of the three case studies of the preprint, as issued: choose a case, a target day and how many days
+    <p class="sub">Retrospective forecasts of the three case studies of the paper: choose a case, a target day and how many days
       before the forecast was issued, and compare Foehn's ensemble with the 1&nbsp;km reference estimates (GHAP, made after the
-      fact) and the CAMS operational forecast issued at the same time. Every panel is a genuine output of the final model
-      (16 members, 1&nbsp;km); nothing is recomputed in the browser. The address bar follows your selection, so a view can be shared.</p>
+      fact) and the CAMS operational forecast issued at the same time. Every panel is an output of the final model
+      (16 members, 1&nbsp;km), drawn with the noise design of the manuscript as submitted, in which the noise of each member is
+      drawn anew for every start day and evolves between lead days; nothing is recomputed in the browser. The arXiv preprint
+      used a first design, with one noise field per member for every start day and lead time, so its case-study figures
+      differ in detail from these panels. The address bar follows your selection, so a view can be shared.</p>
     <div class="viewer" id="viewer-box" tabindex="0" aria-label="Forecast viewer; use the left and right arrow keys to change the lead time">
       <div class="controls">
         <div><label for="case">Case</label><select id="case"></select></div>
@@ -211,7 +217,7 @@
       <div class="panels">
         <div class="panel"><div class="ttl">Foehn, 1 km <span id="foehn-sub"></span></div><img id="img-foehn" alt="Foehn forecast" /></div>
         <div class="panel"><div class="ttl">GHAP, 1 km <span>reference, not a forecast</span></div><img id="img-ghap" alt="GHAP reference" /></div>
-        <div class="panel"><div class="ttl">CAMS, 0.4° <span>issued at the same time</span></div><img id="img-cams" alt="CAMS forecast" /><div class="missing" id="cams-missing" style="display:none">The CAMS forecast covers four days ahead.</div></div>
+        <div class="panel"><div class="ttl">CAMS, 0.4° <span>issued at the same time</span></div><img id="img-cams" alt="CAMS forecast" /><div class="missing" id="cams-missing" style="display:none">The viewer shows the CAMS forecast up to four days ahead.</div></div>
       </div>
       <div class="cbars"><img src="viewer/cbar_pm.png" alt="PM2.5 colour scale" /><img src="viewer/cbar_prob.png" alt="probability colour scale" id="cbar-prob" /><a id="dl" class="dl" href="#" download>Download the Foehn panel (PNG)</a></div>
       <p class="note" id="viewer-note"></p>
@@ -222,7 +228,7 @@
 <section class="band" id="realtime">
   <div class="wrap">
     <h2>Foehn in real time</h2>
-    <p class="sub">The forecasts above are retrospective: the 1&nbsp;km model of the preprint starts from kilometre-scale estimates of
+    <p class="sub">The forecasts above are retrospective: the retrospective 1&nbsp;km model of the paper starts from kilometre-scale estimates of
       the start day, which are produced after the fact. This section shows the latest daily forecast of a version that needs
       only inputs available in real time. It is a research forecast, not an alert service.</p>
     <div class="rt-card" id="rt-card">
@@ -244,12 +250,12 @@
       <p class="help" id="rt-help"></p>
     </div>
     <ul class="limits rt-notes">
-      <li><strong>What it is.</strong> The design of the preprint in its 0.4° version (the one compared with Aurora), fine-tuned on the
+      <li><strong>What it is.</strong> The design of the paper in its 0.4° version, Foehn-CAMS (the one compared with Aurora), fine-tuned on the
         real-time inputs of January to August 2026 and run each day from the CAMS analysis of 00&nbsp;UTC, the ECMWF weather forecast
         and the latest fire emissions, with eight members. A second generative model, trained on the 1&nbsp;km estimates of
         2017–2020, then draws each member at 1&nbsp;km. The map shows the mean of the eight daily means for five days; day&nbsp;1 is
         the day of issue, already under way when the forecast is published.</li>
-      <li><strong>What it is not.</strong> It is not the 1&nbsp;km model evaluated in the preprint, and it is not an alert: it does not
+      <li><strong>What it is not.</strong> It is not the retrospective 1&nbsp;km model of the paper's main evaluation, and it is not an alert: it does not
         replace the air-quality forecasts and warnings of national or local authorities. The street map only helps to find a
         place: the forecast has one value per square kilometre and does not resolve streets.</li>
       <li><strong>Where it is not 1&nbsp;km.</strong> <span id="rt-coarse">Days 3 to 5 are computed at 1&nbsp;km but published at about 2.4&nbsp;km per pixel at the equator (days 1 and 2: about 1.2&nbsp;km).</span>
@@ -281,8 +287,16 @@
         </table></div>
       </details>
       <p class="note">Read with care: these are a few weeks of one season; OpenAQ gathers official and low-cost monitors, which are not
-        harmonised; the 1&nbsp;km estimates the second model learnt from were themselves fitted to monitors<span id="rt-vspread"></span>.</p>
+        harmonised, and they do not include the Chinese network; the 1&nbsp;km estimates the second model learnt from were themselves fitted to monitors<span id="rt-vspread"></span>.</p>
     </div>
+    <article class="story">
+      <h3>A day issued in real time</h3>
+      <p>On 11 November 2026, the monitors of Lahore measured 266&nbsp;µg&nbsp;m<sup>−3</sup> on average, the highest among 60 large
+        cities from 8 to 11 November. For that day, the forecast gave 202&nbsp;µg&nbsp;m<sup>−3</sup> at 1&nbsp;km, against 153 at 0.4°
+        and 149 for the CAMS forecast.</p>
+      <figure class="story-fig"><a href="figures/fig_realtime_day.png" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_realtime_day.jpg" width="1800" height="1819" alt="The real-time 1 km forecast of 11 November 2026, with Lahore, Delhi and Karachi against the monitors" decoding="async" /></a>
+        <figcaption>The real-time 1&nbsp;km forecast of 11 November 2026 (mean of eight members); Lahore and Delhi against the CAMS forecast of the same cycle and the monitors; and Karachi on 10 November, with the residents whom the 0.4° forecast places below the threshold.</figcaption></figure>
+    </article>
   </div>
 </section>
 
@@ -292,40 +306,47 @@
     <p class="sub">Retrospective forecasts for 2022, made with the archived operational weather forecasts, scored against the 1&nbsp;km
       estimates over all land and at 6,324 monitoring stations never used to train or select the model. Click a figure for full resolution.</p>
     <article class="story">
-      <h3>One forecast of the whole planet at 1&nbsp;km</h3>
-      <p>Foehn produces a global field at 1&nbsp;km without visible seams, assembled from twenty-one overlapping continent-sized windows.
-        Shown: the forecast issued for 21 January 2022, the day of the year with the highest population-weighted PM<sub>2.5</sub>. At
-        1&nbsp;km it resolves what the 40&nbsp;km grid of the operational forecast blurs.</p>
-      <figure class="story-fig"><a href="figures/fig_overview.png" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_overview.jpg" width="1800" height="1738" alt="One forecast of the whole planet at 1 km" decoding="async" /></a>
-        <figcaption>Four polluted basins against the CAMS forecast issued at the same time and the 1&nbsp;km estimates, with the measurements of four official networks.</figcaption></figure>
+      <h3>All inhabited land at 1&nbsp;km, a lower error at the stations</h3>
+      <p>Foehn forecasts all inhabited land at 1&nbsp;km. With eight members, its error one day ahead at the stations of six official networks is 17&nbsp;% (12–24&nbsp;%) below that of the CAMS forecast issued at the same time. Shown: 9 February 2022, a day chosen after the evaluation as one on which Foehn did well; at 1&nbsp;km it resolved details that the 40&nbsp;km grid of CAMS missed, such as the Po Valley along the Alps.</p>
+      <figure class="story-fig"><a href="figures/fig_overview.png?v=3" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_overview.jpg?v=3" width="1800" height="2043" alt="Foehn's forecast of all inhabited land at 1 km for 9 February 2022" decoding="async" /></a>
+        <figcaption>Four polluted basins on 9 February 2022 against the CAMS forecast issued at the same time and the 1&nbsp;km estimates, with that day's measurements (of 178 days, Foehn's error there was below CAMS's on 115, 72, 159 and 81), and the error at the stations by lead time and by network.</figcaption></figure>
     </article>
     <article class="story">
-      <h3>Sharp members, calibrated ensembles</h3>
-      <p>Flow matching keeps the detail that a squared error averages away: each member reproduces the plain, the mountains and the
-        cities of the January 2022 haze over the North China Plain, and the spread of the ensemble matches its error at every lead time.</p>
-      <figure class="story-fig"><a href="figures/fig_gc2_realism.png?v=2" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_gc2_realism.jpg?v=2" width="1800" height="1262" alt="Sharp, realistic members over the North China Plain" decoding="async" /></a>
-        <figcaption>The January 2022 haze one and five days ahead: the 1&nbsp;km estimates, three members, the ensemble mean, CAMS and Aurora, their spectra, and the Beijing stations.</figcaption></figure>
+      <h3>Each member keeps the sharp structure of the haze</h3>
+      <p>Flow matching keeps the detail that a squared error averages away: on 24 January 2022, a day chosen after the forecasts were examined, each member issued one day ahead was a sharp field in which haze covered the North China Plain, as in the 1&nbsp;km estimates. Against these estimates the spread of the ensemble matches its error at every lead time; at the stations it is narrower.</p>
+      <figure class="story-fig"><a href="figures/fig_gc2_realism.png?v=3" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_gc2_realism.jpg?v=3" width="1800" height="1273" alt="Sharp, realistic members over the North China Plain" decoding="async" /></a>
+        <figcaption>24 January 2022 one and three days ahead: the 1&nbsp;km estimates, three members, the mean, CAMS and Aurora, their spectra, exceedance probabilities and the Beijing monitors. Over 8–29 January, Foehn's error was the lowest of the three on 14, 12 and 10 of 22 days (1, 3 and 5 days ahead), the highest on 7, 4 and 6.</figcaption></figure>
     </article>
     <article class="story">
       <h3>The people a coarse grid hides</h3>
-      <p>Even a perfect 40&nbsp;km forecast would miss 186 million people a day above 37.5&nbsp;µg&nbsp;m<sup>−3</sup>, the WHO interim
-        target 3. Foehn forecasts at the scale at which they can be warned: one day ahead, it warned 43&nbsp;% of them, and it catches local extremes markedly better than the operational systems.</p>
-      <figure class="story-fig"><a href="figures/fig_hidden.png?v=3" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_hidden.jpg?v=3" width="1800" height="1705" alt="Why the kilometre matters" decoding="async" /></a>
-        <figcaption>The residents a 40&nbsp;km forecast cannot warn; Beijing–Tianjin on 21 January 2022; by region, the share of the exposure that a 40&nbsp;km grid hides and the share of those people whom Foehn warned one and three days ahead.</figcaption></figure>
+      <p>Even a perfect 40&nbsp;km forecast would miss 186 million people a day above 37.5&nbsp;µg&nbsp;m<sup>−3</sup>, the WHO interim target 3. One day ahead, Foehn's eight-member warnings reach 82&nbsp;% of the people exposed, against 66&nbsp;% for CAMS, and 83&nbsp;% of them are correct, against 64&nbsp;%. Of the hidden people, Foehn warns 39&nbsp;%, or 71 million a day; CAMS and Aurora warn 36&nbsp;%.</p>
+      <figure class="story-fig"><a href="figures/fig_hidden.png?v=4" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_hidden.jpg?v=4" width="1800" height="1868" alt="Why the kilometre matters" decoding="async" /></a>
+        <figcaption>The residents a 40&nbsp;km forecast cannot warn; Beijing–Tianjin on 21 January 2022; by region, the share of the exposure that a 40&nbsp;km grid hides; and the warnings issued one day ahead by Foehn, CAMS and Aurora: the share of the people exposed who are reached and the share of the warnings that are correct.</figcaption></figure>
     </article>
     <article class="story">
       <h3>The pollution follows the air</h3>
       <p>Every forecast comes with its Green's functions, which show where the arriving air was: here, the Saharan dust that reached
         Kano, Nigeria, on 16 May 2022. Computing the transport helps most in the first days, while the start day still matters.</p>
-      <figure class="story-fig"><a href="figures/fig_transport.png?v=2" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_transport.jpg?v=2" width="1800" height="1326" alt="The pollution follows the air" decoding="async" /></a>
+      <figure class="story-fig"><a href="figures/fig_transport.png?v=3" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_transport.jpg?v=3" width="1800" height="1335" alt="The pollution follows the air" decoding="async" /></a>
         <figcaption>Where the air reaching Kano was on the three preceding days, Foehn's probability of exceeding 100&nbsp;µg&nbsp;m<sup>−3</sup>, and why the gain of the computed transport fades with lead time.</figcaption></figure>
     </article>
     <article class="story">
       <h3>Smoke forecast days ahead</h3>
-      <p>Five days ahead, Foehn put the smoke of the Gironde fires of July 2022 over the forest of the Landes and the Teich bird
-        reserve, giving the reserve about a one-in-three chance of exceeding 25&nbsp;µg&nbsp;m<sup>−3</sup>.</p>
-      <figure class="story-fig"><a href="figures/fig_smoke.png?v=2" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_smoke.jpg?v=2" width="1800" height="1001" alt="Forecasting wildfire smoke over a bird reserve" decoding="async" /></a>
+      <p>Five days ahead, Foehn gave the Teich bird reserve, beside one of the Gironde fires of July 2022, a probability of about one
+        in five that PM<sub>2.5</sub> would exceed 25&nbsp;µg&nbsp;m<sup>−3</sup> on 18 July, its smokiest day. Its zone of at least
+        one-in-four probability covered 74&nbsp;% of the smoky area of the estimates and was three times larger, mainly over the
+        forest of the Landes.</p>
+      <figure class="story-fig"><a href="figures/fig_smoke.png?v=3" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_smoke.jpg?v=3" width="1800" height="1001" alt="Forecasting wildfire smoke over a bird reserve" decoding="async" /></a>
         <figcaption>The smoke on 18 July 2022 in the 1&nbsp;km estimates, and Foehn's probability of exceeding 25&nbsp;µg&nbsp;m<sup>−3</sup> issued one to seven days before.</figcaption></figure>
+    </article>
+    <article class="story">
+      <h3>The same design in Aurora's own protocol</h3>
+      <p>The design does not depend on the 1&nbsp;km estimates. Trained in the protocol of Aurora's air-pollution model, on the coarse
+        CAMS analyses and without any 1&nbsp;km or station data, a network of the same design (Foehn-CAMS, 9.9 million parameters)
+        has a lower error than Aurora from 36&nbsp;h, by 9&nbsp;% at 3 days and 12&nbsp;% at 5 days, and than the CAMS forecast from
+        2 days ahead. In the first 36&nbsp;h the CAMS forecast, which starts from the reference analysis, is the most accurate of the three.</p>
+      <figure class="story-fig"><a href="figures/fig_aurora_protocol.png" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_aurora_protocol.jpg" width="1800" height="1360" alt="Foehn's design trained in Aurora's protocol, against Aurora and the CAMS forecast" decoding="async" /></a>
+        <figcaption>Forecasts initialized on 1 September 2022, one and five days ahead, against the CAMS analysis, and the error by lead time over 214 initializations from May to November 2022: Foehn-CAMS (mean of eight members), Aurora and the CAMS forecast.</figcaption></figure>
     </article>
   </div>
 </section>
@@ -333,25 +354,22 @@
 <section class="band band-soft" id="benchmark">
   <div class="wrap">
     <h2>Benchmark</h2>
-    <p class="sub">The design was chosen in a controlled benchmark over Europe: five spatiotemporal networks retrained with exactly the
-      inputs of Foehn's flow-matching network (its European 0.25° version), against the CAMS operational forecast, Aurora and
-      climatology. Europe, 2022; scores averaged over lead times of 1 to 4 days and three training seeds.</p>
+    <p class="sub">The configuration was guided by a controlled benchmark over Europe: a 0.25° precursor of Foehn's flow-matching network, with a learned transport layer, against five spatiotemporal networks retrained by regression with the same target, start-day estimates and forecast weather (their other inputs differ), the CAMS operational forecast, Aurora and climatology. Europe, 2022 (360 start days); scores averaged over lead times of 1 to 4 days and three trainings.</p>
     <figure class="story-fig"><a href="figures/fig_benchmark_leadtime.png" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_benchmark_leadtime.jpg" width="1800" height="507" alt="Skill against five spatiotemporal networks, by lead time" decoding="async" /></a>
-        <figcaption>RMSE against the 0.25° block means (<b>a</b>), the 1&nbsp;km pixels (<b>b</b>) and 2,971 EEA stations (<b>c</b>), and CSI of exceedances of 25&nbsp;µg&nbsp;m<sup>−3</sup> (<b>d</b>), by lead time.</figcaption></figure>
+        <figcaption>RMSE against the 0.25° block means (<b>a</b>), the 1&nbsp;km pixels (<b>b</b>) and the EEA stations (<b>c</b>; 2,063 reporting in 2022), and CSI of exceedances of 25&nbsp;µg&nbsp;m<sup>−3</sup> (<b>d</b>), by lead time.</figcaption></figure>
       <figure class="story-fig"><a href="figures/fig_benchmark_scorecard.png" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_benchmark_scorecard.jpg" width="1800" height="555" alt="Scorecard: change of Foehn's score relative to each system on all days, on the most polluted days and during transported episodes" decoding="async" /></a>
-        <figcaption>Change of Foehn's score relative to each system (rows) for the RMSE, the CRPS and the CSI of exceedances of 25&nbsp;µg&nbsp;m<sup>−3</sup>, one to four days ahead: on all days, on the 10&nbsp;% most polluted days and during the four documented transported episodes. Blue means Foehn better: it is better in 319 of the 324 cells, and the five others are within 2&nbsp;%.</figcaption></figure>
-      <figure class="story-fig"><a href="figures/fig_benchmark_scales_cost.png" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_benchmark_scales_cost.jpg" width="1800" height="908" alt="Skill by scale, and the cost of inference" decoding="async" /></a>
-        <figcaption>Error by wavelength at 0.25° (<b>a</b>) and at 1&nbsp;km (<b>b</b>): below one, skill at that scale. <b>c</b>, error at 1&nbsp;km against inference time; marker area, peak GPU memory. Foehn is 26 times faster than Aurora with a 35&nbsp;% lower error.</figcaption></figure>
+        <figcaption>Change of the precursor's score relative to each system (rows) for the RMSE, the CRPS and the CSI of exceedances of 25&nbsp;µg&nbsp;m<sup>−3</sup>, one to four days ahead: on all days, on the 10&nbsp;% most polluted days and during the four documented transported episodes. Blue means the precursor is better: it is better in 319 of the 324 cells, and the five others are RMSE cells within 1.3&nbsp;%.</figcaption></figure>
+      <figure class="story-fig"><a href="figures/fig_benchmark_scales_cost.png?v=2" target="_blank" rel="noopener" title="Open the full-resolution figure"><img src="figures/web/fig_benchmark_scales_cost.jpg?v=2" width="1800" height="919" alt="Skill by scale, and the cost of inference" decoding="async" /></a>
+        <figcaption>Error by wavelength at 0.25° (<b>a</b>) and at 1&nbsp;km (<b>b</b>): below one, skill at that scale. <b>c</b>, error at 1&nbsp;km against inference time; marker area, peak GPU memory. One member of the precursor takes 0.23&nbsp;s, against 6.0&nbsp;s for one lead day of Aurora's global forecast of all its variables, and its error is 35&nbsp;% lower.</figcaption></figure>
     <p class="note">RMSE in µg&nbsp;m<sup>−3</sup> (lower is better); CSI of exceedances of 25&nbsp;µg&nbsp;m<sup>−3</sup> (higher is better); inference:
-      one member of one forecast on one AMD MI250X compute die. Foehn's network was the most accurate in 35 of 36 combinations of
-      score, lead time and set of days (all days, the 10&nbsp;% most polluted days and documented transport episodes).</p>
+      one member for one lead time on one AMD MI250X compute die (the tasks differ in size). The precursor scored better than each other system in 319 of 324 comparisons (nine systems, three scores, four lead times and three sets of days: all days, the 10&nbsp;% most polluted days and four transported episodes) and was within 1.3&nbsp;% in the other five.</p>
       <details class="bench-table">
       <summary>Show the scores as a table</summary>
       <div class="table-wrap"><table class="bench">
-        <thead><tr><th>Model</th><th>RMSE, 0.25°</th><th>RMSE, 1&nbsp;km</th><th>RMSE, 2,971 EEA stations</th><th>CSI, &gt;&nbsp;25&nbsp;µg&nbsp;m<sup>−3</sup></th><th>Inference (s)</th><th>GPU memory (GB)</th></tr></thead>
+        <thead><tr><th>Model</th><th>RMSE, 0.25°</th><th>RMSE, 1&nbsp;km</th><th>RMSE, EEA stations</th><th>CSI, &gt;&nbsp;25&nbsp;µg&nbsp;m<sup>−3</sup></th><th>Inference (s)</th><th>GPU memory (GB)</th></tr></thead>
         <tbody>
-          <tr class="best"><td>Foehn (flow matching, European 0.25° version)</td><td>5.07</td><td>5.47</td><td>11.23</td><td>0.421</td><td>0.231</td><td>0.15</td></tr>
-          <tr><td>Foehn without the learned transport layer</td><td>5.12</td><td>5.52</td><td>11.25</td><td>0.413</td><td>0.045</td><td>0.15</td></tr>
+          <tr class="best"><td>0.25° precursor of Foehn (flow matching)</td><td>5.07</td><td>5.47</td><td>11.23</td><td>0.421</td><td>0.231</td><td>0.15</td></tr>
+          <tr><td>The same precursor without its learned transport layer</td><td>5.12</td><td>5.52</td><td>11.25</td><td>0.413</td><td>0.045</td><td>0.15</td></tr>
           <tr><td>ConvLSTM</td><td>5.26</td><td>5.68</td><td>11.32</td><td>0.398</td><td>0.011</td><td>0.72</td></tr>
           <tr><td>Earthformer</td><td>5.40</td><td>5.82</td><td>11.34</td><td>0.392</td><td>0.006</td><td>0.42</td></tr>
           <tr><td>SimVP</td><td>5.49</td><td>5.92</td><td>11.39</td><td>0.379</td><td>0.010</td><td>0.10</td></tr>
@@ -371,10 +389,10 @@
     <h2>Limitations</h2>
     <p class="sub">What Foehn is, and is not, in its present form.</p>
     <ul class="limits">
-      <li>The 1&nbsp;km estimates Foehn learns from (GHAP) are produced after the fact, so the 1&nbsp;km model of the preprint cannot start from today. The forecast shown under <a href="#realtime">Real time</a> starts instead from an operational analysis at 0.4°, as in the comparison with Aurora, and reaches 1&nbsp;km through a second model; it has been verified over one autumn only (48 issue days).</li>
-      <li>Those estimates have their own errors and regional biases, which Foehn inherits or amplifies, as in India, and they were fitted to measurements from many of the stations used to evaluate it.</li>
-      <li>All members share one deterministic weather forecast; the spread represents the uncertainty of the weather only statistically.</li>
-      <li>The viewer shows precomputed forecasts of 2022; the 1&nbsp;km model of the preprint is not run on demand here, because a forecast needs the 1&nbsp;km inputs of the start day. The daily forecast under <a href="#realtime">Real time</a> comes from another, more recent system.</li>
+      <li>The 1&nbsp;km estimates Foehn learns from (GHAP) are produced after the fact, so the retrospective 1&nbsp;km model cannot start from today. The forecast shown under <a href="#realtime">Real time</a> starts instead from an operational analysis at 0.4°, as in the comparison with Aurora, and reaches 1&nbsp;km through a second model; it has been verified over one autumn only (48 issue days), and its members are too close together (28&nbsp;% of the measurements inside their 10–90&nbsp;% range, where 64&nbsp;% are expected).</li>
+      <li>Those estimates were fitted to measurements from many of the stations used to evaluate Foehn and have errors and regional biases of their own, which Foehn's ensembles do not represent. The evaluation covers one test year, 2022, seen during development.</li>
+      <li>All members share one weather forecast, desert dust is known only through the start-day surface field, and the inventories are monthly. The reference is the global operational forecast, not the regional systems at about 10&nbsp;km.</li>
+      <li>The viewer shows precomputed forecasts of 2022; the retrospective 1&nbsp;km model is not run on demand here, because a forecast needs the 1&nbsp;km inputs of the start day. The daily forecast under <a href="#realtime">Real time</a> comes from the paper's two-stage real-time system.</li>
     </ul>
   </div>
 </section>
@@ -383,10 +401,10 @@
   <div class="wrap">
     <h2>Code &amp; data</h2>
     <table class="links">
-      <tr><td>Code (MIT licence)</td><td><a href="https://github.com/AmmarKheder/Foehn">github.com/AmmarKheder/Foehn</a> — FLEXGREEN, data preparation, training, calibration, inference, evaluation, and every figure of the preprint.</td></tr>
-      <tr><td>Trained weights</td><td>Available to the editors and referees; released with the code upon publication.</td></tr>
-      <tr><td>Target and inputs</td><td>GHAP daily 1&nbsp;km PM<sub>2.5</sub> (Wei et al., Zenodo); ECMWF IFS HRES forecasts (WeatherBench&nbsp;2); ERA5; CAMS global forecasts and analyses, GFAS and CAMS-GLOB-ANT (Copernicus Atmosphere Data Store); GHS-POP population.</td></tr>
-      <tr><td>Evaluation stations</td><td>EEA, CNEMC, US EPA AQS, AirKorea, NIES Japan, CPCB India (partly through OpenAQ). Stations are used for evaluation only.</td></tr>
+      <tr><td>Code (MIT licence)</td><td><a href="https://github.com/AmmarKheder/Foehn">github.com/AmmarKheder/Foehn</a> — FLEXGREEN, the training and inference of Foehn, the real-time system, the downscaling model, and the analyses and figures of the paper (release v1.2.0); release v1.0.0, the retrospective system with its first noise design, is archived at <a href="https://doi.org/10.5281/zenodo.23337751">Zenodo</a>.</td></tr>
+      <tr><td>Trained weights</td><td>Five retrospective models on Zenodo and the real-time weights, available to the editors and referees; opened upon publication.</td></tr>
+      <tr><td>Target and inputs</td><td>GHAP daily 1&nbsp;km PM<sub>2.5</sub>, version 1 (Wei et al., Zenodo); ECMWF IFS HRES forecasts (WeatherBench&nbsp;2) and, in real time, the IFS open data; ERA5; CAMS global forecasts and analyses, GFAS and CAMS-GLOB-ANT (Copernicus Atmosphere Data Store); GHS-POP R2023A population; ETOPO 2022 elevation (NOAA).</td></tr>
+      <tr><td>Evaluation stations</td><td>EEA, CNEMC, US EPA AQS, AirKorea, NIES Japan, CPCB India (partly through OpenAQ); OpenAQ monitors in real time. Used for evaluation only, except in a separate test layer outside the forecast system.</td></tr>
     </table>
   </div>
 </section>
@@ -395,10 +413,10 @@
   <div class="wrap">
     <h2>Cite</h2>
 <pre><code>@article{kheder2026foehn,
-  title  = {Global kilometre-scale forecasts of fine particulate matter},
+  title  = {Global probabilistic forecasting of fine particulate air pollution at the kilometre scale},
   author = {Kheder, Ammar and Boy, Michael and Liu, Zhi-Song},
   year   = {2026},
-  note   = {Manuscript submitted}
+  note   = {Manuscript submitted, November 2026; earlier version: arXiv:2610.25941}
 }</code></pre>
     <p class="note">Questions and problems: <a href="https://github.com/AmmarKheder/Foehn/issues">GitHub issues</a> · ammar.kheder@lut.fi</p>
   </div>
@@ -420,7 +438,7 @@
       <a href="https://www.csc.fi/" title="CSC – IT Center for Science"><img src="assets/csc_logo.svg" alt="CSC" class="lg-csc" /></a>
     </div>
   </div>
-  <p class="fine">Foehn was trained on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland, where the forecasts of the preprint were also computed. Foehn · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. © 2026 Ammar Kheder.</p>
+  <p class="fine">Foehn was trained on <strong>LUMI</strong>, the EuroHPC supercomputer hosted by <strong>CSC</strong> in Kajaani, Finland, where the retrospective forecasts of the paper were also computed. Foehn · Institute for Atmospheric and Earth System Research (INAR), University of Helsinki · LUT University · AMC-Lahti. © 2026 Ammar Kheder.</p>
 </div></footer>
 
 <script>
@@ -475,7 +493,7 @@
     sel.leadout.textContent = h + (h > 1 ? " days" : " day");
     const e = available(c, t, h);
     const base = "viewer/" + key + "/" + t + "_h" + h + "_";
-    if (e) setImg($("img-foehn"), base + layer + ".png");
+    if (e) setImg($("img-foehn"), base + layer + ".png?v=2");
     $("img-foehn").style.display = e ? "block" : "none";
     setImg($("img-ghap"), "viewer/" + key + "/" + t + "_ghap.png");
     const hasCams = e && e[2];
@@ -486,8 +504,8 @@
     $("foehn-sub").textContent = e ? (layer === "prob" ? "probability from 16 members" : layer === "member" ? "member 1 of 16" : "ensemble mean of 16 members") + ", issued on " + issued + " for " + label : "no forecast at this lead time";
     $("help").textContent = HELP[layer];
     $("viewer-note").textContent = c.note + ". Box: " + c.box[1] + "–" + c.box[0] + "°N, " + c.box[2] + "–" + c.box[3] + "°E" + (c.ds > 1 ? "; displayed at " + c.ds + " km." : "; displayed at 1 km.");
-    $("dl").href = e ? base + layer + ".png" : "#"; $("dl").download = e ? "foehn_" + key + "_" + t + "_h" + h + "_" + layer + ".png" : "";
-    for (const hh of [h - 1, h + 1]) { const ee = available(c, t, hh); if (ee) { const im = new Image(); im.src = "viewer/" + key + "/" + t + "_h" + hh + "_" + layer + ".png"; } }
+    $("dl").href = e ? base + layer + ".png?v=2" : "#"; $("dl").download = e ? "foehn_" + key + "_" + t + "_h" + h + "_" + layer + ".png" : "";
+    for (const hh of [h - 1, h + 1]) { const ee = available(c, t, hh); if (ee) { const im = new Image(); im.src = "viewer/" + key + "/" + t + "_h" + hh + "_" + layer + ".png?v=2"; } }
     writeHash();
   }
   function setLayer(l) { layer = l; document.querySelectorAll("#layers button").forEach((x) => x.classList.toggle("on", x.dataset.layer === l)); }
@@ -624,7 +642,7 @@
   // phones get the 720p versions (lower bitrate, H.264 main profile): the 1080p files played badly in Safari on iPhone
   const mobile = matchMedia("(max-width: 820px)").matches || /iPhone|iPad|Android/.test(navigator.userAgent);
   const pickSrc = (b) => (mobile && b.dataset.srcMobile) ? b.dataset.srcMobile : b.dataset.src;
-  // chapters: the start of each scene of the assembled films (manim/out/voice_*_scenes.json)
+  // chapters: the start of each scene of the assembled films
   const CH = {
     film: [[0, "A few days of bad air"], [18, "What are fine particles?"], [63, "1 km versus 40 km"], [97, "Where the air is measured"],
            [130, "Why networks struggle"], [178, "The answer: Foehn"], [201, "Where was the air? FLEXGREEN"], [237, "Green's function"],

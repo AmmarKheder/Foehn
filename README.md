@@ -63,7 +63,7 @@ forecasts it at the kilometre, for the whole planet, as an ensemble:
   members at 1 km deliver kilometre-scale ensembles every day.
 
 <p align="center">
-  <a href="docs/figures/fig_overview.png"><img src="docs/figures/web/fig_overview.jpg" width="880" alt="One forecast of the whole planet at 1 km, with four basin zooms against CAMS and GHAP"></a>
+  <a href="docs/figures/fig_overview.png"><img src="docs/figures/web/fig_overview.jpg" width="880" alt="Foehn's forecast of all inhabited land at 1 km for 9 February 2022, with four basins against CAMS and GHAP and the error at the stations by lead time"></a>
 </p>
 
 ## How Foehn works
@@ -110,10 +110,10 @@ the absolute error. SEDI: Foehn's four-member ensemble mean, over land, for the 
 four-member mean is lower than that of the CAMS forecast.
 
 <p align="center">
-  <a href="docs/figures/fig_transport.png"><img src="docs/figures/web/fig_transport.jpg" width="880" alt="The pollution follows the air: Saharan dust reaching Kano, and why the gain of the computed transport fades with lead time"></a>
+  <a href="docs/figures/fig_transport.png"><img src="docs/figures/web/fig_transport.jpg" width="880" alt="The computed transport traces a dust episode to its origin: Saharan dust reaching Kano on 16 May 2022"></a>
 </p>
 <p align="center">
-  <a href="docs/figures/fig_smoke.png"><img src="docs/figures/web/fig_smoke.jpg" width="880" alt="Forecasting the smoke of the Gironde fires of July 2022 at the Teich bird reserve, five days ahead"></a>
+  <a href="docs/figures/fig_smoke.png"><img src="docs/figures/web/fig_smoke.jpg" width="880" alt="The smoke of the Gironde fires of July 2022: a one-in-five probability of harmful smoke at the Teich bird reserve five days ahead"></a>
 </p>
 
 ### In real time

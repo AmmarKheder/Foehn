@@ -373,3 +373,5 @@ ul.rt-notes { margin: 20px 0 0; max-width: 900px; } .rt-notes li { font-size: 14
 /* eleven links in the top bar: a slightly tighter row between the phone layout and the full width */
 @media (min-width: 861px) and (max-width: 1100px) { .nav { gap: 12px; font-size: 13.5px; } }
 @media (min-width: 861px) and (max-width: 990px) { .nav { gap: 8px; font-size: 12px; } }
+
+h1.tag { font-weight: 400; line-height: 1.55; letter-spacing: 0; }
