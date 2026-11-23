@@ -76,8 +76,8 @@ physics says the air was, and generates the 1 km field of the target day by flow
 ensemble member.
 
 <p align="center">
-  <a href="docs/figures/fig_architecture.png"><img src="docs/assets/readme/architecture.webp" width="880" alt="How Foehn makes a forecast, animated: a, computed transport (FLEXGREEN); b, learned tracers read at the origins of the air; c, the conditional flow-matching generator, from noise to a 1 km forecast for every lead time; close-up of the generator as it runs"></a>
-  <br><sub><b>a</b>, computed transport (FLEXGREEN) · <b>b</b>, learned tracers read where the air was · <b>c</b>, the flow-matching generator, from noise to a 1 km forecast in four steps · close-up of the generator as it runs. Click for the full-resolution figure.</sub>
+  <a href="docs/figures/fig_schematic.png"><img src="docs/assets/readme/architecture.webp" width="880" alt="How Foehn makes a forecast, animated: a, computed transport (FLEXGREEN); b, learned tracers read at the origins of the air; c, the conditional flow-matching generator, from noise to a 1 km forecast for every lead time; close-up of the generator as it runs; d, real time, the same design at 0.4° gives eight members every day; e, each member is downscaled to 1 km by functional flow matching"></a>
+  <br><sub><b>a</b>, computed transport (FLEXGREEN) · <b>b</b>, learned tracers read where the air was · <b>c</b>, the flow-matching generator, from noise to a 1 km forecast in four steps · close-up of the generator as it runs · <b>d</b>, real time: the same design at 0.4°, eight members every day · <b>e</b>, downscaling of each member to 1 km. Click for the full-resolution figure.</sub>
 </p>
 <p align="center"><a href="https://www.youtube.com/watch?v=XB7i0QX7OCo"><b>▶ Watch the film: Foehn, the full story (8 min, narrated, on YouTube)</b></a> · <a href="https://ammarkheder.com/Foehn/#how">the interactive animated figure</a><br><sub>Watch it in your language: ⚙ Settings › Audio track (32 languages)</sub></p>
 

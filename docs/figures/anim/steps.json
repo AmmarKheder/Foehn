@@ -1,24 +1,38 @@
 {
  "fps": 30,
- "duration": 43.4,
+ "duration": 65.0,
  "width": 1600,
  "height": 1190,
  "steps": [
   {
    "key": "a",
+   "title": "Computed transport",
    "t": 0.0
   },
   {
    "key": "b",
+   "title": "Learned tracers",
    "t": 9.6
   },
   {
    "key": "c",
+   "title": "Generator",
    "t": 14.2
   },
   {
-   "key": "d",
+   "key": "close-up",
+   "title": "From noise to forecast",
    "t": 25.2
+  },
+  {
+   "key": "d",
+   "title": "Real time",
+   "t": 40.0
+  },
+  {
+   "key": "e",
+   "title": "Downscaling to 1 km",
+   "t": 48.8
   }
  ]
 }
