@@ -340,13 +340,14 @@ docs/figures/      figures of the preprint used in this README and on the websit
 
 ## Trained weights
 
-The trained weights of five models of the retrospective evaluation are archived at Zenodo
-(<https://doi.org/10.5281/zenodo.23337591>), with their SHA-256 checksums and the inference commands: the final 1 km model
+The trained weights of seven models are archived at Zenodo (<https://doi.org/10.5281/zenodo.24529900>, version 1.2.1), with
+their SHA-256 checksums and the inference commands. Five are the models of the retrospective evaluation: the final 1 km model
 (14.2 million parameters), the model with emissions before the calibration, the base model, the model without transport, and
-Foehn-CAMS, the model of the comparison in Aurora's protocol (9.9 million parameters). During peer review, access to the files
-is restricted to the editors and referees; it will be opened upon publication. The weights of the real-time system and of the
-downscaling model are available to the editors and referees on request and will be released upon publication. The forecast
-and transport fields are too large to deposit; they can be regenerated from the public inputs with this code and the weights.
+Foehn-CAMS, the model of the comparison in Aurora's protocol (9.9 million parameters). The other two are the stages of the
+real-time system: the real-time version of Foehn-CAMS and the downscaling model (3.3 million parameters), with its noise prior
+and sampler settings. The README of the archive maps each file to the figures, tables and notes of the manuscript. During peer
+review, access to the files is restricted to the editors and referees; it will be opened upon publication. The forecast and
+transport fields are too large to deposit; they can be regenerated from the public inputs with this code and the weights.
 
 ## Citation
 
@@ -366,7 +367,7 @@ Kheder A., Boy M. & Liu Z.-S. (2026). *Global probabilistic forecasting of air p
 ```
 
 A revised version of this paper, *Global probabilistic forecasting of fine particulate air pollution at the kilometre scale*
-(Kheder, Boy and Liu), has been submitted for publication; release v1.2.0 holds the code of its analyses. Release v1.0.0 of
+(Kheder, Boy and Liu), has been submitted for publication; release v1.2.1 holds the code of its analyses. Release v1.0.0 of
 this code is archived at Zenodo (<https://doi.org/10.5281/zenodo.23337751>).
 
 ## License and acknowledgements
